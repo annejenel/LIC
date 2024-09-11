@@ -153,11 +153,11 @@ export default function App() {
                 top: '16px',
                 left: '16px',
                 backgroundColor: '#a94442',
-                color: 'white', // Set default color
+                color: 'white', 
                 fontSize: '20px',
                 '&:hover': {
-                  color: 'white', // Ensure text color stays white on hover
-                  backgroundColor: '#892c2c', // Slightly darker background color for hover
+                  color: 'white', 
+                  backgroundColor: '#892c2c', 
                   borderColor: '#a94442',
                 },
               }}
