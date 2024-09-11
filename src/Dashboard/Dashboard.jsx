@@ -1,3 +1,4 @@
+
 import React from 'react';
 import Sheet from '@mui/joy/Sheet';
 import Tooltip from '@mui/material/Tooltip';
@@ -19,8 +20,6 @@ import SearchIcon from '@mui/icons-material/Search';
 import { CssVarsProvider, extendTheme } from '@mui/joy/styles';
 import ExitToAppOutlinedIcon from '@mui/icons-material/ExitToAppOutlined';
 import InsightsTwoTone from '@mui/icons-material/InsightsTwoTone';
-import useState from 'react';
-
 
 import './Dashboard.css';
 
@@ -49,19 +48,6 @@ const theme = extendTheme({
 });
 
 export default function App() {
-
-  const [isModalOpen, setIsModalOpen] = useState(false); 
-
-  const handleOpenModal = () => {
-    setIsModalOpen(true);
-  };
-
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-  };
-
-
-
   return (
     <CssVarsProvider theme={theme}>
       <div className="container">
@@ -194,8 +180,7 @@ export default function App() {
           </div>
         </Sheet>
       </div>
-              
-      <AddStudent open={isModalOpen} onClose={handleCloseModal} />
+
 
       <Sheet>
         hello
