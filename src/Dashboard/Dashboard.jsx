@@ -1,5 +1,6 @@
+import React from 'react';
 import Sheet from '@mui/joy/Sheet';
-import Badge from '@mui/joy/Badge';
+import Tooltip from '@mui/material/Tooltip';
 import Box from '@mui/joy/Box';
 import Button from '@mui/joy/Button';
 import Dropdown from '@mui/joy/Dropdown';
@@ -12,44 +13,57 @@ import MenuButton from '@mui/joy/MenuButton';
 import MenuItem from '@mui/joy/MenuItem';
 import Typography from '@mui/joy/Typography';
 import AddIcon from '@mui/icons-material/Add';
-import NotificationsIcon from '@mui/icons-material/Notifications';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import SearchIcon from '@mui/icons-material/Search';
 import { CssVarsProvider, extendTheme } from '@mui/joy/styles';
 import ExitToAppOutlinedIcon from '@mui/icons-material/ExitToAppOutlined';
 import InsightsTwoTone from '@mui/icons-material/InsightsTwoTone';
-import './Dashboard.css'
-import React from 'react'
+import useState from 'react';
+
+
+import './Dashboard.css';
 
 const theme = extendTheme({
-    components: {
-      JoyTypography: {
-        styleOverrides: {
-          root: {
-            fontFamily: 'Poppins, sans-serif',
-            fontSize: '20px',
-            fontWeight: 'bold',
-            color: '#a94442',
-          },
+  components: {
+    JoyTypography: {
+      styleOverrides: {
+        root: {
+          fontFamily: 'Poppins, sans-serif',
+          fontSize: '20px',
+          fontWeight: 'bold',
+          color: '#a94442',
         },
       },
-      JoySheet: {
-        styleOverrides: {
-          root: {
-            '&.header': {
-              backgroundColor: '#ffd404',
-            },
+    },
+    JoySheet: {
+      styleOverrides: {
+        root: {
+          '&.header': {
+            backgroundColor: '#ffd404',
           },
         },
       },
     },
-  });
-  
-function Dashboard() {
+  },
+});
+
+export default function App() {
+
+  const [isModalOpen, setIsModalOpen] = useState(false); 
+
+  const handleOpenModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
+
+
+
   return (
-    <div>
-        <CssVarsProvider theme={theme}>
+    <CssVarsProvider theme={theme}>
       <div className="container">
         <Sheet
           variant="outlined"
@@ -72,11 +86,16 @@ function Dashboard() {
             <Box className="header-content">
               <Dropdown>
                 <MenuButton
+                  className="menu-button"
                   sx={{
                     '--Button-radius': '1.5rem',
                     backgroundColor: '#B53737',
                     color: 'white',
-                    fontSize: '20px'
+                    fontSize: '20px',
+                    '&:hover': {
+                      color: '#a94442',
+                      backgroundColor: 'white',
+                    },
                   }}
                   variant="outlined"
                   endDecorator={<KeyboardArrowDownIcon />}
@@ -107,38 +126,59 @@ function Dashboard() {
                   <MenuItem>Settings</MenuItem>
                 </Menu>
               </Dropdown>
+
+              <Tooltip title="Analytics"
+              arrow
+              sx={{
+                height: '10px'
+              }}>
               <Button
+                className="analytics-button"
                 sx={{
                   marginLeft: '8px',
                   backgroundColor: 'transparent',
-                  border: '2px solid #a94442;',
+                  border: '2px solid #a94442',
                   color: '#a94442',
                   marginRight: '50px',
+                  '&:hover': {
+                    color: 'white',
+                    backgroundColor: '#a94442',
+                    borderColor: '#a94442',
+                  },
                 }}
               >
-                <InsightsTwoTone/>
+                <InsightsTwoTone />
               </Button>
+              </Tooltip>
             </Box>
 
             <Box className="header-actions">
-                  <ExitToAppOutlinedIcon />
+              <IconButton variant="soft" className="logout">
+                <ExitToAppOutlinedIcon />
+              </IconButton>
             </Box>
-    
           </Sheet>
 
           <div className="hello-world-container">
-            <Button
+          <Button
               startDecorator={<AddIcon />}
-              sx={{ 
+              sx={{
                 position: 'absolute',
                 top: '16px',
                 left: '16px',
                 backgroundColor: '#a94442',
-                fontSize: '20px'
+                color: 'white', // Set default color
+                fontSize: '20px',
+                '&:hover': {
+                  color: 'white', // Ensure text color stays white on hover
+                  backgroundColor: '#892c2c', // Slightly darker background color for hover
+                  borderColor: '#a94442',
+                },
               }}
             >
               Add Student
             </Button>
+
             <div className="hello-world-content">
               Hello world!
             </div>
@@ -154,9 +194,12 @@ function Dashboard() {
           </div>
         </Sheet>
       </div>
-    </CssVarsProvider>
-    </div>
-  )
-}
+              
+      <AddStudent open={isModalOpen} onClose={handleCloseModal} />
 
-export default Dashboard
+      <Sheet>
+        hello
+      </Sheet>
+    </CssVarsProvider>
+  );
+}
