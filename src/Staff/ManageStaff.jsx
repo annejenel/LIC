@@ -140,7 +140,6 @@ export default function App() {
             </Box>
           </Sheet>
 
-          {/* "MANAGE LIC STAFF" Header moved to top */}
           <Typography
             component="h1"
             className="header-text"
@@ -156,7 +155,6 @@ export default function App() {
           </Typography>
 
           <div className="hello-world-container">
-            {/* "Add Staff" Button aligned on the right side */}
             <div className="add-staff-button">
               <Button
                 startDecorator={<AddIcon />}
@@ -172,7 +170,6 @@ export default function App() {
               </Button>
             </div>
 
-            {/* Table Container for both tables */}
             <div className="table-container">
               {/* Table 1 content */}
               <div className="table">

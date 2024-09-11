@@ -163,10 +163,10 @@
   
   .header-text {
     text-align: center;
-    font-size: 36px; /* Reduced size slightly for header text */
+    font-size: 36px; 
     font-weight: bold;
     color: #a94442;
-    margin: 20px 0; /* Spacing around the header */
+    margin: 20px 0; 
   }
   
   .add-staff-button {
