@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'; // Ma
 
 import Login from './Login/Login';
 import Dashboard from './Dashboard/Dashboard';
+import ManageStaff from './Staff/ManageStaff';
 
 
 export default function App() {
@@ -11,6 +12,7 @@ export default function App() {
       <Routes>
         <Route path='/' element={<Login />} />
         <Route path='/dashboard' element={<Dashboard />} />
+        <Route path='staff' element={<ManageStaff/>}/>
       </Routes>
     </Router>
   );
