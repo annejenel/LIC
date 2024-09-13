@@ -72,7 +72,7 @@ export default function Dashboard() {
         const fetchedStudents = response.data.map(student => ({
           ...student,
           timeLeft: formatTimeLeft(student.time_left),
-          status: student.status || 'Change' // Default status
+          status: student.status || 'Change' 
         }));
         setStudents(fetchedStudents);
       })
@@ -91,7 +91,7 @@ export default function Dashboard() {
     setStudents(students.map(student =>
       student.studentID === studentID ? { ...student, status: newStatus } : student
     ));
-    // Optionally, send the new status to the backend here
+    // if i saved ang stats to db
   };
 
   return (
