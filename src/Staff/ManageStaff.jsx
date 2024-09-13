@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate from react-router-dom
 import Sheet from '@mui/joy/Sheet';
-import Tooltip from '@mui/material/Tooltip';
 import Box from '@mui/joy/Box';
 import Button from '@mui/joy/Button';
 import Dropdown from '@mui/joy/Dropdown';
@@ -46,7 +46,10 @@ const theme = extendTheme({
   },
 });
 
-export default function App() {
+export default function ManageStaff() {
+  const [showTooltip, setShowTooltip] = useState(false);
+  const navigate = useNavigate(); // Hook to navigate programmatically
+
   return (
     <CssVarsProvider theme={theme}>
       <div className="container">
@@ -107,12 +110,19 @@ export default function App() {
                     Account
                   </MenuItem>
                   <ListDivider />
-                  <MenuItem>Dashboard</MenuItem>
+                  {/* Add onClick to navigate back to Dashboard */}
+                  <MenuItem onClick={() => navigate('/dashboard')}>
+                    Dashboard
+                  </MenuItem>
                   <MenuItem>Settings</MenuItem>
                 </Menu>
               </Dropdown>
 
-              <Tooltip title="Analytics" arrow sx={{ height: '10px' }}>
+              <Box
+                className="analytics-container"
+                onMouseEnter={() => setShowTooltip(true)}
+                onMouseLeave={() => setShowTooltip(false)}
+              >
                 <Button
                   className="analytics-button"
                   sx={{
@@ -130,7 +140,10 @@ export default function App() {
                 >
                   <InsightsTwoTone />
                 </Button>
-              </Tooltip>
+                {showTooltip && (
+                  <div className="tooltip-text">View Analytics</div>
+                )}
+              </Box>
             </Box>
 
             <Box className="header-actions">
@@ -161,6 +174,7 @@ export default function App() {
                 sx={{
                   backgroundColor: '#28a745',
                   color: 'white',
+                  fontSize: '17px',
                   '&:hover': {
                     backgroundColor: '#218838',
                   },
@@ -171,14 +185,11 @@ export default function App() {
             </div>
 
             <div className="table-container">
-              {/* Table 1 content */}
               <div className="table">
                 <Typography className="table-title">
                   STAFF/ NAS TRANSACTION
                 </Typography>
               </div>
-
-              {/* Table 2 content */}
               <div className="table">
                 <Typography className="table-title">
                   STAFF TABLE
