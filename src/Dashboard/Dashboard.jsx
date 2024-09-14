@@ -36,7 +36,7 @@ const theme = extendTheme({
       styleOverrides: {
         root: {
           fontFamily: 'Poppins, sans-serif',
-          fontSize: '20px',
+          fontSize: '15px',
           fontWeight: 'bold',
           color: '#a94442',
         },
@@ -100,7 +100,11 @@ export default function Dashboard() {
         <Sheet
           variant="outlined"
           className="sheet"
-          sx={{ backgroundColor: '#fff0f2' }}
+          sx={{ backgroundColor: '#fff0f2',
+            padding: '7px',
+            width: '99vw',
+            height: '99vh',
+           }}
         >
           {/* Header Section */}
           <Sheet
@@ -125,7 +129,7 @@ export default function Dashboard() {
                     '--Button-radius': '1.5rem',
                     backgroundColor: '#B53737',
                     color: 'white',
-                    fontSize: '20px',
+                    fontSize: '12px',
                     '&:hover': {
                       color: '#a94442',
                       backgroundColor: 'white',
@@ -146,7 +150,7 @@ export default function Dashboard() {
                     '--ListItem-minHeight': '40px',
                     '--ListDivider-gap': '4px',
                     minWidth: 200,
-                    fontSize: '20px'
+                    fontSize: '12px'
                   }}
                 >
                   <MenuItem>
@@ -206,7 +210,6 @@ export default function Dashboard() {
               justifyContent: 'space-between',
               alignItems: 'center',
               width: '100%',
-              padding: '16px',
             }}
           >
             <Button
@@ -214,12 +217,13 @@ export default function Dashboard() {
               sx={{
                 backgroundColor: '#a94442',
                 color: 'white',
-                fontSize: '20px',
+                fontSize: '12px',
                 '&:hover': {
                   color: 'white',
                   backgroundColor: '#892c2c',
                   borderColor: '#a94442',
                 },
+                height: '20px'
               }}
             >
               Add Student
@@ -233,13 +237,15 @@ export default function Dashboard() {
               className="search-input"
               sx={{
                 width: '250px',
+                height: '20px',
+                fontSize: '13px'
               }}
             />
           </Box>
 
           {/* Student Table */}
-          <Box className="tables" sx={{ padding: '16px' }}>
-            <Typography level="h6">Student List</Typography>
+          <Box className="tables" sx={{ padding: '16px', }}>
+            <Typography level="h6" className="studentlist">Student List</Typography>
             {students.length === 0 ? (
               <p>No students available</p>
             ) : (
