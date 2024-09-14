@@ -1,6 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+/* Importing Nunito Sans font */
 @import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&display=swap');
-
 
 .container {
   display: flex;
@@ -63,7 +62,7 @@
   font-size: 13px;
   height: 20px;
   border: 2px solid #a94442;
-  width: 250px,
+  width: 250px;
 }
 
 .logout {
@@ -98,7 +97,6 @@
   color: #a94442; 
   background-color: white;
 }
-
 
 .tooltip {
   position: relative;
@@ -138,20 +136,36 @@
   opacity: 1;
 }
 
+/* Student table styles */
 .student-table {
-  width: 100%;
-  border-collapse: collapse;
-
+  width: 150%;
+  border-radius: 5px;
+  overflow: hidden; /* Ensure that the border radius works properly */
+  border-spacing: 0; /* Remove any spacing between cells */
+  background: white;
+  font-size: 13px;
 }
 
 .student-table th, .student-table td {
-  border: 1px solid #ddd;
+  border-bottom: 1px solid #b8abab; /* Horizontal line for each row */
   padding: 8px;
-  text-align: center
+  text-align: center;
+  font-family: 'Nunito Sans', sans-serif;
 }
 
 .student-table th {
-  background-color: #f4f4f4;
+  background: linear-gradient(181.2deg, rgba(158, 56, 56, 1) 24.8%, rgba(198, 194, 149, 1) 73.5%);
+  color: white;
+  font-size: 13px;
+  border-top: 1px solid #ddd; /* Top border for the header */
+}
+
+.student-table td {
+  border-right: none; /* Remove vertical lines */
+}
+
+.student-table tr:last-child td {
+  border-bottom: none; /* Remove bottom border for the last row */
 }
 
 .student-table tr:nth-child(even) {
@@ -173,5 +187,5 @@
 
 .studentlist {
   font-size: 10px;
-  font-family: "Nunito Sans", sans-serif,
+  font-family: "Nunito Sans", sans-serif;
 }
