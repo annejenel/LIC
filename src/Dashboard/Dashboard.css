@@ -138,7 +138,7 @@
 
 /* Student table styles */
 .student-table {
-  width: 150%;
+  width: 90%;
   border-radius: 5px;
   overflow: hidden; /* Ensure that the border radius works properly */
   border-spacing: 0; /* Remove any spacing between cells */
@@ -183,6 +183,9 @@
 .tables {
   padding: 16px;
   border-radius: 8px;
+  width: 100%;
+  margin-left: 9%;
+  margin-top: 30px;
 }
 
 .studentlist {
