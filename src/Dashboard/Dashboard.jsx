@@ -22,11 +22,8 @@ import BorderColorRoundedIcon from '@mui/icons-material/BorderColorRounded';
 import HistoryEduRoundedIcon from '@mui/icons-material/HistoryEduRounded';
 import PaymentsRoundedIcon from '@mui/icons-material/PaymentsRounded';
 import EditAttributesTwoToneIcon from '@mui/icons-material/EditAttributesTwoTone';
-
-
 import Chip from '@mui/material/Chip';
 import axios from 'axios';
-
 import { CssVarsProvider, extendTheme } from '@mui/joy/styles';
 import './Dashboard.css';
 
@@ -36,7 +33,7 @@ const theme = extendTheme({
       styleOverrides: {
         root: {
           fontFamily: 'Poppins, sans-serif',
-          fontSize: '20px',
+          fontSize: '15px',
           fontWeight: 'bold',
           color: '#a94442',
         },
@@ -100,7 +97,11 @@ export default function Dashboard() {
         <Sheet
           variant="outlined"
           className="sheet"
-          sx={{ backgroundColor: '#fff0f2' }}
+          sx={{ backgroundColor: '#fff0f2',
+            padding: '7px',
+            width: '99vw',
+            height: '99vh',
+           }}
         >
           {/* Header Section */}
           <Sheet
@@ -125,7 +126,7 @@ export default function Dashboard() {
                     '--Button-radius': '1.5rem',
                     backgroundColor: '#B53737',
                     color: 'white',
-                    fontSize: '20px',
+                    fontSize: '12px',
                     '&:hover': {
                       color: '#a94442',
                       backgroundColor: 'white',
@@ -146,7 +147,7 @@ export default function Dashboard() {
                     '--ListItem-minHeight': '40px',
                     '--ListDivider-gap': '4px',
                     minWidth: 200,
-                    fontSize: '20px'
+                    fontSize: '12px'
                   }}
                 >
                   <MenuItem>
@@ -206,7 +207,6 @@ export default function Dashboard() {
               justifyContent: 'space-between',
               alignItems: 'center',
               width: '100%',
-              padding: '16px',
             }}
           >
             <Button
@@ -214,12 +214,13 @@ export default function Dashboard() {
               sx={{
                 backgroundColor: '#a94442',
                 color: 'white',
-                fontSize: '20px',
+                fontSize: '12px',
                 '&:hover': {
                   color: 'white',
                   backgroundColor: '#892c2c',
                   borderColor: '#a94442',
                 },
+                height: '20px'
               }}
             >
               Add Student
@@ -233,72 +234,76 @@ export default function Dashboard() {
               className="search-input"
               sx={{
                 width: '250px',
+                height: '20px',
+                fontSize: '13px'
               }}
             />
           </Box>
 
           {/* Student Table */}
-          <Box className="tables" sx={{ padding: '16px' }}>
-            <Typography level="h6">Student List</Typography>
+          <Box className="tables"> 
+            <Typography level="h6" className="studentlist">Student List</Typography>
             {students.length === 0 ? (
               <p>No students available</p>
             ) : (
-              <table className="student-table">
-                <thead>
-                  <tr>
-                    <th>Student ID</th>
-                    <th>Name</th>
-                    <th>Course</th>
-                    <th>Time Left</th>
-                    <th>Status</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {students.map((student) => (
-                    <tr key={student.studentID}>
-                      <td>{student.studentID}</td>
-                      <td>{student.name}</td>
-                      <td>{student.course}</td>
-                      <td>{student.timeLeft}</td>
-                      <td>
-                        <Dropdown>
-                          <IconButton>
-                            <EditAttributesTwoToneIcon />
-                          </IconButton>
-                          <Menu
-                            variant="outlined"
-                            placement="bottom-start"
-                            disablePortal
-                            size="sm"
-                          >
-                            <MenuItem onClick={() => handleStatusChange(student.studentID, 'Active')}>
-                              <Chip label="Active" color={statusColors.Active} />
-                            </MenuItem>
-                            <MenuItem onClick={() => handleStatusChange(student.studentID, 'Inactive')}>
-                              <Chip label="Inactive" color={statusColors.Inactive} />
-                            </MenuItem>
-                            <MenuItem onClick={() => handleStatusChange(student.studentID, 'Dropped Out')}>
-                              <Chip label="Dropped Out" color={statusColors['Dropped Out']} />
-                            </MenuItem>
-                          </Menu>
-                        </Dropdown>
-                      </td>
-                      <td>
-                        <IconButton>
-                          <HistoryEduRoundedIcon />
-                        </IconButton>
-                        <IconButton>
-                          <PaymentsRoundedIcon />
-                        </IconButton>
-                        <IconButton>
-                          <BorderColorRoundedIcon />
-                        </IconButton>
-                      </td>
+              <div className="table-wrapper">
+                <table className="student-table">
+                  <thead>
+                    <tr>
+                      <th>STUDENT ID</th>
+                      <th>NAME</th>
+                      <th>COURSE</th>
+                      <th>TIME LEFT</th>
+                      <th>STATUS</th>
+                      <th>ACTIONS</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {students.map((student) => (
+                      <tr key={student.studentID}>
+                        <td>{student.studentID}</td>
+                        <td>{student.name}</td>
+                        <td>{student.course}</td>
+                        <td>{student.timeLeft}</td>
+                        <td>
+                          <Dropdown>
+                            <IconButton>
+                              <EditAttributesTwoToneIcon />
+                            </IconButton>
+                            <Menu
+                              variant="outlined"
+                              placement="bottom-start"
+                              disablePortal
+                              size="sm"
+                            >
+                              <MenuItem onClick={() => handleStatusChange(student.studentID, 'Active')}>
+                                <Chip label="Active" color={statusColors.Active} />
+                              </MenuItem>
+                              <MenuItem onClick={() => handleStatusChange(student.studentID, 'Inactive')}>
+                                <Chip label="Inactive" color={statusColors.Inactive} />
+                              </MenuItem>
+                              <MenuItem onClick={() => handleStatusChange(student.studentID, 'Dropped Out')}>
+                                <Chip label="Dropped Out" color={statusColors['Dropped Out']} />
+                              </MenuItem>
+                            </Menu>
+                          </Dropdown>
+                        </td>
+                        <td>
+                          <IconButton>
+                            <HistoryEduRoundedIcon />
+                          </IconButton>
+                          <IconButton>
+                            <PaymentsRoundedIcon />
+                          </IconButton>
+                          <IconButton>
+                            <BorderColorRoundedIcon />
+                          </IconButton>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             )}
           </Box>
         </Sheet>
