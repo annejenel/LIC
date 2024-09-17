@@ -15,7 +15,7 @@ class Student(models.Model):
     time_left = models.PositiveIntegerField()  
     password = models.CharField(
         max_length=128,
-        default=make_password('changeme')  # Default hashed password
+        default=make_password('123456')  # Default hashed password
     )
     status = models.CharField(
         max_length=15,

@@ -23,7 +23,10 @@ import BorderColorRoundedIcon from '@mui/icons-material/BorderColorRounded';
 import HistoryEduRoundedIcon from '@mui/icons-material/HistoryEduRounded';
 import PaymentsRoundedIcon from '@mui/icons-material/PaymentsRounded';
 import { CssVarsProvider, extendTheme } from '@mui/joy/styles';
+import AddStudent from '../Modals/AddStudent';  // Import the new modal component
+
 import './Dashboard.css';
+import '../Modals/AddStudent.css';  // Import the modal CSS
 
 const theme = extendTheme({
   components: {
@@ -59,6 +62,8 @@ export default function Dashboard() {
   const [showTooltip, setShowTooltip] = useState(false);
   const [students, setStudents] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);  
+  const [alert, setAlert] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -107,6 +112,9 @@ export default function Dashboard() {
         alert('Failed to update status. Please try again.');
       });
   };
+
+  const openModal = () => setIsModalOpen(true);
+  const closeModal = () => setIsModalOpen(false);
 
   return (
     <CssVarsProvider theme={theme}>
@@ -244,9 +252,11 @@ export default function Dashboard() {
                 },
                 height: '20px'
               }}
+              onClick={openModal}  // Open modal on button click
             >
               Add Student
             </Button>
+            
 
             <Input
               placeholder="Search for student ID..."
@@ -352,6 +362,9 @@ export default function Dashboard() {
             )}
           </Box>
         </Sheet>
+
+        {/* Modal */}
+        <AddStudent isOpen={isModalOpen} onClose={closeModal} />
       </div>
     </CssVarsProvider>
   );
