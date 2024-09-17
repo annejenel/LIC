@@ -22,6 +22,7 @@ import BorderColorRoundedIcon from '@mui/icons-material/BorderColorRounded';
 import HistoryEduRoundedIcon from '@mui/icons-material/HistoryEduRounded';
 import PaymentsRoundedIcon from '@mui/icons-material/PaymentsRounded';
 import EditAttributesTwoToneIcon from '@mui/icons-material/EditAttributesTwoTone';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
 import Chip from '@mui/material/Chip';
 import axios from 'axios';
 import { CssVarsProvider, extendTheme } from '@mui/joy/styles';
@@ -99,8 +100,9 @@ export default function Dashboard() {
           className="sheet"
           sx={{ backgroundColor: '#fff0f2',
             padding: '7px',
-            width: '99vw',
-            height: '99vh',
+            width: '100%',  
+            height: '100%',            
+        
            }}
         >
           {/* Header Section */}
@@ -192,10 +194,14 @@ export default function Dashboard() {
               </Box>
             </Box>
 
+
             <Box className="header-actions">
-              <IconButton variant="soft" className="logout">
-                <ExitToAppOutlinedIcon />
+              <Dropdown>
+              <IconButton variant="none" className="logout">
+                <MoreVertIcon />
               </IconButton>
+              </Dropdown>
+              
             </Box>
           </Sheet>
 
@@ -207,6 +213,7 @@ export default function Dashboard() {
               justifyContent: 'space-between',
               alignItems: 'center',
               width: '100%',
+              padding: '10px'
             }}
           >
             <Button
@@ -307,6 +314,7 @@ export default function Dashboard() {
             )}
           </Box>
         </Sheet>
+        
       </div>
     </CssVarsProvider>
   );

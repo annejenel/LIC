@@ -1,5 +1,28 @@
-/* Importing Nunito Sans font */
 @import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&display=swap');
+
+body {
+  overflow-x: hidden; 
+  overflow-y: auto; 
+}
+
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 10px; /* Width of the scrollbar */
+  background-color: #f9f9f9; /* Scrollbar track color */
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #9c383c; /* Scrollbar thumb color */
+  border-radius: 0; /* Remove rounded corners for square scrollbar */
+}
+
+/* For Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #9c383c #f9f9f9;
+}
+
 
 .container {
   display: flex;
@@ -11,10 +34,13 @@
   padding: 16px;
   display: flex;
   flex-direction: column;
-  background: url('images/background.jpg');
   align-items: center;
   position: relative;
+  background: url('images/background.jpg') no-repeat center center;
+  background-size: cover;
+  background-attachment: fixed; /* This keeps the background fixed while scrolling */
 }
+
 
 .sheet-colored {
   background-color: transparent;
@@ -34,8 +60,8 @@
 .logo {
   display: flex;
   align-items: center;
-  width: 80px;
-  height: 80px;
+  width: 70px;
+  height: 70px;
   background-image: url('images/gui_logo.png');
   background-size: contain;
   background-repeat: no-repeat;
@@ -54,14 +80,16 @@
 .header-actions {
   display: flex;
   align-items: center; 
-  gap: 8px;
+  width: 10px;
+  height: 10px;
+  padding-right: 30px;
 }
 
 .search-input {
   display: flex;
   font-size: 13px;
   height: 20px;
-  border: 2px solid #a94442;
+  border: 2px solid #9c383c;
   width: 250px;
 }
 
@@ -89,12 +117,12 @@
 .analytics-button {
   transition: all 0.3s ease;
   color: white; 
-  background-color: #B53737; 
+  background-color: #9c383c; 
 }
 
 .menu-button:hover,
 .analytics-button:hover {
-  color: #a94442; 
+  color: #9c383c; 
   background-color: white;
 }
 
@@ -116,19 +144,18 @@
 
 .tooltip-text {
   visibility: hidden;
-  width: 120px;
   background-color: #555;
   color: #fff;
   text-align: center;
   border-radius: 6px;
-  padding: 5px 0;
   position: absolute;
   z-index: 1;
   bottom: -80%;
   left: 50%;
   margin-left: -80px; 
-  opacity: 0;
+  opacity: 5;
   transition: opacity 0.3s;
+  font-size: 10px;
 }
 
 .analytics-container:hover .tooltip-text {
@@ -136,36 +163,35 @@
   opacity: 1;
 }
 
-/* Student table styles */
 .student-table {
   width: 90%;
   border-radius: 5px;
-  overflow: hidden; /* Ensure that the border radius works properly */
-  border-spacing: 0; /* Remove any spacing between cells */
+  overflow: hidden; 
+  border-spacing: 0; 
   background: white;
   font-size: 13px;
 }
 
 .student-table th, .student-table td {
-  border-bottom: 1px solid #b8abab; /* Horizontal line for each row */
+  border-bottom: 1px solid #9c383c; 
   padding: 8px;
   text-align: center;
   font-family: 'Nunito Sans', sans-serif;
 }
 
 .student-table th {
-  background: linear-gradient(181.2deg, rgba(158, 56, 56, 1) 24.8%, rgba(198, 194, 149, 1) 73.5%);
+  background: linear-gradient(181.2deg, rgba(156, 56, 60, 1) 24.8%, rgba(198, 194, 149, 1) 73.5%);
   color: white;
   font-size: 13px;
-  border-top: 1px solid #ddd; /* Top border for the header */
+  border-top: 1px solid #ddd; 
 }
 
 .student-table td {
-  border-right: none; /* Remove vertical lines */
+  border-right: none; 
 }
 
 .student-table tr:last-child td {
-  border-bottom: none; /* Remove bottom border for the last row */
+  border-bottom: none; 
 }
 
 .student-table tr:nth-child(even) {
@@ -191,4 +217,63 @@
 .studentlist {
   font-size: 10px;
   font-family: "Nunito Sans", sans-serif;
+}
+
+/* Dashboard.css */
+
+.header-actions {
+  position: relative;
+}
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #9c383c;
+  font-size: 24px;
+  display: flex;
+  align-items: center;
+}
+
+.dropdown-button:hover {
+  background-color: #ffd404;
+}
+
+.dropdown-menu {
+  display: block;
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background-color: white;
+  border: 1px solid #ddd;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+  width: 150px;
+  padding: 0;
+  margin-top: 5px; /* Optional spacing from the button */
+}
+
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+  font-size: 14px;
+}
+
+.dropdown-item:hover {
+  background-color: #f1f1f1;
+}
+
+.dropdown-item svg {
+  margin-right: 8px;
 }
