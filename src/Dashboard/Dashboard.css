@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
 
 body {
   overflow-x: hidden; 
@@ -13,32 +14,35 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background-color: #9c383c; /* Scrollbar thumb color */
-  border-radius: 0; /* Remove rounded corners for square scrollbar */
+  background-color: #89343b; 
+  border-radius: 0; 
 }
 
 /* For Firefox */
 * {
   scrollbar-width: thin;
-  scrollbar-color: #9c383c #f9f9f9;
+  scrollbar-color: #89343b #f9f9f9;
 }
-
 
 .container {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
+  height: 100%;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .sheet {
-  padding: 16px;
+  padding: 20px;
   display: flex;
   flex-direction: column;
   align-items: center;
   position: relative;
   background: url('images/background.jpg') no-repeat center center;
   background-size: cover;
-  background-attachment: fixed; /* This keeps the background fixed while scrolling */
+  background-attachment: fixed;
+  min-height: 100%;
 }
 
 
@@ -49,11 +53,11 @@ body {
 .header {
   display: flex;
   align-items: center;
-  padding: 8px;
+  padding: 10px;
   border-radius: 8px;
   min-width: 100%;
   margin-bottom: 10px;
-  background-color: #ffd404; 
+  background-color: #ffd000; 
   width: 100%;
 }
 
@@ -82,14 +86,14 @@ body {
   align-items: center; 
   width: 10px;
   height: 10px;
-  padding-right: 30px;
+  padding-right: 50px;
 }
 
 .search-input {
   display: flex;
   font-size: 13px;
   height: 20px;
-  border: 2px solid #9c383c;
+  border: 2px solid #89343b;
   width: 250px;
 }
 
@@ -97,6 +101,7 @@ body {
   border-radius: 50%;
   height: 50px;
   background-color: transparent;
+  
 }
 
 .hello-world-container {
@@ -117,12 +122,12 @@ body {
 .analytics-button {
   transition: all 0.3s ease;
   color: white; 
-  background-color: #9c383c; 
+  background-color: #89343b; 
 }
 
 .menu-button:hover,
 .analytics-button:hover {
-  color: #9c383c; 
+  color: #89343b; 
   background-color: white;
 }
 
@@ -173,17 +178,18 @@ body {
 }
 
 .student-table th, .student-table td {
-  border-bottom: 1px solid #9c383c; 
+  border-bottom: 1px solid #89343b; 
   padding: 8px;
   text-align: center;
   font-family: 'Nunito Sans', sans-serif;
 }
 
 .student-table th {
-  background: linear-gradient(181.2deg, rgba(156, 56, 60, 1) 24.8%, rgba(198, 194, 149, 1) 73.5%);
-  color: white;
+  background: linear-gradient(181.2deg, rgba(137, 52, 59, 1) 24.8%, rgba(198, 194, 149, 1) 80.5%);
+  color: rgb(0, 0, 0);
   font-size: 13px;
-  border-top: 1px solid #ddd; 
+  border-top: 1px solid #89343b; 
+  height: 30px;
 }
 
 .student-table td {
@@ -217,63 +223,4 @@ body {
 .studentlist {
   font-size: 10px;
   font-family: "Nunito Sans", sans-serif;
-}
-
-/* Dashboard.css */
-
-.header-actions {
-  position: relative;
-}
-
-.dropdown {
-  position: relative;
-  display: inline-block;
-}
-
-.dropdown-button {
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: #9c383c;
-  font-size: 24px;
-  display: flex;
-  align-items: center;
-}
-
-.dropdown-button:hover {
-  background-color: #ffd404;
-}
-
-.dropdown-menu {
-  display: block;
-  position: absolute;
-  top: 100%;
-  right: 0;
-  background-color: white;
-  border: 1px solid #ddd;
-  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-  z-index: 1;
-  width: 150px;
-  padding: 0;
-  margin-top: 5px; /* Optional spacing from the button */
-}
-
-.dropdown-item {
-  display: flex;
-  align-items: center;
-  padding: 10px;
-  border: none;
-  background: none;
-  cursor: pointer;
-  width: 100%;
-  text-align: left;
-  font-size: 14px;
-}
-
-.dropdown-item:hover {
-  background-color: #f1f1f1;
-}
-
-.dropdown-item svg {
-  margin-right: 8px;
 }

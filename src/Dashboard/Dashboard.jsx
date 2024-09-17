@@ -99,7 +99,7 @@ export default function Dashboard() {
           variant="outlined"
           className="sheet"
           sx={{ backgroundColor: '#fff0f2',
-            padding: '7px',
+            padding: '20px',
             width: '100%',  
             height: '100%',            
         
@@ -109,12 +109,12 @@ export default function Dashboard() {
           <Sheet
             variant="solid"
             className="header"
-            sx={{ backgroundColor: '#ffd404' }}
+            sx={{ backgroundColor: '#ffd000', }}
           >
             <Box className="logo" />
             <Typography
               component="div"
-              sx={{ marginLeft: '16px', textAlign: 'left' }}
+              sx={{ marginLeft: '16px', textAlign: 'left', fontSize: '20px' }}
             >
               <div>LIC Connect</div>
               <div>Library Internet Center</div>
@@ -126,11 +126,11 @@ export default function Dashboard() {
                   className="menu-button"
                   sx={{
                     '--Button-radius': '1.5rem',
-                    backgroundColor: '#B53737',
+                    backgroundColor: '#89343b',
                     color: 'white',
                     fontSize: '12px',
                     '&:hover': {
-                      color: '#a94442',
+                      color: '#89343b',
                       backgroundColor: 'white',
                     },
                   }}
@@ -176,13 +176,13 @@ export default function Dashboard() {
                   sx={{
                     marginLeft: '8px',
                     backgroundColor: 'transparent',
-                    border: '2px solid #a94442',
-                    color: '#a94442',
+                    border: '2px solid #89343b',
+                    color: '#89343b',
                     marginRight: '50px',
                     '&:hover': {
                       color: 'white',
-                      backgroundColor: '#a94442',
-                      borderColor: '#a94442',
+                      backgroundColor: '#89343b',
+                      borderColor: '#89343b',
                     },
                   }}
                 >
@@ -196,12 +196,12 @@ export default function Dashboard() {
 
 
             <Box className="header-actions">
-              <Dropdown>
-              <IconButton variant="none" className="logout">
+              <IconButton variant="none" className="logout"
+              sx={{
+                color: '#89343b'
+              }}>
                 <MoreVertIcon />
               </IconButton>
-              </Dropdown>
-              
             </Box>
           </Sheet>
 
@@ -212,19 +212,19 @@ export default function Dashboard() {
               display: 'flex',
               justifyContent: 'space-between',
               alignItems: 'center',
-              width: '100%',
-              padding: '10px'
+              width: '95%',
+              padding: '10px',
             }}
           >
             <Button
               startDecorator={<AddIcon />}
               sx={{
-                backgroundColor: '#a94442',
+                backgroundColor: '#89343b',
                 color: 'white',
                 fontSize: '12px',
                 '&:hover': {
-                  color: 'white',
-                  backgroundColor: '#892c2c',
+                  color: '#89343b',
+                  backgroundColor: '#ffd000',
                   borderColor: '#a94442',
                 },
                 height: '20px'
