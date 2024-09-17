@@ -46,7 +46,7 @@ const theme = extendTheme({
   },
 });
 
-export default function ManageStaff() {
+const ManageStaff = () => {
   const [showTooltip, setShowTooltip] = useState(false);
   const navigate = useNavigate(); // Hook to navigate programmatically
 
@@ -206,3 +206,5 @@ export default function ManageStaff() {
     </CssVarsProvider>
   );
 }
+
+export default ManageStaff

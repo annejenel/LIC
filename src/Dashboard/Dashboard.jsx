@@ -58,7 +58,7 @@ const statusColors = {
   'Dropped Out': 'default'
 };
 
-export default function Dashboard() {
+const  Dashboard = () => {
   const [showTooltip, setShowTooltip] = useState(false);
   const [students, setStudents] = useState([]);
   const [statusDropdown, setStatusDropdown] = useState({});
@@ -319,3 +319,5 @@ export default function Dashboard() {
     </CssVarsProvider>
   );
 }
+
+export default Dashboard
