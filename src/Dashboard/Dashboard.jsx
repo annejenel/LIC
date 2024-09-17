@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import Sheet from '@mui/joy/Sheet';
 import Box from '@mui/joy/Box';
 import Button from '@mui/joy/Button';
@@ -16,15 +17,11 @@ import AddIcon from '@mui/icons-material/Add';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import SearchIcon from '@mui/icons-material/Search';
-import ExitToAppOutlinedIcon from '@mui/icons-material/ExitToAppOutlined';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
 import InsightsTwoTone from '@mui/icons-material/InsightsTwoTone';
 import BorderColorRoundedIcon from '@mui/icons-material/BorderColorRounded';
 import HistoryEduRoundedIcon from '@mui/icons-material/HistoryEduRounded';
 import PaymentsRoundedIcon from '@mui/icons-material/PaymentsRounded';
-import EditAttributesTwoToneIcon from '@mui/icons-material/EditAttributesTwoTone';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
-import Chip from '@mui/material/Chip';
-import axios from 'axios';
 import { CssVarsProvider, extendTheme } from '@mui/joy/styles';
 import './Dashboard.css';
 
@@ -58,25 +55,14 @@ const statusColors = {
   'Dropped Out': 'default'
 };
 
-const  Dashboard = () => {
+export default function Dashboard() {
   const [showTooltip, setShowTooltip] = useState(false);
   const [students, setStudents] = useState([]);
-  const [statusDropdown, setStatusDropdown] = useState({});
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
-    axios.get('http://localhost:8000/api/students/')
-      .then(response => {
-        const fetchedStudents = response.data.map(student => ({
-          ...student,
-          timeLeft: formatTimeLeft(student.time_left),
-          status: student.status || 'Change' 
-        }));
-        setStudents(fetchedStudents);
-      })
-      .catch(error => {
-        console.error('Error fetching student data:', error);
-      });
+    fetchStudents();
   }, []);
 
   const formatTimeLeft = (timeLeft) => {
@@ -85,11 +71,41 @@ const  Dashboard = () => {
     return `${hours} hours ${minutes} minutes`;
   };
 
+  const fetchStudents = () => {
+    setLoading(true);
+    axios.get('http://localhost:8000/api/students/')
+      .then(response => {
+        const fetchedStudents = response.data.map(student => ({
+          ...student,
+          timeLeft: formatTimeLeft(student.time_left),
+          status: student.status || 'Change'
+        }));
+        setStudents(fetchedStudents);
+      })
+      .catch(error => {
+        console.error('Error fetching student data:', error);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
+
   const handleStatusChange = (studentID, newStatus) => {
+    const originalStudents = [...students];
     setStudents(students.map(student =>
       student.studentID === studentID ? { ...student, status: newStatus } : student
     ));
-    // if i saved ang stats to db
+
+    axios.patch(`http://localhost:8000/api/students/${studentID}/`, { status: newStatus })
+      .then(response => {
+        console.log('Status updated successfully:', response.data);
+        fetchStudents(); 
+      })
+      .catch(error => {
+        console.error('Error updating status:', error.response ? error.response.data : error.message);
+        setStudents(originalStudents);
+        alert('Failed to update status. Please try again.');
+      });
   };
 
   return (
@@ -98,18 +114,18 @@ const  Dashboard = () => {
         <Sheet
           variant="outlined"
           className="sheet"
-          sx={{ backgroundColor: '#fff0f2',
+          sx={{
+            backgroundColor: '#fff0f2',
             padding: '20px',
-            width: '100%',  
-            height: '100%',            
-        
-           }}
+            width: '100%',
+            height: '100%',
+          }}
         >
           {/* Header Section */}
           <Sheet
             variant="solid"
             className="header"
-            sx={{ backgroundColor: '#ffd000', }}
+            sx={{ backgroundColor: '#ffd000' }}
           >
             <Box className="logo" />
             <Typography
@@ -194,12 +210,11 @@ const  Dashboard = () => {
               </Box>
             </Box>
 
-
             <Box className="header-actions">
               <IconButton variant="none" className="logout"
-              sx={{
-                color: '#89343b'
-              }}>
+                sx={{
+                  color: '#89343b'
+                }}>
                 <MoreVertIcon />
               </IconButton>
             </Box>
@@ -248,9 +263,11 @@ const  Dashboard = () => {
           </Box>
 
           {/* Student Table */}
-          <Box className="tables"> 
+          <Box className="tables">
             <Typography level="h6" className="studentlist">Student List</Typography>
-            {students.length === 0 ? (
+            {loading ? (
+              <p>Loading...</p>
+            ) : students.length === 0 ? (
               <p>No students available</p>
             ) : (
               <div className="table-wrapper">
@@ -274,23 +291,44 @@ const  Dashboard = () => {
                         <td>{student.timeLeft}</td>
                         <td>
                           <Dropdown>
-                            <IconButton>
-                              <EditAttributesTwoToneIcon />
-                            </IconButton>
+                            <MenuButton
+                              className="menu-button"
+                              sx={{
+                                '--Button-radius': '1.5rem',
+                                backgroundColor: statusColors[student.status] || 'default',
+                                color: statusColors[student.status] === 'default' ? 'black' : 'maroon',
+                                fontSize: '12px',
+                                '&:hover': {
+                                  color: '#89343b',
+                                  backgroundColor: 'white',
+                                },
+                              }}
+                              variant="outlined"
+                              endDecorator={<KeyboardArrowDownIcon />}
+                            >
+                              {student.status}
+                            </MenuButton>
                             <Menu
                               variant="outlined"
                               placement="bottom-start"
                               disablePortal
                               size="sm"
+                              sx={{
+                                '--ListItemDecorator-size': '24px',
+                                '--ListItem-minHeight': '40px',
+                                '--ListDivider-gap': '4px',
+                                minWidth: 200,
+                                fontSize: '12px'
+                              }}
                             >
                               <MenuItem onClick={() => handleStatusChange(student.studentID, 'Active')}>
-                                <Chip label="Active" color={statusColors.Active} />
+                                Active
                               </MenuItem>
                               <MenuItem onClick={() => handleStatusChange(student.studentID, 'Inactive')}>
-                                <Chip label="Inactive" color={statusColors.Inactive} />
+                                Inactive
                               </MenuItem>
                               <MenuItem onClick={() => handleStatusChange(student.studentID, 'Dropped Out')}>
-                                <Chip label="Dropped Out" color={statusColors['Dropped Out']} />
+                                Dropped Out
                               </MenuItem>
                             </Menu>
                           </Dropdown>
@@ -314,10 +352,7 @@ const  Dashboard = () => {
             )}
           </Box>
         </Sheet>
-        
       </div>
     </CssVarsProvider>
   );
 }
-
-export default Dashboard
