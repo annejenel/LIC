@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense, lazy } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Sheet from '@mui/joy/Sheet';
@@ -23,7 +23,9 @@ import BorderColorRoundedIcon from '@mui/icons-material/BorderColorRounded';
 import HistoryEduRoundedIcon from '@mui/icons-material/HistoryEduRounded';
 import PaymentsRoundedIcon from '@mui/icons-material/PaymentsRounded';
 import { CssVarsProvider, extendTheme } from '@mui/joy/styles';
-import AddStudent from '../Modals/AddStudent'; // Import the new modal component
+
+// Lazy load the AddStudent component
+const AddStudent = lazy(() => import('../Modals/AddStudent'));
 
 import './Dashboard.css';
 import '../Modals/AddStudent.css'; // Import the modal CSS
@@ -121,9 +123,6 @@ export default function Dashboard() {
         setStudents(originalStudents); // Restore original status if update fails
       });
   };
-  
-  
-  
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
@@ -134,18 +133,18 @@ export default function Dashboard() {
         <Sheet
           variant="outlined"
           className="sheet"
-          sx={{
-            backgroundColor: '#fff0f2',
-            padding: '20px',
-            width: '100%',
-            height: '100%',
-          }}
         >
           {/* Header Section */}
           <Sheet
             variant="solid"
             className="header"
-            sx={{ backgroundColor: '#ffd000' }}
+            sx={{ backgroundColor: '#ffd000', 
+              borderRadius: '0',
+              marginTop: '0',
+              top: 0, 
+              left: 0,
+              zindex: 1000,
+             }}
           >
             <Box className="logo" />
             <Typography
@@ -375,7 +374,11 @@ export default function Dashboard() {
         </Sheet>
 
         {/* Modal */}
-        <AddStudent isOpen={isModalOpen} onClose={closeModal} onStudentAdded={handleStudentAdded} />
+        <Suspense fallback={<div>Loading modal...</div>}>
+          {isModalOpen && (
+            <AddStudent isOpen={isModalOpen} onClose={closeModal} onStudentAdded={handleStudentAdded} />
+          )}
+        </Suspense>
       </div>
     </CssVarsProvider>
   );
