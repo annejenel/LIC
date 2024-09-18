@@ -9,9 +9,8 @@ class Student(models.Model):
         ('Dropped_out', 'Dropped Out'),
     ]
 
-    # Adjust studentID field
     studentID = models.CharField(
-        max_length=15,  # Increased length to accommodate format
+        max_length=15,
         unique=True,
         validators=[
             RegexValidator(
@@ -23,16 +22,24 @@ class Student(models.Model):
     )
     name = models.CharField(max_length=100)
     course = models.CharField(max_length=100)
-    time_left = models.PositiveIntegerField()  
+    time_left = models.PositiveIntegerField()
     password = models.CharField(
         max_length=128,
-        default=make_password('123456')  # Default hashed password
+        default=make_password('123456')
     )
     status = models.CharField(
         max_length=15,
         choices=STATUS_CHOICES,
-        default='Active'  # Default to 'active' for existing and new records
+        default='Active'
     )
 
     def __str__(self):
         return self.name
+
+class Transaction(models.Model):
+    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    reference_number = models.CharField(max_length=100)
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Transaction {self.reference_number} for {self.student.name}"

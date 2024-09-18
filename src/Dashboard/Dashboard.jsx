@@ -28,8 +28,9 @@ import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
 import ListIcon from '@mui/icons-material/List';
 import DriveFolderUploadIcon from '@mui/icons-material/DriveFolderUpload';
 
-// Lazy load the AddStudent component
+// Lazy load the modals
 const AddStudent = lazy(() => import('../Modals/AddStudent'));
+const StudentTransaction = lazy(() => import('../Modals/StudentTransaction'));
 
 import './Dashboard.css';
 import '../Modals/AddStudent.css'; 
@@ -68,12 +69,14 @@ export default function Dashboard() {
   const [showTooltip, setShowTooltip] = useState(false);
   const [students, setStudents] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);  
+  const [isAddStudentModalOpen, setIsAddStudentModalOpen] = useState(false);  
+  const [isTransactionModalOpen, setIsTransactionModalOpen] = useState(false); 
+  const [selectedStudentID, setSelectedStudentID] = useState(null); // New state for selected student ID
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [searchQuery, setSearchQuery] = useState(''); 
-
+  
   useEffect(() => {
     fetchStudents();
   }, []);
@@ -130,8 +133,16 @@ export default function Dashboard() {
       });
   };
 
-  const openModal = () => setIsModalOpen(true);
-  const closeModal = () => setIsModalOpen(false);
+  const openAddStudentModal = () => setIsAddStudentModalOpen(true);
+  const closeAddStudentModal = () => setIsAddStudentModalOpen(false);
+
+  const openTransactionModal = (studentID) => {
+    setSelectedStudentID(studentID); // Set the selected student ID
+    setIsTransactionModalOpen(true); // Open the modal
+  };
+  
+  const closeTransactionModal = () => setIsTransactionModalOpen(false); // Function to close Transaction Modal
+
 
   const handleRowsPerPageChange = (event) => {
     setRowsPerPage(parseInt(event.target.value, 10));
@@ -143,6 +154,13 @@ export default function Dashboard() {
       setCurrentPage(newPage);
     }
   };
+
+  const handleTransactionCompleted = () => {
+    // Logic for when a transaction is completed, like refreshing student data
+    console.log("Transaction completed!");
+    fetchStudents(); // Optionally refresh the student list
+  };
+  
 
   // Filter and paginate students
   const filteredStudents = students.filter(student => 
@@ -288,28 +306,29 @@ export default function Dashboard() {
                     height: '20px',
                     margin: 0,
                   }}
-                  onClick={openModal}
+                  onClick={openAddStudentModal}
                 >
                   Add Student
                 </Button>
                 <Button
-                  startDecorator={<ReceiptLongIcon />}
-                  sx={{
-                    backgroundColor: '#89343b',
-                    color: 'white',
-                    fontSize: '12px',
-                    '&:hover': {
-                      color: '#89343b',
-                      backgroundColor: '#ffd000',
-                      borderColor: '#a94442',
-                    },
-                    height: '20px',
-                    margin: 0,
-                  }}
-                  onClick={openModal}
-                >
-                  Transaction
-                </Button>
+  startDecorator={<ReceiptLongIcon />}
+  sx={{
+    backgroundColor: '#89343b',
+    color: 'white',
+    fontSize: '12px',
+    '&:hover': {
+      color: '#89343b',
+      backgroundColor: '#ffd000',
+      borderColor: '#a94442',
+    },
+    height: '20px',
+    margin: 0,
+  }}
+  onClick={openTransactionModal} // Open Transaction Modal
+>
+  Transaction
+</Button>
+
                 <Button
                   startDecorator={<ListIcon />}
                   sx={{
@@ -324,7 +343,7 @@ export default function Dashboard() {
                     height: '20px',
                     margin: 0,
                   }}
-                  onClick={openModal}
+                  onClick={openAddStudentModal}
                 >
                   Logs
                 </Button>
@@ -342,7 +361,7 @@ export default function Dashboard() {
                     height: '20px',
                     margin: 0,
                   }}
-                  onClick={openModal}
+                  onClick={openAddStudentModal}
                 >
                   Import
                 </Button>
@@ -462,9 +481,11 @@ export default function Dashboard() {
                           <IconButton>
                             <HistoryEduRoundedIcon />
                           </IconButton>
-                          <IconButton>
-                            <PaymentsRoundedIcon />
-                          </IconButton>
+                          <IconButton onClick={() => openTransactionModal(student.studentID)}> {/* Pass studentID */}
+  <PaymentsRoundedIcon />
+</IconButton>
+
+
                           <IconButton>
                             <BorderColorRoundedIcon />
                           </IconButton>
@@ -478,12 +499,28 @@ export default function Dashboard() {
           </Box>
         </Sheet>
 
-        {/* Modal */}
-        <Suspense fallback={<div>Loading modal...</div>}>
-          {isModalOpen && (
-            <AddStudent isOpen={isModalOpen} onClose={closeModal} onStudentAdded={handleStudentAdded} />
-          )}
-        </Suspense>
+        {/* Modals */}
+        <Suspense fallback={<div>Loading modals...</div>}>
+      {isAddStudentModalOpen && (
+        <AddStudent 
+          isOpen={isAddStudentModalOpen} 
+          onClose={closeAddStudentModal} 
+          onStudentAdded={handleStudentAdded} 
+        />
+      )}
+      {isTransactionModalOpen && (
+  <StudentTransaction
+    isOpen={isTransactionModalOpen}
+    onClose={closeTransactionModal}
+    studentID={selectedStudentID} // Pass the studentID to the modal
+    onTransactionCompleted={handleTransactionCompleted} // Pass the callback
+  />
+)}
+
+
+
+    </Suspense>
+
       </div>
     </CssVarsProvider>
   );
