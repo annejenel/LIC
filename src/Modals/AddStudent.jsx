@@ -19,6 +19,14 @@ const AddStudent = ({ isOpen, onClose, onStudentAdded }) => {
 
     const studentIDRegex = /^\d{2}-\d{4}-\d{3}$/;
 
+    // Debugging: Log the field values
+    console.log('Student ID:', studentID);
+    console.log('Name:', name);
+    console.log('Course:', course);
+    console.log('Status:', status);
+    console.log('Password:', password);
+    console.log('Time Left:', timeLeft);
+
     if (!studentID || !name || !course) {
       setError('Please fill in all fields');
       return;
@@ -42,6 +50,15 @@ const AddStudent = ({ isOpen, onClose, onStudentAdded }) => {
       const response = await axios.post('http://localhost:8000/api/students/', newStudent);
       console.log('Student added successfully:', response.data);
       onStudentAdded(); // Notify parent to refresh student list
+
+      // Clear the form fields after success
+      setStudentID('');
+      setName('');
+      setCourse('');
+      setStatus('Active'); // Reset status to default
+      setPassword('hashed_default_password'); // Reset password to default
+      setTimeLeft(60); // Reset time_left to default
+
       onClose(); // Close modal
       alert('Student added successfully!');
     } catch (error) {
