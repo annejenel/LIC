@@ -455,9 +455,6 @@ export default function Dashboard() {
                               <MenuItem onClick={() => handleStatusChange(student.studentID, 'Inactive')}>
                                 Inactive
                               </MenuItem>
-                              <MenuItem onClick={() => handleStatusChange(student.studentID, 'Dropped Out')}>
-                                Dropped Out
-                              </MenuItem>
                             </Menu>
                           </Dropdown>
                         </td>
