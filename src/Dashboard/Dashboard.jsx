@@ -23,10 +23,10 @@ import BorderColorRoundedIcon from '@mui/icons-material/BorderColorRounded';
 import HistoryEduRoundedIcon from '@mui/icons-material/HistoryEduRounded';
 import PaymentsRoundedIcon from '@mui/icons-material/PaymentsRounded';
 import { CssVarsProvider, extendTheme } from '@mui/joy/styles';
-import AddStudent from '../Modals/AddStudent';  // Import the new modal component
+import AddStudent from '../Modals/AddStudent'; // Import the new modal component
 
 import './Dashboard.css';
-import '../Modals/AddStudent.css';  // Import the modal CSS
+import '../Modals/AddStudent.css'; // Import the modal CSS
 
 const theme = extendTheme({
   components: {
@@ -95,23 +95,35 @@ export default function Dashboard() {
       });
   };
 
-  const handleStatusChange = (studentID, newStatus) => {
-    const originalStudents = [...students];
-    setStudents(students.map(student =>
-      student.studentID === studentID ? { ...student, status: newStatus } : student
-    ));
+  const handleStudentAdded = () => {
+    fetchStudents(); // Refresh student list when a new student is added
+  };
 
-    axios.patch(`http://localhost:8000/api/students/${studentID}/`, { status: newStatus })
+  const handleStatusChange = (studentID, newStatus) => {
+    const encodedStudentID = encodeURIComponent(studentID);  // Encode the studentID
+  
+    const updatedStudents = students.map(student =>
+      student.studentID === studentID ? { ...student, status: newStatus } : student
+    );
+  
+    const originalStudents = [...students];
+  
+    setStudents(updatedStudents);
+  
+    axios
+      .patch(`http://localhost:8000/api/students/${encodedStudentID}/`, { status: newStatus })
       .then(response => {
         console.log('Status updated successfully:', response.data);
-        fetchStudents(); 
+        fetchStudents(); // Refresh the student list from the server
       })
       .catch(error => {
         console.error('Error updating status:', error.response ? error.response.data : error.message);
-        setStudents(originalStudents);
-        alert('Failed to update status. Please try again.');
+        setStudents(originalStudents); // Restore original status if update fails
       });
   };
+  
+  
+  
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
@@ -252,12 +264,11 @@ export default function Dashboard() {
                 },
                 height: '20px'
               }}
-              onClick={openModal}  // Open modal on button click
+              onClick={openModal} // Open modal on button click
             >
               Add Student
             </Button>
             
-
             <Input
               placeholder="Search for student ID..."
               variant="soft"
@@ -364,7 +375,7 @@ export default function Dashboard() {
         </Sheet>
 
         {/* Modal */}
-        <AddStudent isOpen={isModalOpen} onClose={closeModal} />
+        <AddStudent isOpen={isModalOpen} onClose={closeModal} onStudentAdded={handleStudentAdded} />
       </div>
     </CssVarsProvider>
   );

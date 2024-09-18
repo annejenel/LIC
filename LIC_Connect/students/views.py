@@ -1,20 +1,19 @@
-from rest_framework import viewsets
-from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.response import Response
+from rest_framework.viewsets import ModelViewSet
 from .models import Student
 from .serializers import StudentSerializer
 
-class StudentViewSet(viewsets.ModelViewSet):
+class StudentViewSet(ModelViewSet):
     queryset = Student.objects.all()
     serializer_class = StudentSerializer
+    lookup_field = 'studentID'  # Use studentID as the lookup field instead of pk
 
-    def update(self, request, *args, **kwargs):
-        instance = self.get_object()
-        print(f"Updating student {instance.studentID} status to {request.data.get('status')}")
-        serializer = self.get_serializer(instance, data=request.data, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        else:
-            print(f"Error: {serializer.errors}")
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    def get_object(self):
+        student_id = self.kwargs['studentID']
+        # Try to find the student by formatted studentID first
+        try:
+            return Student.objects.get(studentID=student_id)
+        except Student.DoesNotExist:
+            # If studentID format fails, try without the format (or handle case)
+            return Student.objects.get(studentID=student_id.replace('-', ''))  # Adjust for no format
