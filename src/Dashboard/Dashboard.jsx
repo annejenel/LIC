@@ -29,6 +29,7 @@ const AddStudent = lazy(() => import('../Modals/AddStudent'));
 
 import './Dashboard.css';
 import '../Modals/AddStudent.css'; // Import the modal CSS
+import { ArrowBackIos, ArrowForwardIos, NavigateNext } from '@mui/icons-material';
 
 const theme = extendTheme({
   components: {
@@ -65,8 +66,9 @@ export default function Dashboard() {
   const [students, setStudents] = useState([]);
   const [loading, setLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);  
-  const [alert, setAlert] = useState(null);
   const navigate = useNavigate();
+  const [currentPage, setCurrentPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
 
   useEffect(() => {
     fetchStudents();
@@ -127,6 +129,20 @@ export default function Dashboard() {
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
 
+  const handleRowsPerPageChange = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setCurrentPage(0); // Reset to the first page
+  };
+
+  const handlePageChange = (newPage) => {
+    if (newPage >= 0 && newPage < totalPages) {
+      setCurrentPage(newPage);
+    }
+  };
+
+  const paginatedStudents = students.slice(currentPage * rowsPerPage, currentPage * rowsPerPage + rowsPerPage);
+  const totalPages = Math.ceil(students.length / rowsPerPage);
+
   return (
     <CssVarsProvider theme={theme}>
       <div className="container">
@@ -143,8 +159,8 @@ export default function Dashboard() {
               marginTop: '0',
               top: 0, 
               left: 0,
-              zindex: 1000,
-             }}
+              zIndex: 1000,
+            }}
           >
             <Box className="logo" />
             <Typography
@@ -291,6 +307,31 @@ export default function Dashboard() {
               <p>No students available</p>
             ) : (
               <div className="table-wrapper">
+                {/* Pagination Controls */}
+                <div className="pagination">
+                  <button 
+                    onClick={() => handlePageChange(currentPage - 1)} 
+                    disabled={currentPage === 0}
+                  >
+                    <ArrowBackIos/>
+                  </button>
+                  {Array.from({ length: totalPages }, (_, index) => (
+                    <button
+                      key={index}
+                      onClick={() => handlePageChange(index)}
+                      className={currentPage === index ? 'active' : ''}
+                    >
+                      {index + 1}
+                    </button>
+                  ))}
+                  <button
+                    onClick={() => handlePageChange(currentPage + 1)}
+                    disabled={currentPage >= totalPages - 1}
+                  >
+                    <ArrowForwardIos/>
+                  </button>
+                </div>
+
                 <table className="student-table">
                   <thead>
                     <tr>
@@ -303,7 +344,7 @@ export default function Dashboard() {
                     </tr>
                   </thead>
                   <tbody>
-                    {students.map((student) => (
+                    {paginatedStudents.map((student) => (
                       <tr key={student.studentID}>
                         <td>{student.studentID}</td>
                         <td>{student.name}</td>

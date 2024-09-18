@@ -29,7 +29,7 @@ html, body {
 
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
-  background: #ffd000;
+  background: rgba(160, 90, 96, 0.8);
 }
 
 .container {
@@ -171,6 +171,8 @@ html, body {
   border-spacing: 0; 
   background: white;
   font-size: 13px;
+  border-collapse: collapse;
+  table-layout: fixed;
 }
 
 .student-table th, .student-table td {
@@ -178,6 +180,10 @@ html, body {
   padding: 8px;
   text-align: center;
   font-family: 'Nunito Sans', sans-serif;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  word-wrap: break-word; 
 }
 
 .student-table th {
@@ -218,4 +224,41 @@ html, body {
 .studentlist {
   font-size: 10px;
   font-family: "Nunito Sans", sans-serif;
+}
+
+.table-wrapper {
+  position: relative; /* Positioning context for the pagination controls */
+}
+
+.pagination {
+  display: flex;
+  margin-bottom: 10px; 
+  margin-left: 157vh;
+}
+
+.pagination button {
+  background-color: #f0f0f0;
+  border: 1px solid #ddd;
+  border-radius: 20px; /* Rounded corners */
+  color: #333;
+  cursor: pointer;
+  font-size: 14px;
+  margin: 0 5px;
+  padding: 5px 10px;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.pagination button:hover {
+  background-color: #ddd;
+}
+
+.pagination .active {
+  background-color: #89343b;
+  color: white;
+  border-color: #89343b;
+}
+
+.pagination button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
 }
