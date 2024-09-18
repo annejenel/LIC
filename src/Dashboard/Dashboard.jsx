@@ -28,7 +28,7 @@ import { CssVarsProvider, extendTheme } from '@mui/joy/styles';
 const AddStudent = lazy(() => import('../Modals/AddStudent'));
 
 import './Dashboard.css';
-import '../Modals/AddStudent.css'; // Import the modal CSS
+import '../Modals/AddStudent.css'; 
 import { ArrowBackIos, ArrowForwardIos, NavigateNext } from '@mui/icons-material';
 
 const theme = extendTheme({
@@ -100,11 +100,11 @@ export default function Dashboard() {
   };
 
   const handleStudentAdded = () => {
-    fetchStudents(); // Refresh student list when a new student is added
+    fetchStudents(); 
   };
 
   const handleStatusChange = (studentID, newStatus) => {
-    const encodedStudentID = encodeURIComponent(studentID);  // Encode the studentID
+    const encodedStudentID = encodeURIComponent(studentID);  
   
     const updatedStudents = students.map(student =>
       student.studentID === studentID ? { ...student, status: newStatus } : student
@@ -118,11 +118,11 @@ export default function Dashboard() {
       .patch(`http://localhost:8000/api/students/${encodedStudentID}/`, { status: newStatus })
       .then(response => {
         console.log('Status updated successfully:', response.data);
-        fetchStudents(); // Refresh the student list from the server
+        fetchStudents(); 
       })
       .catch(error => {
         console.error('Error updating status:', error.response ? error.response.data : error.message);
-        setStudents(originalStudents); // Restore original status if update fails
+        setStudents(originalStudents); 
       });
   };
 
@@ -131,7 +131,7 @@ export default function Dashboard() {
 
   const handleRowsPerPageChange = (event) => {
     setRowsPerPage(parseInt(event.target.value, 10));
-    setCurrentPage(0); // Reset to the first page
+    setCurrentPage(0); 
   };
 
   const handlePageChange = (newPage) => {
@@ -279,7 +279,7 @@ export default function Dashboard() {
                 },
                 height: '20px'
               }}
-              onClick={openModal} // Open modal on button click
+              onClick={openModal} 
             >
               Add Student
             </Button>

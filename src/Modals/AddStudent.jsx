@@ -6,20 +6,19 @@ const AddStudent = ({ isOpen, onClose, onStudentAdded }) => {
   const [studentID, setStudentID] = useState('');
   const [name, setName] = useState('');
   const [course, setCourse] = useState('');
-  const [status, setStatus] = useState('Active'); // Default status
-  const [password, setPassword] = useState('hashed_default_password'); // Default hashed password
-  const [timeLeft, setTimeLeft] = useState(60); // Default time_left
+  const [status, setStatus] = useState('Active'); 
+  const [password, setPassword] = useState('hashed_default_password'); 
+  const [timeLeft, setTimeLeft] = useState(60); 
   const [error, setError] = useState('');
 
   if (!isOpen) return null;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError(''); // Clear previous errors
+    setError(''); 
 
     const studentIDRegex = /^\d{2}-\d{4}-\d{3}$/;
 
-    // Debugging: Log the field values
     console.log('Student ID:', studentID);
     console.log('Name:', name);
     console.log('Course:', course);
@@ -41,25 +40,24 @@ const AddStudent = ({ isOpen, onClose, onStudentAdded }) => {
       studentID,
       name,
       course,
-      time_left: timeLeft,  // Use the fetched or default value
-      status,  // Use the fetched or default value
-      password // Password will be handled in backend, not sent from here
+      time_left: timeLeft,  
+      status,  
+      password
     };
 
     try {
       const response = await axios.post('http://localhost:8000/api/students/', newStudent);
       console.log('Student added successfully:', response.data);
-      onStudentAdded(); // Notify parent to refresh student list
+      onStudentAdded(); 
 
-      // Clear the form fields after success
       setStudentID('');
       setName('');
       setCourse('');
-      setStatus('Active'); // Reset status to default
-      setPassword('hashed_default_password'); // Reset password to default
-      setTimeLeft(60); // Reset time_left to default
+      setStatus('Active'); 
+      setPassword('hashed_default_password'); 
+      setTimeLeft(60); 
 
-      onClose(); // Close modal
+      onClose(); 
       alert('Student added successfully!');
     } catch (error) {
       console.error('Error adding student:', error.response ? error.response.data : error.message);
