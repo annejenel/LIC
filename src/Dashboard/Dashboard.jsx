@@ -23,13 +23,13 @@ import BorderColorRoundedIcon from '@mui/icons-material/BorderColorRounded';
 import HistoryEduRoundedIcon from '@mui/icons-material/HistoryEduRounded';
 import PaymentsRoundedIcon from '@mui/icons-material/PaymentsRounded';
 import { CssVarsProvider, extendTheme } from '@mui/joy/styles';
+import { ArrowBackIos, ArrowForwardIos } from '@mui/icons-material';
 
 // Lazy load the AddStudent component
 const AddStudent = lazy(() => import('../Modals/AddStudent'));
 
 import './Dashboard.css';
 import '../Modals/AddStudent.css'; 
-import { ArrowBackIos, ArrowForwardIos, NavigateNext } from '@mui/icons-material';
 
 const theme = extendTheme({
   components: {
@@ -69,6 +69,7 @@ export default function Dashboard() {
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [searchQuery, setSearchQuery] = useState(''); 
 
   useEffect(() => {
     fetchStudents();
@@ -105,15 +106,15 @@ export default function Dashboard() {
 
   const handleStatusChange = (studentID, newStatus) => {
     const encodedStudentID = encodeURIComponent(studentID);  
-  
+    
     const updatedStudents = students.map(student =>
       student.studentID === studentID ? { ...student, status: newStatus } : student
     );
-  
+    
     const originalStudents = [...students];
-  
+    
     setStudents(updatedStudents);
-  
+    
     axios
       .patch(`http://localhost:8000/api/students/${encodedStudentID}/`, { status: newStatus })
       .then(response => {
@@ -140,21 +141,24 @@ export default function Dashboard() {
     }
   };
 
-  const paginatedStudents = students.slice(currentPage * rowsPerPage, currentPage * rowsPerPage + rowsPerPage);
-  const totalPages = Math.ceil(students.length / rowsPerPage);
+  // Filter and paginate students
+  const filteredStudents = students.filter(student => 
+    student.studentID.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+  
+  const totalPages = Math.ceil(filteredStudents.length / rowsPerPage);
+  const paginatedStudents = filteredStudents.slice(currentPage * rowsPerPage, currentPage * rowsPerPage + rowsPerPage);
 
   return (
     <CssVarsProvider theme={theme}>
       <div className="container">
-        <Sheet
-          variant="outlined"
-          className="sheet"
-        >
+        <Sheet variant="outlined" className="sheet">
           {/* Header Section */}
           <Sheet
             variant="solid"
             className="header"
-            sx={{ backgroundColor: '#ffd000', 
+            sx={{ 
+              backgroundColor: '#ffd000', 
               borderRadius: '0',
               marginTop: '0',
               top: 0, 
@@ -293,9 +297,12 @@ export default function Dashboard() {
               sx={{
                 width: '250px',
                 height: '20px',
-                fontSize: '13px'
+                fontSize: '13px',
               }}
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
             />
+
           </Box>
 
           {/* Student Table */}
@@ -303,7 +310,7 @@ export default function Dashboard() {
             <Typography level="h6" className="studentlist">Student List</Typography>
             {loading ? (
               <p>Loading...</p>
-            ) : students.length === 0 ? (
+            ) : filteredStudents.length === 0 ? (
               <p>No students available</p>
             ) : (
               <div className="table-wrapper">
