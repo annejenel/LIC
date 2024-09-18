@@ -24,6 +24,9 @@ import HistoryEduRoundedIcon from '@mui/icons-material/HistoryEduRounded';
 import PaymentsRoundedIcon from '@mui/icons-material/PaymentsRounded';
 import { CssVarsProvider, extendTheme } from '@mui/joy/styles';
 import { ArrowBackIos, ArrowForwardIos } from '@mui/icons-material';
+import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
+import ListIcon from '@mui/icons-material/List';
+import DriveFolderUploadIcon from '@mui/icons-material/DriveFolderUpload';
 
 // Lazy load the AddStudent component
 const AddStudent = lazy(() => import('../Modals/AddStudent'));
@@ -270,23 +273,80 @@ export default function Dashboard() {
               padding: '10px',
             }}
           >
-            <Button
-              startDecorator={<AddIcon />}
-              sx={{
-                backgroundColor: '#89343b',
-                color: 'white',
-                fontSize: '12px',
-                '&:hover': {
-                  color: '#89343b',
-                  backgroundColor: '#ffd000',
-                  borderColor: '#a94442',
-                },
-                height: '20px'
-              }}
-              onClick={openModal} 
-            >
-              Add Student
-            </Button>
+             <Box className="button-group">
+                <Button
+                  startDecorator={<AddIcon />}
+                  sx={{
+                    backgroundColor: '#89343b',
+                    color: 'white',
+                    fontSize: '12px',
+                    '&:hover': {
+                      color: '#89343b',
+                      backgroundColor: '#ffd000',
+                      borderColor: '#a94442',
+                    },
+                    height: '20px',
+                    margin: 0,
+                  }}
+                  onClick={openModal}
+                >
+                  Add Student
+                </Button>
+                <Button
+                  startDecorator={<ReceiptLongIcon />}
+                  sx={{
+                    backgroundColor: '#89343b',
+                    color: 'white',
+                    fontSize: '12px',
+                    '&:hover': {
+                      color: '#89343b',
+                      backgroundColor: '#ffd000',
+                      borderColor: '#a94442',
+                    },
+                    height: '20px',
+                    margin: 0,
+                  }}
+                  onClick={openModal}
+                >
+                  Transaction
+                </Button>
+                <Button
+                  startDecorator={<ListIcon />}
+                  sx={{
+                    backgroundColor: '#89343b',
+                    color: 'white',
+                    fontSize: '12px',
+                    '&:hover': {
+                      color: '#89343b',
+                      backgroundColor: '#ffd000',
+                      borderColor: '#a94442',
+                    },
+                    height: '20px',
+                    margin: 0,
+                  }}
+                  onClick={openModal}
+                >
+                  Logs
+                </Button>
+                <Button
+                  startDecorator={<DriveFolderUploadIcon />}
+                  sx={{
+                    backgroundColor: '#89343b',
+                    color: 'white',
+                    fontSize: '12px',
+                    '&:hover': {
+                      color: '#89343b',
+                      backgroundColor: '#ffd000',
+                      borderColor: '#a94442',
+                    },
+                    height: '20px',
+                    margin: 0,
+                  }}
+                  onClick={openModal}
+                >
+                  Import
+                </Button>
+              </Box>
             
             <Input
               placeholder="Search for student ID..."
