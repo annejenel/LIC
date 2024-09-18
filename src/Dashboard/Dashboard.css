@@ -39,7 +39,7 @@ html, body {
   width: 100%;
   box-sizing: border-box;
   flex: 1;
-  min-height: 500vh;
+  min-height: 300vh;
 }
 
 .sheet {
@@ -51,7 +51,7 @@ html, body {
   background-size: cover;
   min-height: 100%; 
   min-width: 100%;
-  z-index: -1;
+  height: 300px;
 }
 
 .sheet-colored {
@@ -171,7 +171,6 @@ html, body {
   border-spacing: 0; 
   background: white;
   font-size: 13px;
-  overflow: auto;
 }
 
 .student-table th, .student-table td {
@@ -187,7 +186,6 @@ html, body {
   font-size: 13px;
   border-top: 1px solid #89343b; 
   height: 30px;
-  border-right: 1px solid #89343b; 
 }
 
 .student-table td {
@@ -220,11 +218,4 @@ html, body {
 .studentlist {
   font-size: 10px;
   font-family: "Nunito Sans", sans-serif;
-}
-
-/* Handle table overflow */
-.table-wrapper {
-  width: 100%;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
 }
