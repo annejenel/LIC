@@ -1,0 +1,68 @@
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  padding: 20px;
+  width: 400px;
+  max-width: 100%;
+  position: relative;
+  /* Add max-height to keep the modal in view */
+  max-height: 80vh;
+  overflow: hidden;
+}
+
+.modal-close {
+  background: transparent;
+  border: none;
+  font-size: 24px;
+  color: #333;
+  cursor: pointer;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+
+.modal-close:hover {
+  color: #666;
+}
+
+h2 {
+  margin-top: 0;
+}
+
+.error-message {
+  color: red;
+  font-size: 14px;
+  margin: 10px 0;
+}
+
+.transaction-list {
+  /* Set a maximum height for the transaction list */
+  max-height: 60vh; /* Adjust as needed */
+  overflow-y: auto; /* Enable vertical scrolling */
+}
+
+.transaction-list ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.transaction-list li {
+  margin-bottom: 10px;
+  border-bottom: 1px solid #ddd; /* Line to separate transactions */
+  padding-bottom: 10px;
+}

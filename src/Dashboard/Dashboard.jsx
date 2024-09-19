@@ -31,6 +31,8 @@ import DriveFolderUploadIcon from '@mui/icons-material/DriveFolderUpload';
 // Lazy load the modals
 const AddStudent = lazy(() => import('../Modals/AddStudent'));
 const StudentTransaction = lazy(() => import('../Modals/StudentTransaction'));
+const TransactionHistory = lazy(() => import('../Modals/TransactionHistory'));
+
 
 import './Dashboard.css';
 import '../Modals/AddStudent.css'; 
@@ -76,6 +78,8 @@ export default function Dashboard() {
   const [currentPage, setCurrentPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [searchQuery, setSearchQuery] = useState(''); 
+  const [isTransactionHistoryModalOpen, setIsTransactionHistoryModalOpen] = useState(false);
+
   
   useEffect(() => {
     fetchStudents();
@@ -142,6 +146,9 @@ export default function Dashboard() {
   };
   
   const closeTransactionModal = () => setIsTransactionModalOpen(false);
+  const openTransactionHistoryModal = () => setIsTransactionHistoryModalOpen(true);
+  const closeTransactionHistoryModal = () => setIsTransactionHistoryModalOpen(false);
+
 
 
   const handleRowsPerPageChange = (event) => {
@@ -310,23 +317,23 @@ export default function Dashboard() {
                   Add Student
                 </Button>
                 <Button
-                  startDecorator={<ReceiptLongIcon />}
-                  sx={{
-                    backgroundColor: '#89343b',
-                    color: 'white',
-                    fontSize: '12px',
-                    '&:hover': {
-                      color: '#89343b',
-                      backgroundColor: '#ffd000',
-                      borderColor: '#a94442',
-                    },
-                    height: '20px',
-                    margin: 0,
-                  }}
-                  onClick={openTransactionModal} 
-                >
-                  Transaction
-                </Button>
+  startDecorator={<ReceiptLongIcon />}
+  sx={{
+    backgroundColor: '#89343b',
+    color: 'white',
+    fontSize: '12px',
+    '&:hover': {
+      color: '#89343b',
+      backgroundColor: '#ffd000',
+      borderColor: '#a94442',
+    },
+    height: '20px',
+    margin: 0,
+  }}
+  onClick={openTransactionHistoryModal} // Open TransactionHistory modal
+>
+  Transaction
+</Button>
 
                 <Button
                   startDecorator={<ListIcon />}
@@ -516,6 +523,13 @@ export default function Dashboard() {
   />
 )}
 
+{isTransactionHistoryModalOpen && (
+    <TransactionHistory
+      isOpen={isTransactionHistoryModalOpen}
+      onClose={closeTransactionHistoryModal}
+      // Add any other props required by the TransactionHistory modal
+    />
+  )}
 
 
     </Suspense>

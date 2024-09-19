@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import './StudentTransaction.css'; 
+import './StudentTransaction.css';
 import { Typography } from '@mui/joy';
 
 const StudentTransaction = ({ isOpen, onClose, studentID, onTransactionCompleted }) => {
   const [transactionRef, setTransactionRef] = useState('');
-  const [receiptImage, setReceiptImage] = useState(null); 
-  const [hoursToAdd, setHoursToAdd] = useState(1); 
+  const [receiptImage, setReceiptImage] = useState(null);
+  const [hoursToAdd, setHoursToAdd] = useState(1);
   const [error, setError] = useState('');
 
   if (!isOpen) return null;
@@ -14,62 +14,45 @@ const StudentTransaction = ({ isOpen, onClose, studentID, onTransactionCompleted
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      setReceiptImage(URL.createObjectURL(file));
+      setReceiptImage(file); // Store file itself, not URL.createObjectURL
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError(''); 
-  
+    setError('');
+
     if (!transactionRef || !studentID || !hoursToAdd) {
-      alert('Transaction reference, hours, and student ID are required.');
+      setError('Transaction reference, hours, and student ID are required.');
       return;
     }
-  
+
     const formData = new FormData();
     formData.append('reference_number', transactionRef);
     formData.append('student_id', studentID);
-    formData.append('hours', hoursToAdd.toString()); 
+    formData.append('hours', hoursToAdd.toString());
     if (receiptImage) {
-      formData.append('receipt', receiptImage); 
+      formData.append('receipt', receiptImage); // Use file object directly
     }
-  
+
     try {
-      const response = await axios.post('http://localhost:8000/api/transactions/', formData, {
+      const response = await axios.post('http://localhost:8000/api/transactions/create/', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       });
-  
+
       if (response.status === 201) {
         onTransactionCompleted();
-        onClose(); 
+        onClose();
         alert('Transaction processed successfully!');
       } else {
         alert('Failed to process the transaction.');
       }
     } catch (error) {
-
-      if (error.response && error.response.data && error.response.data.error) {
-        alert(`Error: ${error.response.data.error}`); 
-      } else {
-        alert(`Error processing transaction: ${error.message}`); 
-      }
+      console.error('Error processing transaction:', error);
+      setError(error.response?.data?.error || 'Error processing transaction');
     }
-  };
-  
-  const handleTransactionSubmit = () => {
-    processTransaction()
-      .then(() => {
-        if (props.onTransactionCompleted) {
-          props.onTransactionCompleted();
-        }
-        props.onClose(); 
-      })
-      .catch((error) => {
-        console.error("Error processing transaction:", error);
-      });
   };
 
   return (
@@ -79,7 +62,6 @@ const StudentTransaction = ({ isOpen, onClose, studentID, onTransactionCompleted
           &times;
         </button>
         <h2>New Transaction</h2>
-        {/* Display student ID */}
         <Typography variant="h6" component="div" gutterBottom>
           Student ID: {studentID}
         </Typography>
@@ -119,7 +101,7 @@ const StudentTransaction = ({ isOpen, onClose, studentID, onTransactionCompleted
               accept="image/*"
               onChange={handleImageChange}
             />
-            {receiptImage && <img src={receiptImage} alt="Receipt Preview" className="image-preview" />}
+            {receiptImage && <img src={URL.createObjectURL(receiptImage)} alt="Receipt Preview" className="image-preview" />}
           </div>
           <button type="submit">Submit</button>
         </form>

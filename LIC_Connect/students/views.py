@@ -4,6 +4,9 @@ from rest_framework.viewsets import ModelViewSet
 from .models import Student, Transaction
 from .serializers import StudentSerializer, TransactionSerializer
 from rest_framework.views import APIView
+from rest_framework import generics
+
+
 
 class StudentViewSet(ModelViewSet):
     queryset = Student.objects.all()
@@ -54,3 +57,8 @@ class TransactionCreateView(APIView):
         # Serialize and return the created transaction
         serializer = TransactionSerializer(transaction)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+    
+
+class TransactionListView(generics.ListAPIView):
+    queryset = Transaction.objects.all()
+    serializer_class = TransactionSerializer
