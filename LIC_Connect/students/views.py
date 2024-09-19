@@ -28,6 +28,7 @@ class TransactionCreateView(APIView):
         student_id = request.data.get('student_id')
         hours_to_add = request.data.get('hours')
 
+        # Print received data for debugging
         print(f"Received data: reference_number={reference_number}, student_id={student_id}, hours_to_add={hours_to_add}")
 
         # Validate required fields

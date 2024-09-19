@@ -61,8 +61,19 @@ const AddStudent = ({ isOpen, onClose, onStudentAdded }) => {
       alert('Student added successfully!');
     } catch (error) {
       console.error('Error adding student:', error.response ? error.response.data : error.message);
+      
       if (error.response && error.response.data) {
-        setError(`Error: ${error.response.data}`);
+        // Extract specific error message from response data
+        const errorData = error.response.data;
+
+        // Check for studentID-specific errors
+        if (errorData.studentID) {
+          setError(errorData.studentID.join(', ')); // Join array elements into a single string
+        } else if (errorData.non_field_errors) {
+          setError(errorData.non_field_errors.join(', ')); // Handle non-field errors
+        } else {
+          setError('An error occurred. Please try again.');
+        }
       } else {
         setError('Failed to add student. Please try again.');
       }

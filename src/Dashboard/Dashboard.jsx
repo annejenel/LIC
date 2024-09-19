@@ -33,7 +33,6 @@ const AddStudent = lazy(() => import('../Modals/AddStudent'));
 const StudentTransaction = lazy(() => import('../Modals/StudentTransaction'));
 const TransactionHistory = lazy(() => import('../Modals/TransactionHistory'));
 
-
 import './Dashboard.css';
 import '../Modals/AddStudent.css'; 
 
@@ -80,10 +79,14 @@ export default function Dashboard() {
   const [searchQuery, setSearchQuery] = useState(''); 
   const [isTransactionHistoryModalOpen, setIsTransactionHistoryModalOpen] = useState(false);
 
-  
   useEffect(() => {
     fetchStudents();
   }, []);
+
+  useEffect(() => {
+    // Reset to page 0 whenever the search query changes
+    setCurrentPage(0);
+  }, [searchQuery]);
 
   const formatTimeLeft = (timeLeft) => {
     const hours = Math.floor(timeLeft / 60);
@@ -149,11 +152,22 @@ export default function Dashboard() {
   const openTransactionHistoryModal = () => setIsTransactionHistoryModalOpen(true);
   const closeTransactionHistoryModal = () => setIsTransactionHistoryModalOpen(false);
 
+  const filteredStudents = students.filter(student =>
+    student.studentID.toString().toLowerCase().includes(searchQuery.toLowerCase())
+  );
+  const totalPages = Math.ceil(filteredStudents.length / rowsPerPage);
+  const paginatedStudents = filteredStudents.slice(currentPage * rowsPerPage, currentPage * rowsPerPage + rowsPerPage);
 
+  useEffect(() => {
+    // Update page number if it exceeds the total number of pages
+    if (currentPage >= totalPages && totalPages > 0) {
+      setCurrentPage(totalPages - 1);
+    }
+  }, [totalPages, currentPage]);
 
   const handleRowsPerPageChange = (event) => {
     setRowsPerPage(parseInt(event.target.value, 10));
-    setCurrentPage(0); 
+    setCurrentPage(0); // Reset to first page
   };
 
   const handlePageChange = (newPage) => {
@@ -166,15 +180,6 @@ export default function Dashboard() {
     console.log("Transaction completed!");
     fetchStudents(); 
   };
-  
-
-  // Pagination
-  const filteredStudents = students.filter(student => 
-    student.studentID.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-  
-  const totalPages = Math.ceil(filteredStudents.length / rowsPerPage);
-  const paginatedStudents = filteredStudents.slice(currentPage * rowsPerPage, currentPage * rowsPerPage + rowsPerPage);
 
   return (
     <CssVarsProvider theme={theme}>
@@ -373,21 +378,20 @@ export default function Dashboard() {
                 </Button>
               </Box>
             
-            <Input
-              placeholder="Search for student ID..."
-              variant="soft"
-              size="sm"
-              endDecorator={<SearchIcon />}
-              className="search-input"
-              sx={{
-                width: '250px',
-                height: '20px',
-                fontSize: '13px',
-              }}
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-
+              <Input
+                placeholder="Search for student ID..."
+                variant="soft"
+                size="sm"
+                endDecorator={<SearchIcon />}
+                className="search-input"
+                sx={{
+                  width: '250px',
+                  height: '20px',
+                  fontSize: '13px',
+                }}
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
           </Box>
 
           {/* Student Table */}
@@ -487,11 +491,9 @@ export default function Dashboard() {
                           <IconButton>
                             <HistoryEduRoundedIcon />
                           </IconButton>
-                          <IconButton onClick={() => openTransactionModal(student.studentID)}> {/* Pass studentID */}
-  <PaymentsRoundedIcon />
-</IconButton>
-
-
+                          <IconButton onClick={() => openTransactionModal(student.studentID)}>
+                            <PaymentsRoundedIcon />
+                          </IconButton>
                           <IconButton>
                             <BorderColorRoundedIcon />
                           </IconButton>
@@ -507,33 +509,29 @@ export default function Dashboard() {
 
         {/* Modals */}
         <Suspense fallback={<div>Loading modals...</div>}>
-      {isAddStudentModalOpen && (
-        <AddStudent 
-          isOpen={isAddStudentModalOpen} 
-          onClose={closeAddStudentModal} 
-          onStudentAdded={handleStudentAdded} 
-        />
-      )}
-      {isTransactionModalOpen && (
-  <StudentTransaction
-    isOpen={isTransactionModalOpen}
-    onClose={closeTransactionModal}
-    studentID={selectedStudentID} 
-    onTransactionCompleted={handleTransactionCompleted} 
-  />
-)}
-
-{isTransactionHistoryModalOpen && (
-    <TransactionHistory
-      isOpen={isTransactionHistoryModalOpen}
-      onClose={closeTransactionHistoryModal}
-      // Add any other props required by the TransactionHistory modal
-    />
-  )}
-
-
-    </Suspense>
-
+          {isAddStudentModalOpen && (
+            <AddStudent 
+              isOpen={isAddStudentModalOpen} 
+              onClose={closeAddStudentModal} 
+              onStudentAdded={handleStudentAdded} 
+            />
+          )}
+          {isTransactionModalOpen && (
+            <StudentTransaction
+              isOpen={isTransactionModalOpen}
+              onClose={closeTransactionModal}
+              studentID={selectedStudentID} 
+              onTransactionCompleted={handleTransactionCompleted} 
+            />
+          )}
+          {isTransactionHistoryModalOpen && (
+            <TransactionHistory
+              isOpen={isTransactionHistoryModalOpen}
+              onClose={closeTransactionHistoryModal}
+              // Add any other props required by the TransactionHistory modal
+            />
+          )}
+        </Suspense>
       </div>
     </CssVarsProvider>
   );
