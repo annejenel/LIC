@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import './StudentTransaction.css'; 
+import { Typography } from '@mui/joy';
+
 const StudentTransaction = ({ isOpen, onClose, studentID, onTransactionCompleted }) => {
   const [transactionRef, setTransactionRef] = useState('');
   const [receiptImage, setReceiptImage] = useState(null); 
@@ -40,10 +42,9 @@ const StudentTransaction = ({ isOpen, onClose, studentID, onTransactionCompleted
         },
       });
   
-
       if (response.status === 201) {
         onTransactionCompleted();
-        onClose(); // Close the modal
+        onClose(); 
         alert('Transaction processed successfully!');
       } else {
         alert('Failed to process the transaction.');
@@ -58,8 +59,7 @@ const StudentTransaction = ({ isOpen, onClose, studentID, onTransactionCompleted
     }
   };
   
-  
-const handleTransactionSubmit = () => {
+  const handleTransactionSubmit = () => {
     processTransaction()
       .then(() => {
         if (props.onTransactionCompleted) {
@@ -71,7 +71,6 @@ const handleTransactionSubmit = () => {
         console.error("Error processing transaction:", error);
       });
   };
-  
 
   return (
     <div className="modal-overlay">
@@ -79,7 +78,11 @@ const handleTransactionSubmit = () => {
         <button className="modal-close" onClick={onClose}>
           &times;
         </button>
-        <h2>Add Time to Student</h2>
+        <h2>New Transaction</h2>
+        {/* Display student ID */}
+        <Typography variant="h6" component="div" gutterBottom>
+          Student ID: {studentID}
+        </Typography>
         {error && <p className="error-message">{error}</p>}
         <form onSubmit={handleSubmit}>
           <div>
