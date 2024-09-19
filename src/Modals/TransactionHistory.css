@@ -19,7 +19,6 @@
   width: 400px;
   max-width: 100%;
   position: relative;
-  /* Add max-height to keep the modal in view */
   max-height: 80vh;
   overflow: hidden;
 }
@@ -50,9 +49,8 @@ h2 {
 }
 
 .transaction-list {
-  /* Set a maximum height for the transaction list */
-  max-height: 60vh; /* Adjust as needed */
-  overflow-y: auto; /* Enable vertical scrolling */
+  max-height: 60vh; 
+  overflow-y: auto;
 }
 
 .transaction-list ul {
@@ -63,6 +61,6 @@ h2 {
 
 .transaction-list li {
   margin-bottom: 10px;
-  border-bottom: 1px solid #ddd; /* Line to separate transactions */
+  border-bottom: 1px solid #ddd;
   padding-bottom: 10px;
 }

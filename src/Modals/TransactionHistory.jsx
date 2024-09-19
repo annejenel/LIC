@@ -17,14 +17,13 @@ const TransactionHistory = ({ isOpen, onClose }) => {
     setError('');
     try {
       const response = await axios.get('http://localhost:8000/api/transactions/');
-      console.log('Fetched transactions:', response.data); // Log the data for debugging
+      console.log('Fetched transactions:', response.data); 
 
-      // Sort transactions by timestamp in descending order
       const sortedTransactions = response.data.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
       
       setTransactions(sortedTransactions);
     } catch (error) {
-      console.error('Error fetching transactions:', error.response ? error.response.data : error.message); // Log more details
+      console.error('Error fetching transactions:', error.response ? error.response.data : error.message); 
       setError('Failed to fetch transactions.');
     }
   };

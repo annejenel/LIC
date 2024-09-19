@@ -14,7 +14,7 @@ const StudentTransaction = ({ isOpen, onClose, studentID, onTransactionCompleted
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      setReceiptImage(file); // Store file itself, not URL.createObjectURL
+      setReceiptImage(file); 
     }
   };
 
@@ -32,7 +32,7 @@ const StudentTransaction = ({ isOpen, onClose, studentID, onTransactionCompleted
     formData.append('student_id', studentID);
     formData.append('hours', hoursToAdd.toString());
     if (receiptImage) {
-      formData.append('receipt', receiptImage); // Use file object directly
+      formData.append('receipt', receiptImage);
     }
 
     try {
