@@ -23,19 +23,25 @@ class TransactionCreateView(APIView):
     def post(self, request, *args, **kwargs):
         reference_number = request.data.get('reference_number')
         student_id = request.data.get('student_id')
-        hours_to_add = request.data.get('hours')  # Get hours from the request
+        hours_to_add = request.data.get('hours')
 
         print(f"Received data: reference_number={reference_number}, student_id={student_id}, hours_to_add={hours_to_add}")
 
+        # Validate required fields
         if not reference_number or not student_id or not hours_to_add:
             return Response({"error": "Reference number, hours, and student ID are required"}, status=status.HTTP_400_BAD_REQUEST)
 
+        # Check if the student exists
         try:
             student = Student.objects.get(studentID=student_id)
         except Student.DoesNotExist:
             return Response({"error": "Student not found"}, status=status.HTTP_404_NOT_FOUND)
 
-        # Create a transaction
+        # Check if the reference number has already been used
+        if Transaction.objects.filter(reference_number=reference_number).exists():
+            return Response({"error": "This reference number has already been used"}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Create a new transaction
         transaction = Transaction.objects.create(
             student=student,
             reference_number=reference_number
@@ -45,5 +51,6 @@ class TransactionCreateView(APIView):
         student.time_left += int(hours_to_add) * 60
         student.save()
 
+        # Serialize and return the created transaction
         serializer = TransactionSerializer(transaction)
         return Response(serializer.data, status=status.HTTP_201_CREATED)

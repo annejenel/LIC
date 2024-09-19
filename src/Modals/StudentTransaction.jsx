@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import './StudentTransaction.css'; // Import the CSS
-
+import './StudentTransaction.css'; 
 const StudentTransaction = ({ isOpen, onClose, studentID, onTransactionCompleted }) => {
   const [transactionRef, setTransactionRef] = useState('');
-  const [receiptImage, setReceiptImage] = useState(null); // State for image
-  const [hoursToAdd, setHoursToAdd] = useState(1); // New state for hours
+  const [receiptImage, setReceiptImage] = useState(null); 
+  const [hoursToAdd, setHoursToAdd] = useState(1); 
   const [error, setError] = useState('');
 
   if (!isOpen) return null;
@@ -13,25 +12,25 @@ const StudentTransaction = ({ isOpen, onClose, studentID, onTransactionCompleted
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      setReceiptImage(URL.createObjectURL(file)); // Preview the image
+      setReceiptImage(URL.createObjectURL(file));
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
+    setError(''); 
   
     if (!transactionRef || !studentID || !hoursToAdd) {
-      setError('Transaction reference, hours, and student ID are required.');
+      alert('Transaction reference, hours, and student ID are required.');
       return;
     }
   
     const formData = new FormData();
     formData.append('reference_number', transactionRef);
     formData.append('student_id', studentID);
-    formData.append('hours', hoursToAdd.toString()); // Convert hoursToAdd to string before appending
+    formData.append('hours', hoursToAdd.toString()); 
     if (receiptImage) {
-      formData.append('receipt', receiptImage); // Append the image
+      formData.append('receipt', receiptImage); 
     }
   
     try {
@@ -41,27 +40,32 @@ const StudentTransaction = ({ isOpen, onClose, studentID, onTransactionCompleted
         },
       });
   
+
       if (response.status === 201) {
         onTransactionCompleted();
-        onClose();
+        onClose(); // Close the modal
         alert('Transaction processed successfully!');
       } else {
-        setError('Failed to process the transaction.');
+        alert('Failed to process the transaction.');
       }
     } catch (error) {
-      setError('Error processing transaction: ' + error.message);
+
+      if (error.response && error.response.data && error.response.data.error) {
+        alert(`Error: ${error.response.data.error}`); 
+      } else {
+        alert(`Error processing transaction: ${error.message}`); 
+      }
     }
   };
   
-  // Ensure you are calling the callback after the transaction completes
+  
 const handleTransactionSubmit = () => {
-    // Assuming transaction processing logic goes here
     processTransaction()
       .then(() => {
         if (props.onTransactionCompleted) {
-          props.onTransactionCompleted(); // Call the callback when transaction is done
+          props.onTransactionCompleted();
         }
-        props.onClose(); // Close the modal
+        props.onClose(); 
       })
       .catch((error) => {
         console.error("Error processing transaction:", error);

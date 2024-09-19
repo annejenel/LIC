@@ -71,7 +71,7 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(false);
   const [isAddStudentModalOpen, setIsAddStudentModalOpen] = useState(false);  
   const [isTransactionModalOpen, setIsTransactionModalOpen] = useState(false); 
-  const [selectedStudentID, setSelectedStudentID] = useState(null); // New state for selected student ID
+  const [selectedStudentID, setSelectedStudentID] = useState(null); 
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -137,11 +137,11 @@ export default function Dashboard() {
   const closeAddStudentModal = () => setIsAddStudentModalOpen(false);
 
   const openTransactionModal = (studentID) => {
-    setSelectedStudentID(studentID); // Set the selected student ID
-    setIsTransactionModalOpen(true); // Open the modal
+    setSelectedStudentID(studentID); 
+    setIsTransactionModalOpen(true);
   };
   
-  const closeTransactionModal = () => setIsTransactionModalOpen(false); // Function to close Transaction Modal
+  const closeTransactionModal = () => setIsTransactionModalOpen(false);
 
 
   const handleRowsPerPageChange = (event) => {
@@ -156,13 +156,12 @@ export default function Dashboard() {
   };
 
   const handleTransactionCompleted = () => {
-    // Logic for when a transaction is completed, like refreshing student data
     console.log("Transaction completed!");
-    fetchStudents(); // Optionally refresh the student list
+    fetchStudents(); 
   };
   
 
-  // Filter and paginate students
+  // Pagination
   const filteredStudents = students.filter(student => 
     student.studentID.toLowerCase().includes(searchQuery.toLowerCase())
   );
@@ -311,23 +310,23 @@ export default function Dashboard() {
                   Add Student
                 </Button>
                 <Button
-  startDecorator={<ReceiptLongIcon />}
-  sx={{
-    backgroundColor: '#89343b',
-    color: 'white',
-    fontSize: '12px',
-    '&:hover': {
-      color: '#89343b',
-      backgroundColor: '#ffd000',
-      borderColor: '#a94442',
-    },
-    height: '20px',
-    margin: 0,
-  }}
-  onClick={openTransactionModal} // Open Transaction Modal
->
-  Transaction
-</Button>
+                  startDecorator={<ReceiptLongIcon />}
+                  sx={{
+                    backgroundColor: '#89343b',
+                    color: 'white',
+                    fontSize: '12px',
+                    '&:hover': {
+                      color: '#89343b',
+                      backgroundColor: '#ffd000',
+                      borderColor: '#a94442',
+                    },
+                    height: '20px',
+                    margin: 0,
+                  }}
+                  onClick={openTransactionModal} 
+                >
+                  Transaction
+                </Button>
 
                 <Button
                   startDecorator={<ListIcon />}
@@ -512,8 +511,8 @@ export default function Dashboard() {
   <StudentTransaction
     isOpen={isTransactionModalOpen}
     onClose={closeTransactionModal}
-    studentID={selectedStudentID} // Pass the studentID to the modal
-    onTransactionCompleted={handleTransactionCompleted} // Pass the callback
+    studentID={selectedStudentID} 
+    onTransactionCompleted={handleTransactionCompleted} 
   />
 )}
 
