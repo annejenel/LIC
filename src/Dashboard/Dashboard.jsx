@@ -249,7 +249,7 @@ export default function Dashboard() {
                   <MenuItem onClick={() => navigate('/staff')}>
                     Manage Staff
                   </MenuItem>
-                  <MenuItem>Settings</MenuItem>
+                  <MenuItem onClick={() => navigate('/settings')}>Settings</MenuItem>
                 </Menu>
               </Dropdown>
 

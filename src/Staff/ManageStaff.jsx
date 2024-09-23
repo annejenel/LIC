@@ -114,7 +114,7 @@ const ManageStaff = () => {
                   <MenuItem onClick={() => navigate('/dashboard')}>
                     Dashboard
                   </MenuItem>
-                  <MenuItem>Settings</MenuItem>
+                  <MenuItem onClick={() => navigate('/settings')}>Settings</MenuItem>
                 </Menu>
               </Dropdown>
 
