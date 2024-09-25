@@ -1,58 +1,53 @@
-import React, { useState, useEffect, Suspense, lazy } from 'react';
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import Sheet from '@mui/joy/Sheet';
-import Box from '@mui/joy/Box';
-import Button from '@mui/joy/Button';
-import Dropdown from '@mui/joy/Dropdown';
-import Input from '@mui/joy/Input';
-import IconButton from '@mui/joy/IconButton';
-import ListDivider from '@mui/joy/ListDivider';
-import ListItemDecorator from '@mui/joy/ListItemDecorator';
-import Menu from '@mui/joy/Menu';
-import MenuButton from '@mui/joy/MenuButton';
-import MenuItem from '@mui/joy/MenuItem';
-import Typography from '@mui/joy/Typography';
-import AddIcon from '@mui/icons-material/Add';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
-import SearchIcon from '@mui/icons-material/Search';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
-import InsightsTwoTone from '@mui/icons-material/InsightsTwoTone';
-import BorderColorRoundedIcon from '@mui/icons-material/BorderColorRounded';
-import HistoryEduRoundedIcon from '@mui/icons-material/HistoryEduRounded';
-import PaymentsRoundedIcon from '@mui/icons-material/PaymentsRounded';
-import { CssVarsProvider, extendTheme } from '@mui/joy/styles';
-import { ArrowBackIos, ArrowForwardIos } from '@mui/icons-material';
-import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
-import ListIcon from '@mui/icons-material/List';
-import DriveFolderUploadIcon from '@mui/icons-material/DriveFolderUpload';
+import React, { useState, useEffect, Suspense, lazy } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import Sheet from "@mui/joy/Sheet";
+import Box from "@mui/joy/Box";
+import Button from "@mui/joy/Button";
+import Dropdown from "@mui/joy/Dropdown";
+import Input from "@mui/joy/Input";
+import IconButton from "@mui/joy/IconButton";
+import ListDivider from "@mui/joy/ListDivider";
+import ListItemDecorator from "@mui/joy/ListItemDecorator";
+import Menu from "@mui/joy/Menu";
+import MenuButton from "@mui/joy/MenuButton";
+import MenuItem from "@mui/joy/MenuItem";
+import Typography from "@mui/joy/Typography";
+import AddIcon from "@mui/icons-material/Add";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
+import SearchIcon from "@mui/icons-material/Search";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
+import InsightsTwoTone from "@mui/icons-material/InsightsTwoTone";
+import BorderColorRoundedIcon from "@mui/icons-material/BorderColorRounded";
+import HistoryEduRoundedIcon from "@mui/icons-material/HistoryEduRounded";
+import PaymentsRoundedIcon from "@mui/icons-material/PaymentsRounded";
+import { CssVarsProvider, extendTheme } from "@mui/joy/styles";
+import { ArrowBackIos, ArrowForwardIos } from "@mui/icons-material";
+import ReceiptLongIcon from "@mui/icons-material/ReceiptLong";
+import ListIcon from "@mui/icons-material/List";
+import DriveFolderUploadIcon from "@mui/icons-material/DriveFolderUpload";
 
-// Lazy load the modals
-const AddStudent = lazy(() => import('../Modals/AddStudent'));
-const StudentTransaction = lazy(() => import('../Modals/StudentTransaction'));
-const TransactionHistory = lazy(() => import('../Modals/TransactionHistory'));
-
-import './Dashboard.css';
-import '../Modals/AddStudent.css'; 
+import "./Dashboard.css";
+import "../Modals/AddStudent.css";
 
 const theme = extendTheme({
   components: {
     JoyTypography: {
       styleOverrides: {
         root: {
-          fontFamily: 'Poppins, sans-serif',
-          fontSize: '15px',
-          fontWeight: 'bold',
-          color: '#a94442',
+          fontFamily: "Poppins, sans-serif",
+          fontSize: "15px",
+          fontWeight: "bold",
+          color: "#a94442",
         },
       },
     },
     JoySheet: {
       styleOverrides: {
         root: {
-          '&.header': {
-            backgroundColor: '#ffd404',
+          "&.header": {
+            backgroundColor: "#ffd404",
           },
         },
       },
@@ -61,23 +56,24 @@ const theme = extendTheme({
 });
 
 const statusColors = {
-  Active: 'success',
-  Inactive: 'error',
-  'Dropped Out': 'default'
+  Active: "success",
+  Inactive: "error",
+  "Dropped Out": "default",
 };
 
 export default function Dashboard() {
   const [showTooltip, setShowTooltip] = useState(false);
   const [students, setStudents] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [isAddStudentModalOpen, setIsAddStudentModalOpen] = useState(false);  
-  const [isTransactionModalOpen, setIsTransactionModalOpen] = useState(false); 
-  const [selectedStudentID, setSelectedStudentID] = useState(null); 
+  const [isAddStudentModalOpen, setIsAddStudentModalOpen] = useState(false);
+  const [isTransactionModalOpen, setIsTransactionModalOpen] = useState(false);
+  const [selectedStudentID, setSelectedStudentID] = useState(null);
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [searchQuery, setSearchQuery] = useState(''); 
-  const [isTransactionHistoryModalOpen, setIsTransactionHistoryModalOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [isTransactionHistoryModalOpen, setIsTransactionHistoryModalOpen] =
+    useState(false);
 
   useEffect(() => {
     fetchStudents();
@@ -96,17 +92,18 @@ export default function Dashboard() {
 
   const fetchStudents = () => {
     setLoading(true);
-    axios.get('http://localhost:8000/api/students/')
-      .then(response => {
-        const fetchedStudents = response.data.map(student => ({
+    axios
+      .get("http://localhost:8000/api/students/")
+      .then((response) => {
+        const fetchedStudents = response.data.map((student) => ({
           ...student,
           timeLeft: formatTimeLeft(student.time_left),
-          status: student.status || 'Change'
+          status: student.status || "Change",
         }));
         setStudents(fetchedStudents);
       })
-      .catch(error => {
-        console.error('Error fetching student data:', error);
+      .catch((error) => {
+        console.error("Error fetching student data:", error);
       })
       .finally(() => {
         setLoading(false);
@@ -114,29 +111,36 @@ export default function Dashboard() {
   };
 
   const handleStudentAdded = () => {
-    fetchStudents(); 
+    fetchStudents();
   };
 
   const handleStatusChange = (studentID, newStatus) => {
-    const encodedStudentID = encodeURIComponent(studentID);  
-    
-    const updatedStudents = students.map(student =>
-      student.studentID === studentID ? { ...student, status: newStatus } : student
+    const encodedStudentID = encodeURIComponent(studentID);
+
+    const updatedStudents = students.map((student) =>
+      student.studentID === studentID
+        ? { ...student, status: newStatus }
+        : student
     );
-    
+
     const originalStudents = [...students];
-    
+
     setStudents(updatedStudents);
-    
+
     axios
-      .patch(`http://localhost:8000/api/students/${encodedStudentID}/`, { status: newStatus })
-      .then(response => {
-        console.log('Status updated successfully:', response.data);
-        fetchStudents(); 
+      .patch(`http://localhost:8000/api/students/${encodedStudentID}/`, {
+        status: newStatus,
       })
-      .catch(error => {
-        console.error('Error updating status:', error.response ? error.response.data : error.message);
-        setStudents(originalStudents); 
+      .then((response) => {
+        console.log("Status updated successfully:", response.data);
+        fetchStudents();
+      })
+      .catch((error) => {
+        console.error(
+          "Error updating status:",
+          error.response ? error.response.data : error.message
+        );
+        setStudents(originalStudents);
       });
   };
 
@@ -144,19 +148,27 @@ export default function Dashboard() {
   const closeAddStudentModal = () => setIsAddStudentModalOpen(false);
 
   const openTransactionModal = (studentID) => {
-    setSelectedStudentID(studentID); 
+    setSelectedStudentID(studentID);
     setIsTransactionModalOpen(true);
   };
-  
-  const closeTransactionModal = () => setIsTransactionModalOpen(false);
-  const openTransactionHistoryModal = () => setIsTransactionHistoryModalOpen(true);
-  const closeTransactionHistoryModal = () => setIsTransactionHistoryModalOpen(false);
 
-  const filteredStudents = students.filter(student =>
-    student.studentID.toString().toLowerCase().includes(searchQuery.toLowerCase())
+  const closeTransactionModal = () => setIsTransactionModalOpen(false);
+  const openTransactionHistoryModal = () =>
+    setIsTransactionHistoryModalOpen(true);
+  const closeTransactionHistoryModal = () =>
+    setIsTransactionHistoryModalOpen(false);
+
+  const filteredStudents = students.filter((student) =>
+    student.studentID
+      .toString()
+      .toLowerCase()
+      .includes(searchQuery.toLowerCase())
   );
   const totalPages = Math.ceil(filteredStudents.length / rowsPerPage);
-  const paginatedStudents = filteredStudents.slice(currentPage * rowsPerPage, currentPage * rowsPerPage + rowsPerPage);
+  const paginatedStudents = filteredStudents.slice(
+    currentPage * rowsPerPage,
+    currentPage * rowsPerPage + rowsPerPage
+  );
 
   useEffect(() => {
     // Update page number if it exceeds the total number of pages
@@ -178,7 +190,7 @@ export default function Dashboard() {
 
   const handleTransactionCompleted = () => {
     console.log("Transaction completed!");
-    fetchStudents(); 
+    fetchStudents();
   };
 
   return (
@@ -189,11 +201,11 @@ export default function Dashboard() {
           <Sheet
             variant="solid"
             className="header"
-            sx={{ 
-              backgroundColor: '#ffd000', 
-              borderRadius: '0',
-              marginTop: '0',
-              top: 0, 
+            sx={{
+              backgroundColor: "#ffd000",
+              borderRadius: "0",
+              marginTop: "0",
+              top: 0,
               left: 0,
               zIndex: 1000,
             }}
@@ -201,7 +213,7 @@ export default function Dashboard() {
             <Box className="logo" />
             <Typography
               component="div"
-              sx={{ marginLeft: '16px', textAlign: 'left', fontSize: '20px' }}
+              sx={{ marginLeft: "16px", textAlign: "left", fontSize: "20px" }}
             >
               <div>LIC Connect</div>
               <div>Library Internet Center</div>
@@ -212,13 +224,13 @@ export default function Dashboard() {
                 <MenuButton
                   className="menu-button"
                   sx={{
-                    '--Button-radius': '1.5rem',
-                    backgroundColor: '#89343b',
-                    color: 'white',
-                    fontSize: '12px',
-                    '&:hover': {
-                      color: '#89343b',
-                      backgroundColor: 'white',
+                    "--Button-radius": "1.5rem",
+                    backgroundColor: "#89343b",
+                    color: "white",
+                    fontSize: "12px",
+                    "&:hover": {
+                      color: "#89343b",
+                      backgroundColor: "white",
                     },
                   }}
                   variant="outlined"
@@ -232,11 +244,11 @@ export default function Dashboard() {
                   disablePortal
                   size="sm"
                   sx={{
-                    '--ListItemDecorator-size': '24px',
-                    '--ListItem-minHeight': '40px',
-                    '--ListDivider-gap': '4px',
+                    "--ListItemDecorator-size": "24px",
+                    "--ListItem-minHeight": "40px",
+                    "--ListDivider-gap": "4px",
                     minWidth: 200,
-                    fontSize: '12px'
+                    fontSize: "12px",
                   }}
                 >
                   <MenuItem>
@@ -246,10 +258,12 @@ export default function Dashboard() {
                     Account
                   </MenuItem>
                   <ListDivider />
-                  <MenuItem onClick={() => navigate('/staff')}>
+                  <MenuItem onClick={() => navigate("/staff")}>
                     Manage Staff
                   </MenuItem>
-                  <MenuItem onClick={() => navigate('/settings')}>Settings</MenuItem>
+                  <MenuItem onClick={() => navigate("/settings")}>
+                    Settings
+                  </MenuItem>
                 </Menu>
               </Dropdown>
 
@@ -261,15 +275,15 @@ export default function Dashboard() {
                 <Button
                   className="analytics-button"
                   sx={{
-                    marginLeft: '8px',
-                    backgroundColor: 'transparent',
-                    border: '2px solid #89343b',
-                    color: '#89343b',
-                    marginRight: '50px',
-                    '&:hover': {
-                      color: 'white',
-                      backgroundColor: '#89343b',
-                      borderColor: '#89343b',
+                    marginLeft: "8px",
+                    backgroundColor: "transparent",
+                    border: "2px solid #89343b",
+                    color: "#89343b",
+                    marginRight: "50px",
+                    "&:hover": {
+                      color: "white",
+                      backgroundColor: "#89343b",
+                      borderColor: "#89343b",
                     },
                   }}
                 >
@@ -282,10 +296,13 @@ export default function Dashboard() {
             </Box>
 
             <Box className="header-actions">
-              <IconButton variant="none" className="logout"
+              <IconButton
+                variant="none"
+                className="logout"
                 sx={{
-                  color: '#89343b'
-                }}>
+                  color: "#89343b",
+                }}
+              >
                 <MoreVertIcon />
               </IconButton>
             </Box>
@@ -295,108 +312,110 @@ export default function Dashboard() {
           <Box
             className="actions-container"
             sx={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              width: '95%',
-              padding: '10px',
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              width: "95%",
+              padding: "10px",
             }}
           >
-             <Box className="button-group">
-                <Button
-                  startDecorator={<AddIcon />}
-                  sx={{
-                    backgroundColor: '#89343b',
-                    color: 'white',
-                    fontSize: '12px',
-                    '&:hover': {
-                      color: '#89343b',
-                      backgroundColor: '#ffd000',
-                      borderColor: '#a94442',
-                    },
-                    height: '20px',
-                    margin: 0,
-                  }}
-                  onClick={openAddStudentModal}
-                >
-                  Add Student
-                </Button>
-                <Button
-  startDecorator={<ReceiptLongIcon />}
-  sx={{
-    backgroundColor: '#89343b',
-    color: 'white',
-    fontSize: '12px',
-    '&:hover': {
-      color: '#89343b',
-      backgroundColor: '#ffd000',
-      borderColor: '#a94442',
-    },
-    height: '20px',
-    margin: 0,
-  }}
-  onClick={openTransactionHistoryModal} // Open TransactionHistory modal
->
-  Transaction
-</Button>
-
-                <Button
-                  startDecorator={<ListIcon />}
-                  sx={{
-                    backgroundColor: '#89343b',
-                    color: 'white',
-                    fontSize: '12px',
-                    '&:hover': {
-                      color: '#89343b',
-                      backgroundColor: '#ffd000',
-                      borderColor: '#a94442',
-                    },
-                    height: '20px',
-                    margin: 0,
-                  }}
-                  onClick={openAddStudentModal}
-                >
-                  Logs
-                </Button>
-                <Button
-                  startDecorator={<DriveFolderUploadIcon />}
-                  sx={{
-                    backgroundColor: '#89343b',
-                    color: 'white',
-                    fontSize: '12px',
-                    '&:hover': {
-                      color: '#89343b',
-                      backgroundColor: '#ffd000',
-                      borderColor: '#a94442',
-                    },
-                    height: '20px',
-                    margin: 0,
-                  }}
-                  onClick={openAddStudentModal}
-                >
-                  Import
-                </Button>
-              </Box>
-            
-              <Input
-                placeholder="Search for student ID..."
-                variant="soft"
-                size="sm"
-                endDecorator={<SearchIcon />}
-                className="search-input"
+            <Box className="button-group">
+              <Button
+                startDecorator={<AddIcon />}
                 sx={{
-                  width: '250px',
-                  height: '20px',
-                  fontSize: '13px',
+                  backgroundColor: "#89343b",
+                  color: "white",
+                  fontSize: "12px",
+                  "&:hover": {
+                    color: "#89343b",
+                    backgroundColor: "#ffd000",
+                    borderColor: "#a94442",
+                  },
+                  height: "20px",
+                  margin: 0,
                 }}
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
+                onClick={openAddStudentModal}
+              >
+                Add Student
+              </Button>
+              <Button
+                startDecorator={<ReceiptLongIcon />}
+                sx={{
+                  backgroundColor: "#89343b",
+                  color: "white",
+                  fontSize: "12px",
+                  "&:hover": {
+                    color: "#89343b",
+                    backgroundColor: "#ffd000",
+                    borderColor: "#a94442",
+                  },
+                  height: "20px",
+                  margin: 0,
+                }}
+                onClick={openTransactionHistoryModal} // Open TransactionHistory modal
+              >
+                Transaction
+              </Button>
+
+              <Button
+                startDecorator={<ListIcon />}
+                sx={{
+                  backgroundColor: "#89343b",
+                  color: "white",
+                  fontSize: "12px",
+                  "&:hover": {
+                    color: "#89343b",
+                    backgroundColor: "#ffd000",
+                    borderColor: "#a94442",
+                  },
+                  height: "20px",
+                  margin: 0,
+                }}
+                onClick={openAddStudentModal}
+              >
+                Logs
+              </Button>
+              <Button
+                startDecorator={<DriveFolderUploadIcon />}
+                sx={{
+                  backgroundColor: "#89343b",
+                  color: "white",
+                  fontSize: "12px",
+                  "&:hover": {
+                    color: "#89343b",
+                    backgroundColor: "#ffd000",
+                    borderColor: "#a94442",
+                  },
+                  height: "20px",
+                  margin: 0,
+                }}
+                onClick={openAddStudentModal}
+              >
+                Import
+              </Button>
+            </Box>
+
+            <Input
+              placeholder="Search for student ID..."
+              variant="soft"
+              size="sm"
+              endDecorator={<SearchIcon />}
+              className="search-input"
+              sx={{
+                width: "250px",
+                height: "20px",
+                fontSize: "13px",
+              }}
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
           </Box>
 
           {/* Student Table */}
           <Box className="tables">
-            <Typography level="h6" className="studentlist">Student List</Typography>
+            <Typography level="h6" className="studentlist">
+              Student List
+            </Typography>
             {loading ? (
               <p>Loading...</p>
             ) : filteredStudents.length === 0 ? (
@@ -405,17 +424,17 @@ export default function Dashboard() {
               <div className="table-wrapper">
                 {/* Pagination Controls */}
                 <div className="pagination">
-                  <button 
-                    onClick={() => handlePageChange(currentPage - 1)} 
+                  <button
+                    onClick={() => handlePageChange(currentPage - 1)}
                     disabled={currentPage === 0}
                   >
-                    <ArrowBackIos/>
+                    <ArrowBackIos />
                   </button>
                   {Array.from({ length: totalPages }, (_, index) => (
                     <button
                       key={index}
                       onClick={() => handlePageChange(index)}
-                      className={currentPage === index ? 'active' : ''}
+                      className={currentPage === index ? "active" : ""}
                     >
                       {index + 1}
                     </button>
@@ -424,7 +443,7 @@ export default function Dashboard() {
                     onClick={() => handlePageChange(currentPage + 1)}
                     disabled={currentPage >= totalPages - 1}
                   >
-                    <ArrowForwardIos/>
+                    <ArrowForwardIos />
                   </button>
                 </div>
 
@@ -451,13 +470,17 @@ export default function Dashboard() {
                             <MenuButton
                               className="menu-button"
                               sx={{
-                                '--Button-radius': '1.5rem',
-                                backgroundColor: statusColors[student.status] || 'default',
-                                color: statusColors[student.status] === 'default' ? 'black' : 'maroon',
-                                fontSize: '12px',
-                                '&:hover': {
-                                  color: '#89343b',
-                                  backgroundColor: 'white',
+                                "--Button-radius": "1.5rem",
+                                backgroundColor:
+                                  statusColors[student.status] || "default",
+                                color:
+                                  statusColors[student.status] === "default"
+                                    ? "black"
+                                    : "maroon",
+                                fontSize: "12px",
+                                "&:hover": {
+                                  color: "#89343b",
+                                  backgroundColor: "white",
                                 },
                               }}
                               variant="outlined"
@@ -471,17 +494,31 @@ export default function Dashboard() {
                               disablePortal
                               size="sm"
                               sx={{
-                                '--ListItemDecorator-size': '24px',
-                                '--ListItem-minHeight': '40px',
-                                '--ListDivider-gap': '4px',
+                                "--ListItemDecorator-size": "24px",
+                                "--ListItem-minHeight": "40px",
+                                "--ListDivider-gap": "4px",
                                 minWidth: 200,
-                                fontSize: '12px'
+                                fontSize: "12px",
                               }}
                             >
-                              <MenuItem onClick={() => handleStatusChange(student.studentID, 'Active')}>
+                              <MenuItem
+                                onClick={() =>
+                                  handleStatusChange(
+                                    student.studentID,
+                                    "Active"
+                                  )
+                                }
+                              >
                                 Active
                               </MenuItem>
-                              <MenuItem onClick={() => handleStatusChange(student.studentID, 'Inactive')}>
+                              <MenuItem
+                                onClick={() =>
+                                  handleStatusChange(
+                                    student.studentID,
+                                    "Inactive"
+                                  )
+                                }
+                              >
                                 Inactive
                               </MenuItem>
                             </Menu>
@@ -491,7 +528,11 @@ export default function Dashboard() {
                           <IconButton>
                             <HistoryEduRoundedIcon />
                           </IconButton>
-                          <IconButton onClick={() => openTransactionModal(student.studentID)}>
+                          <IconButton
+                            onClick={() =>
+                              openTransactionModal(student.studentID)
+                            }
+                          >
                             <PaymentsRoundedIcon />
                           </IconButton>
                           <IconButton>
@@ -510,18 +551,18 @@ export default function Dashboard() {
         {/* Modals */}
         <Suspense fallback={<div>Loading modals...</div>}>
           {isAddStudentModalOpen && (
-            <AddStudent 
-              isOpen={isAddStudentModalOpen} 
-              onClose={closeAddStudentModal} 
-              onStudentAdded={handleStudentAdded} 
+            <AddStudent
+              isOpen={isAddStudentModalOpen}
+              onClose={closeAddStudentModal}
+              onStudentAdded={handleStudentAdded}
             />
           )}
           {isTransactionModalOpen && (
             <StudentTransaction
               isOpen={isTransactionModalOpen}
               onClose={closeTransactionModal}
-              studentID={selectedStudentID} 
-              onTransactionCompleted={handleTransactionCompleted} 
+              studentID={selectedStudentID}
+              onTransactionCompleted={handleTransactionCompleted}
             />
           )}
           {isTransactionHistoryModalOpen && (
