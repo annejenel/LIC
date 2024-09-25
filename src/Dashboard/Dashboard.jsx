@@ -28,6 +28,11 @@ import ReceiptLongIcon from "@mui/icons-material/ReceiptLong";
 import ListIcon from "@mui/icons-material/List";
 import DriveFolderUploadIcon from "@mui/icons-material/DriveFolderUpload";
 
+// Lazy load the modals
+const AddStudent = lazy(() => import("../Modals/AddStudent"));
+const StudentTransaction = lazy(() => import("../Modals/StudentTransaction"));
+const TransactionHistory = lazy(() => import("../Modals/TransactionHistory"));
+
 import "./Dashboard.css";
 import "../Modals/AddStudent.css";
 
