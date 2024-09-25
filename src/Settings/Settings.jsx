@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Sheet from "@mui/joy/Sheet";
 import Box from "@mui/joy/Box";
@@ -17,6 +17,32 @@ import "./Settings.css";
 
 const Settings = () => {
   const navigate = useNavigate();
+
+  //State to store form values
+  const [formValues, setFormValues] = useState({
+    currentPassword: "",
+    newPassword: "",
+    confirmPassword: "",
+  });
+
+  //Handle reset button click
+  const handleReset = () => {
+    //Clear all form values
+    setFormValues({
+      currentPassword: "",
+      newPassword: "",
+      confirmPassword: "",
+    });
+  };
+
+  //Handle input change
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormValues((prevValues) => ({
+      ...prevValues,
+      [name]: value,
+    }));
+  };
 
   return (
     <>
@@ -111,6 +137,9 @@ const Settings = () => {
                 label="Current Password"
                 variant="outlined"
                 type="password"
+                name="currentPassword"
+                value={formValues.currentPassword}
+                onChange={handleInputChange}
                 fullWidth
                 required
               />
@@ -118,6 +147,9 @@ const Settings = () => {
                 label="New Password"
                 variant="outlined"
                 type="password"
+                name="newPassword"
+                value={formValues.newPassword}
+                onChange={handleInputChange}
                 fullWidth
                 required
               />
@@ -125,17 +157,46 @@ const Settings = () => {
                 label="Confirm Password"
                 variant="outlined"
                 type="password"
+                name="confirmPassword"
+                value={formValues.confirmPassword}
+                onChange={handleInputChange}
                 fullWidth
                 required
               />
-              <Button
-                variant="contained"
-                color="success"
-                fullWidth
-                sx={{ mt: 2 }}
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "flex-end",
+                  gap: 2,
+                  width: "auto",
+                }}
               >
-                Change Password
-              </Button>
+                <Button
+                  variant="outlined"
+                  color="secondary"
+                  sx={{
+                    mt: 2,
+                  }}
+                  onClick={handleReset}
+                >
+                  Reset
+                </Button>
+
+                <Button
+                  variant="contained"
+                  color="secondary"
+                  sx={{
+                    mt: 2,
+                    backgroundColor: "#89343B",
+                    color: "white",
+                    "&:hover": {
+                      backgroundColor: "#b04049",
+                    },
+                  }}
+                >
+                  Change
+                </Button>
+              </Box>
             </Box>
           </Container>
         </Sheet>
