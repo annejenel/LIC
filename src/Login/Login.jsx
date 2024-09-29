@@ -1,13 +1,30 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom"; // Import useNavigate hook
 import "./Login.css";
 import { Paper, TextField, Box, Button } from "@mui/material"; // Import Paper and TextField from MUI
-//eyyy
+import axios from "axios";
+
 const Login = () => {
   const navigate = useNavigate();
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
 
-  const handleLogin = () => {
-    navigate("/dashboard");
+  const handleLogin = async () => {
+    try {
+      const response = await axios.post("http://localhost:8000/api/login/", {
+        username,
+        password,
+      });
+
+      if (response.data.status === "success") {
+        navigate("/dashboard"); // Redirect on successful login
+      } else {
+        alert("Login failed");
+      }
+    } catch (error) {
+      console.error("Login error:", error);
+      alert("Invalid credentials");
+    }
   };
   return (
     <>
@@ -49,7 +66,9 @@ const Login = () => {
             id="username"
             label="Username"
             variant="outlined"
+            value={username}
             fullWidth
+            onChange={(e) => setUsername(e.target.value)}
             sx={{ mb: 2 }}
           />
           <TextField
@@ -59,6 +78,8 @@ const Login = () => {
             variant="outlined"
             fullWidth
             sx={{ mb: 2 }}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
           />
           <Button variant="contained" onClick={handleLogin} fullWidth>
             <strong>Login</strong>

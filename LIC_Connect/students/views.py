@@ -5,8 +5,31 @@ from .models import Student, Transaction
 from .serializers import StudentSerializer, TransactionSerializer
 from rest_framework.views import APIView
 from rest_framework import generics
+from django.contrib.auth import authenticate, login, logout
 
 
+class LoginView(APIView):
+    def post(self, request, *args, **kwargs):
+        username = request.data.get('username')
+        password = request.data.get('password')
+        print(f"Username: {username}, Password: {password}")  # Debugging
+        if not username or not password:
+            return Response({"error": "Username and password are required"}, status=status.HTTP_400_BAD_REQUEST)
+
+        user = authenticate(request, username=username, password=password)
+
+        if user is not None:
+            login(request, user)  # Log the user in
+            return Response({"status": "success", "message": "Login successful"}, status=status.HTTP_200_OK)
+        else:
+            print("Authentication failed")  # Debugging
+            return Response({"error": "Invalid username or password"}, status=status.HTTP_400_BAD_REQUEST)
+
+class LogoutView(APIView):
+    def post(self, request, *args, **kwargs):
+        # Log the user out
+        logout(request)
+        return Response({"status": "success", "message": "Logged out successfully"}, status=status.HTTP_200_OK)
 
 class StudentViewSet(ModelViewSet):
     queryset = Student.objects.all()

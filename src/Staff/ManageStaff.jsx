@@ -1,44 +1,46 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate from react-router-dom
-import Sheet from '@mui/joy/Sheet';
-import Box from '@mui/joy/Box';
-import Button from '@mui/joy/Button';
-import Dropdown from '@mui/joy/Dropdown';
-import Input from '@mui/joy/Input';
-import IconButton from '@mui/joy/IconButton';
-import ListDivider from '@mui/joy/ListDivider';
-import ListItemDecorator from '@mui/joy/ListItemDecorator';
-import Menu from '@mui/joy/Menu';
-import MenuButton from '@mui/joy/MenuButton';
-import MenuItem from '@mui/joy/MenuItem';
-import Typography from '@mui/joy/Typography';
-import AddIcon from '@mui/icons-material/Add';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
-import SearchIcon from '@mui/icons-material/Search';
-import { CssVarsProvider, extendTheme } from '@mui/joy/styles';
-import ExitToAppOutlinedIcon from '@mui/icons-material/ExitToAppOutlined';
-import InsightsTwoTone from '@mui/icons-material/InsightsTwoTone';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom"; // Import useNavigate from react-router-dom
+import Sheet from "@mui/joy/Sheet";
+import Box from "@mui/joy/Box";
+import Button from "@mui/joy/Button";
+import Dropdown from "@mui/joy/Dropdown";
+import Input from "@mui/joy/Input";
+import IconButton from "@mui/joy/IconButton";
+import ListDivider from "@mui/joy/ListDivider";
+import ListItemDecorator from "@mui/joy/ListItemDecorator";
+import Menu from "@mui/joy/Menu";
+import MenuButton from "@mui/joy/MenuButton";
+import MenuItem from "@mui/joy/MenuItem";
+import Typography from "@mui/joy/Typography";
+import AddIcon from "@mui/icons-material/Add";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
+import SearchIcon from "@mui/icons-material/Search";
+import { CssVarsProvider, extendTheme } from "@mui/joy/styles";
+import ExitToAppOutlinedIcon from "@mui/icons-material/ExitToAppOutlined";
+import InsightsTwoTone from "@mui/icons-material/InsightsTwoTone";
+import axios from "axios";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
 
-import './ManageStaff.css';
+import "./ManageStaff.css";
 
 const theme = extendTheme({
   components: {
     JoyTypography: {
       styleOverrides: {
         root: {
-          fontFamily: 'Poppins, sans-serif',
-          fontSize: '20px',
-          fontWeight: 'bold',
-          color: '#a94442',
+          fontFamily: "Poppins, sans-serif",
+          fontSize: "20px",
+          fontWeight: "bold",
+          color: "#a94442",
         },
       },
     },
     JoySheet: {
       styleOverrides: {
         root: {
-          '&.header': {
-            backgroundColor: '#ffd404',
+          "&.header": {
+            backgroundColor: "#ffd404",
           },
         },
       },
@@ -49,6 +51,15 @@ const theme = extendTheme({
 const ManageStaff = () => {
   const [showTooltip, setShowTooltip] = useState(false);
   const navigate = useNavigate(); // Hook to navigate programmatically
+  const handleLogout = async () => {
+    try {
+      await axios.post("http://localhost:8000/api/logout/"); // Adjust the URL to your logout endpoint
+      // On success, navigate to the login page or home page
+      navigate("/");
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
+  };
 
   return (
     <CssVarsProvider theme={theme}>
@@ -56,17 +67,17 @@ const ManageStaff = () => {
         <Sheet
           variant="outlined"
           className="sheet"
-          sx={{ backgroundColor: '#fff0f2' }}
+          sx={{ backgroundColor: "#fff0f2" }}
         >
           <Sheet
             variant="solid"
             className="header"
-            sx={{ backgroundColor: '#ffd404' }}
+            sx={{ backgroundColor: "#ffd404" }}
           >
             <Box className="logo" />
             <Typography
               component="div"
-              sx={{ marginLeft: '16px', textAlign: 'left' }}
+              sx={{ marginLeft: "16px", textAlign: "left" }}
             >
               <div>LIC Connect</div>
               <div>Library Internet Center</div>
@@ -76,13 +87,13 @@ const ManageStaff = () => {
                 <MenuButton
                   className="menu-button"
                   sx={{
-                    '--Button-radius': '1.5rem',
-                    backgroundColor: '#B53737',
-                    color: 'white',
-                    fontSize: '20px',
-                    '&:hover': {
-                      color: '#a94442',
-                      backgroundColor: 'white',
+                    "--Button-radius": "1.5rem",
+                    backgroundColor: "#B53737",
+                    color: "white",
+                    fontSize: "20px",
+                    "&:hover": {
+                      color: "#a94442",
+                      backgroundColor: "white",
                     },
                   }}
                   variant="outlined"
@@ -96,11 +107,11 @@ const ManageStaff = () => {
                   disablePortal
                   size="sm"
                   sx={{
-                    '--ListItemDecorator-size': '24px',
-                    '--ListItem-minHeight': '40px',
-                    '--ListDivider-gap': '4px',
+                    "--ListItemDecorator-size": "24px",
+                    "--ListItem-minHeight": "40px",
+                    "--ListDivider-gap": "4px",
                     minWidth: 200,
-                    fontSize: '20px',
+                    fontSize: "20px",
                   }}
                 >
                   <MenuItem>
@@ -111,10 +122,12 @@ const ManageStaff = () => {
                   </MenuItem>
                   <ListDivider />
                   {/* Add onClick to navigate back to Dashboard */}
-                  <MenuItem onClick={() => navigate('/dashboard')}>
+                  <MenuItem onClick={() => navigate("/dashboard")}>
                     Dashboard
                   </MenuItem>
-                  <MenuItem onClick={() => navigate('/settings')}>Settings</MenuItem>
+                  <MenuItem onClick={() => navigate("/settings")}>
+                    Settings
+                  </MenuItem>
                 </Menu>
               </Dropdown>
 
@@ -126,15 +139,15 @@ const ManageStaff = () => {
                 <Button
                   className="analytics-button"
                   sx={{
-                    marginLeft: '8px',
-                    backgroundColor: 'transparent',
-                    border: '2px solid #a94442',
-                    color: '#a94442',
-                    marginRight: '50px',
-                    '&:hover': {
-                      color: 'white',
-                      backgroundColor: '#a94442',
-                      borderColor: '#a94442',
+                    marginLeft: "8px",
+                    backgroundColor: "transparent",
+                    border: "2px solid #a94442",
+                    color: "#a94442",
+                    marginRight: "50px",
+                    "&:hover": {
+                      color: "white",
+                      backgroundColor: "#a94442",
+                      borderColor: "#a94442",
                     },
                   }}
                 >
@@ -147,9 +160,32 @@ const ManageStaff = () => {
             </Box>
 
             <Box className="header-actions">
-              <IconButton variant="soft" className="logout">
-                <ExitToAppOutlinedIcon />
-              </IconButton>
+              <Dropdown>
+                <MenuButton
+                  variant="none"
+                  className="logout"
+                  sx={{
+                    color: "#89343b",
+                  }}
+                >
+                  <MoreVertIcon />
+                </MenuButton>
+                <Menu
+                  variant="outlined"
+                  placement="bottom-start"
+                  disablePortal
+                  size="sm"
+                  sx={{
+                    "--ListItemDecorator-size": "24px",
+                    "--ListItem-minHeight": "40px",
+                    "--ListDivider-gap": "4px",
+                    minWidth: 200,
+                    fontSize: "12px",
+                  }}
+                >
+                  <MenuItem onClick={handleLogout}>Logout</MenuItem>
+                </Menu>
+              </Dropdown>
             </Box>
           </Sheet>
 
@@ -157,11 +193,11 @@ const ManageStaff = () => {
             component="h1"
             className="header-text"
             sx={{
-              textAlign: 'center',
-              fontSize: '36px',
-              fontWeight: 'bold',
-              color: '#a94442',
-              margin: '20px 0',
+              textAlign: "center",
+              fontSize: "36px",
+              fontWeight: "bold",
+              color: "#a94442",
+              margin: "20px 0",
             }}
           >
             MANAGE LIC STAFF
@@ -172,11 +208,11 @@ const ManageStaff = () => {
               <Button
                 startDecorator={<AddIcon />}
                 sx={{
-                  backgroundColor: '#28a745',
-                  color: 'white',
-                  fontSize: '17px',
-                  '&:hover': {
-                    backgroundColor: '#218838',
+                  backgroundColor: "#28a745",
+                  color: "white",
+                  fontSize: "17px",
+                  "&:hover": {
+                    backgroundColor: "#218838",
                   },
                 }}
               >
@@ -191,20 +227,16 @@ const ManageStaff = () => {
                 </Typography>
               </div>
               <div className="table">
-                <Typography className="table-title">
-                  STAFF TABLE
-                </Typography>
+                <Typography className="table-title">STAFF TABLE</Typography>
               </div>
             </div>
           </div>
         </Sheet>
       </div>
 
-      <Sheet>
-        hello
-      </Sheet>
+      <Sheet>hello</Sheet>
     </CssVarsProvider>
   );
-}
+};
 
-export default ManageStaff
+export default ManageStaff;
