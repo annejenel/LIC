@@ -176,6 +176,9 @@ const Settings = () => {
                   color="secondary"
                   sx={{
                     mt: 2,
+                    "&:hover": {
+                      color: "#FFD000",
+                    },
                   }}
                   onClick={handleReset}
                 >
