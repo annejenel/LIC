@@ -61,7 +61,10 @@ const Login = () => {
             height: 300,
           }}
         >
-          <h2 className="loginHeader">Login</h2>
+          <h2 className="loginHeader" style={{ fontWeight: "bolder" }}>
+            <span style={{ color: "#e4e811" }}>LIC</span>{" "}
+            <span style={{ color: "#A83332" }}>Connect</span>
+          </h2>
           <TextField
             id="username"
             label="Username"
@@ -81,7 +84,14 @@ const Login = () => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
-          <Button variant="contained" onClick={handleLogin} fullWidth>
+          <Button
+            variant="contained"
+            onClick={handleLogin}
+            fullWidth
+            sx={{
+              backgroundColor: "#A83332",
+            }}
+          >
             <strong>Login</strong>
           </Button>
         </Paper>
