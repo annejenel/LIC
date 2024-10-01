@@ -13,22 +13,10 @@ import Typography from "@mui/joy/Typography";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
 import { Container, TextField } from "@mui/material";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
-import axios from "axios";
 import "./Settings.css";
+
 const Settings = () => {
   const navigate = useNavigate();
-
-  //Handle Logout
-  const handleLogout = async () => {
-    try {
-      await axios.post("http://localhost:8000/api/logout/"); // Adjust the URL to your logout endpoint
-      // On success, navigate to the login page or home page
-      navigate("/");
-    } catch (error) {
-      console.error("Logout failed:", error);
-    }
-  };
 
   //State to store form values
   const [formValues, setFormValues] = useState({
@@ -131,34 +119,6 @@ const Settings = () => {
                 </Menu>
               </Dropdown>
             </Box>
-            <Box className="header-actions">
-              <Dropdown>
-                <MenuButton
-                  variant="none"
-                  className="logout"
-                  sx={{
-                    color: "#89343b",
-                  }}
-                >
-                  <MoreVertIcon />
-                </MenuButton>
-                <Menu
-                  variant="outlined"
-                  placement="bottom-start"
-                  disablePortal
-                  size="sm"
-                  sx={{
-                    "--ListItemDecorator-size": "24px",
-                    "--ListItem-minHeight": "40px",
-                    "--ListDivider-gap": "4px",
-                    minWidth: 200,
-                    fontSize: "12px",
-                  }}
-                >
-                  <MenuItem onClick={handleLogout}>Logout</MenuItem>
-                </Menu>
-              </Dropdown>
-            </Box>
           </Sheet>
           <Container maxWidth="sm" className="passwordForm">
             <Box
@@ -216,9 +176,6 @@ const Settings = () => {
                   color="secondary"
                   sx={{
                     mt: 2,
-                    "&:hover": {
-                      color: "#FFD000",
-                    },
                   }}
                   onClick={handleReset}
                 >

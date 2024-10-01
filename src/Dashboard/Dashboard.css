@@ -2,13 +2,12 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
 
 body {
-  overflow-x: hidden;
+  overflow-x: hidden; 
   overflow-y: auto;
   min-height: 100%;
 }
 
-html,
-body {
+html, body {
   height: 100%;
   margin: 0;
 }
@@ -20,9 +19,9 @@ body {
 
 /* Track */
 ::-webkit-scrollbar-track {
-  background: #89343b;
+  background: #89343b; 
 }
-
+ 
 /* Handle */
 ::-webkit-scrollbar-thumb {
   background: rgba(160, 90, 96, 0.8);
@@ -50,7 +49,7 @@ body {
   position: relative;
   background: url('images/background.jpg') no-repeat center center fixed;
   background-size: cover;
-  min-height: 100%;
+  min-height: 100%; 
   min-width: 100%;
   height: 300px;
 }
@@ -74,14 +73,14 @@ body {
 .header-content {
   flex: 1;
   display: flex;
-  gap: 8px;
+  gap: 8px; 
   padding: 0 8px;
-  justify-content: flex-end;
+  justify-content: flex-end; 
 }
 
 .header-actions {
   display: flex;
-  align-items: center;
+  align-items: center; 
   width: 10px;
   height: 10px;
   padding-right: 50px;
@@ -99,7 +98,7 @@ body {
   border-radius: 50%;
   height: 50px;
   background-color: transparent;
-
+  
 }
 
 .hello-world-container {
@@ -118,21 +117,20 @@ body {
 
 .button-group {
   display: flex;
-  gap: 5px;
-  /* Adjust this value to control space between buttons */
+  gap: 5px; /* Adjust this value to control space between buttons */
 }
 
 
 .menu-button,
 .analytics-button {
   transition: all 0.3s ease;
-  color: white;
-  background-color: #89343b;
+  color: white; 
+  background-color: #89343b; 
 }
 
 .menu-button:hover,
 .analytics-button:hover {
-  color: #89343b;
+  color: #89343b; 
   background-color: white;
 }
 
@@ -162,7 +160,7 @@ body {
   z-index: 1;
   bottom: -80%;
   left: 50%;
-  margin-left: -80px;
+  margin-left: -80px; 
   opacity: 5;
   transition: opacity 0.3s;
   font-size: 10px;
@@ -175,40 +173,39 @@ body {
 
 .student-table {
   width: 90%;
-  overflow: hidden;
-  border-spacing: 0;
+  overflow: hidden; 
+  border-spacing: 0; 
   background: white;
   font-size: 13px;
   border-collapse: collapse;
   table-layout: fixed;
 }
 
-.student-table th,
-.student-table td {
-  border-bottom: 1px solid #89343b;
+.student-table th, .student-table td {
+  border-bottom: 1px solid #89343b; 
   padding: 8px;
   text-align: center;
   font-family: 'Nunito Sans', sans-serif;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  word-wrap: break-word;
+  word-wrap: break-word; 
 }
 
 .student-table th {
   background: linear-gradient(181.2deg, rgba(137, 52, 59, 1) 24.8%, rgba(198, 194, 149, 1) 80.5%);
   color: rgb(0, 0, 0);
   font-size: 13px;
-  border-top: 1px solid #89343b;
+  border-top: 1px solid #89343b; 
   height: 30px;
 }
 
 .student-table td {
-  border-right: none;
+  border-right: none; 
 }
 
 .student-table tr:last-child td {
-  border-bottom: none;
+  border-bottom: none; 
 }
 
 .student-table tr:nth-child(even) {
@@ -236,21 +233,19 @@ body {
 }
 
 .table-wrapper {
-  position: relative;
-  /* Positioning context for the pagination controls */
+  position: relative; /* Positioning context for the pagination controls */
 }
 
 .pagination {
   display: flex;
-  margin-bottom: 10px;
+  margin-bottom: 10px; 
   margin-left: 157vh;
 }
 
 .pagination button {
   background-color: #f0f0f0;
   border: 1px solid #ddd;
-  border-radius: 20px;
-  /* Rounded corners */
+  border-radius: 20px; /* Rounded corners */
   color: #333;
   cursor: pointer;
   font-size: 14px;
@@ -273,3 +268,4 @@ body {
   cursor: not-allowed;
   opacity: 0.5;
 }
+
