@@ -9,27 +9,25 @@ from rest_framework import generics
 
 
 class StudentViewSet(ModelViewSet):
-    queryset = Student.objects.all()
+    queryset = Student.objects.all()  # Ensure all Student objects are being queried
     serializer_class = StudentSerializer
-    lookup_field = 'studentID'  # Use studentID as the lookup field instead of pk
+    lookup_field = 'studentID'  # Ensure the correct field is being used for lookup
 
     def get_object(self):
         student_id = self.kwargs['studentID']
-        # Try to find the student by formatted studentID first
         try:
+            # Try to find the student by the formatted studentID
             return Student.objects.get(studentID=student_id)
         except Student.DoesNotExist:
-            # If studentID format fails, try without the format (or handle case)
-            return Student.objects.get(studentID=student_id.replace('-', ''))  # Adjust for no format
+            # If studentID format fails, try without the format
+            return Student.objects.get(studentID=student_id.replace('-', ''))
 
 class TransactionCreateView(APIView):
     def post(self, request, *args, **kwargs):
         reference_number = request.data.get('reference_number')
         student_id = request.data.get('student_id')
         hours_to_add = request.data.get('hours')
-
-        # Print received data for debugging
-        print(f"Received data: reference_number={reference_number}, student_id={student_id}, hours_to_add={hours_to_add}")
+        receipt_image = request.FILES.get('receipt')  # Get the uploaded image file
 
         # Validate required fields
         if not reference_number or not student_id or not hours_to_add:
@@ -48,7 +46,8 @@ class TransactionCreateView(APIView):
         # Create a new transaction
         transaction = Transaction.objects.create(
             student=student,
-            reference_number=reference_number
+            reference_number=reference_number,
+            receipt_image=receipt_image  # Save the image file in the transaction
         )
 
         # Update student's time_left (convert hours to minutes and add)
@@ -58,6 +57,7 @@ class TransactionCreateView(APIView):
         # Serialize and return the created transaction
         serializer = TransactionSerializer(transaction)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
     
 
 class TransactionListView(generics.ListAPIView):

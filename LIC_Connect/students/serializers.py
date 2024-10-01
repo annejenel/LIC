@@ -20,9 +20,10 @@ class StudentSerializer(serializers.ModelSerializer):
         return super(StudentSerializer, self).update(instance, validated_data)
 
 class TransactionSerializer(serializers.ModelSerializer):
-    student_id = serializers.ReadOnlyField(source='student.studentID')  
+    student_id = serializers.ReadOnlyField(source='student.studentID')
 
     class Meta:
         model = Transaction
-        fields = ['id', 'student', 'student_id', 'reference_number', 'timestamp']
+        fields = ['id', 'student', 'student_id', 'reference_number', 'timestamp', 'receipt_image']  # Include receipt_image
+
 
