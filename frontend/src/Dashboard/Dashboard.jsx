@@ -28,6 +28,8 @@ import ReceiptLongIcon from "@mui/icons-material/ReceiptLong";
 import ListIcon from "@mui/icons-material/List";
 import DriveFolderUploadIcon from "@mui/icons-material/DriveFolderUpload";
 
+import Logout from "../Components/Logout";
+
 // Lazy load the modals
 const AddStudent = lazy(() => import("../Modals/AddStudent"));
 const StudentTransaction = lazy(() => import("../Modals/StudentTransaction"));
@@ -198,6 +200,16 @@ export default function Dashboard() {
     fetchStudents();
   };
 
+  const handleLogout = async () => {
+    try {
+      await axios.post("http://localhost:8000/api/logout/"); // Adjust the URL to your logout endpoint
+      // On success, navigate to the login page or home page
+      navigate("/");
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
+  };
+
   return (
     <CssVarsProvider theme={theme}>
       <div className="container">
@@ -301,15 +313,32 @@ export default function Dashboard() {
             </Box>
 
             <Box className="header-actions">
-              <IconButton
-                variant="none"
-                className="logout"
-                sx={{
-                  color: "#89343b",
-                }}
-              >
-                <MoreVertIcon />
-              </IconButton>
+              <Dropdown>
+                <MenuButton
+                  variant="none"
+                  className="logout"
+                  sx={{
+                    color: "#89343b",
+                  }}
+                >
+                  <MoreVertIcon />
+                </MenuButton>
+                <Menu
+                  variant="outlined"
+                  placement="bottom-start"
+                  disablePortal
+                  size="sm"
+                  sx={{
+                    "--ListItemDecorator-size": "24px",
+                    "--ListItem-minHeight": "40px",
+                    "--ListDivider-gap": "4px",
+                    minWidth: 200,
+                    fontSize: "12px",
+                  }}
+                >
+                  <MenuItem onClick={handleLogout}>Logout</MenuItem>
+                </Menu>
+              </Dropdown>
             </Box>
           </Sheet>
 
