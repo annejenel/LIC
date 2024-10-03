@@ -376,25 +376,6 @@ export default function Dashboard() {
               >
                 Transaction
               </Button>
-
-              <Button
-                startDecorator={<ListIcon />}
-                sx={{
-                  backgroundColor: "#89343b",
-                  color: "white",
-                  fontSize: "12px",
-                  "&:hover": {
-                    color: "#89343b",
-                    backgroundColor: "#ffd000",
-                    borderColor: "#a94442",
-                  },
-                  height: "20px",
-                  margin: 0,
-                }}
-                onClick={openAddStudentModal}
-              >
-                Logs
-              </Button>
               <Button
                 startDecorator={<DriveFolderUploadIcon />}
                 sx={{
