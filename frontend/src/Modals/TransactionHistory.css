@@ -17,11 +17,13 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   padding: 20px;
   width: 100%;
-  max-width: 400px; /* Adjust as needed */
+  max-width: 400px;
+  /* Adjust as needed */
   position: relative;
   max-height: 80vh;
   overflow: hidden;
-  box-sizing: border-box; /* Ensure padding is included in width */
+  box-sizing: border-box;
+  /* Ensure padding is included in width */
 }
 
 .modal-close {
@@ -33,12 +35,15 @@
   position: absolute;
   top: 10px;
   right: 10px;
-  z-index: 1010; /* Ensure it’s on top of the modal content */
-  pointer-events: auto; /* Ensure it can be clicked */
+  z-index: 1010;
+  /* Ensure it’s on top of the modal content */
+  pointer-events: auto;
+  /* Ensure it can be clicked */
 }
 
 .modal-close:hover {
-  color: #666;
+  color: white;
+  background-color: #89343b;
 }
 
 h2 {
@@ -52,9 +57,10 @@ h2 {
 }
 
 .transaction-list {
-  max-height: 60vh; 
+  max-height: 60vh;
   overflow-y: auto;
-  overflow-x: hidden; /* Prevent horizontal scroll */
+  overflow-x: hidden;
+  /* Prevent horizontal scroll */
 }
 
 .transaction-list ul {

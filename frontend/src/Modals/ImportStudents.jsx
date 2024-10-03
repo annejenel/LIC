@@ -17,7 +17,7 @@ const ImportStudents = ({isOpen, onClose}) => {
         <div id="file-name"></div>
         <div className="button-group">
             <button className="import-btn">Import</button>
-            <button className="cancel-btn" onClick={onClose}>Cancel</button>
+           
         </div>
         </div>
     </div>

@@ -14,7 +14,7 @@ const AddNewSem = ({ isOpen, onClose}) => {
             </button>
             <h2>New Semester</h2>
             <form>
-                <div>
+                <div className='input'>
                     <label htmlFor="year">
                         <input type="text" placeholder='e.g. 2024-2025'/>
                     </label>
