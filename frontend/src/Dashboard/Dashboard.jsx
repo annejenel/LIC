@@ -32,7 +32,8 @@ import DriveFolderUploadIcon from "@mui/icons-material/DriveFolderUpload";
 const AddStudent = lazy(() => import("../Modals/AddStudent"));
 const StudentTransaction = lazy(() => import("../Modals/StudentTransaction"));
 const TransactionHistory = lazy(() => import("../Modals/TransactionHistory"));
-
+const AddNewSem = lazy(() => import("../Modals/AddNewSem"));
+import "../Modals/AddNewSem.css";
 import "./Dashboard.css";
 import "../Modals/AddStudent.css";
 
@@ -71,6 +72,7 @@ export default function Dashboard() {
   const [students, setStudents] = useState([]);
   const [loading, setLoading] = useState(false);
   const [isAddStudentModalOpen, setIsAddStudentModalOpen] = useState(false);
+  const [isAddNewSemOpen, setIsAddNewSemOpen] = useState(false);
   const [isTransactionModalOpen, setIsTransactionModalOpen] = useState(false);
   const [selectedStudentID, setSelectedStudentID] = useState(null);
   const navigate = useNavigate();
@@ -89,6 +91,7 @@ export default function Dashboard() {
     setCurrentPage(0);
   }, [searchQuery]);
 
+  
   const formatTimeLeft = (timeLeft) => {
     const hours = Math.floor(timeLeft / 60);
     const minutes = timeLeft % 60;
@@ -152,6 +155,14 @@ export default function Dashboard() {
   const openAddStudentModal = () => setIsAddStudentModalOpen(true);
   const closeAddStudentModal = () => setIsAddStudentModalOpen(false);
 
+  const openAddNewSem = () => {
+    console.log("Opening modal");
+    setIsAddNewSemOpen(true);
+  };
+    
+  const closeAddNewSem = () => setIsAddNewSemOpen(false);
+
+  
   const openTransactionModal = (studentID) => {
     setSelectedStudentID(studentID);
     setIsTransactionModalOpen(true);
@@ -343,6 +354,7 @@ export default function Dashboard() {
               >
                 Add Student
               </Button>
+              
               <Button
                 startDecorator={<ReceiptLongIcon />}
                 sx={{
@@ -394,12 +406,25 @@ export default function Dashboard() {
                   height: "20px",
                   margin: 0,
                 }}
-                onClick={openAddStudentModal}
+                onClick={openAddStudentModal}  
               >
                 Import
               </Button>
+              <Button sx={{                   
+                  backgroundColor: "#89343b",
+                  color: "white",                   
+                  fontSize: "12px",
+                  "&:hover": {
+                    color: "#89343b",
+                    backgroundColor: "#ffd000",
+                    borderColor: "#a94442",
+                  },
+                  height: "20px",
+                  margin: 0,  
+                }} onClick={openAddNewSem}>New Semester</Button>    
             </Box>
 
+            
             <Input
               placeholder="Search for student ID..."
               variant="soft"
@@ -574,6 +599,13 @@ export default function Dashboard() {
             <TransactionHistory
               isOpen={isTransactionHistoryModalOpen}
               onClose={closeTransactionHistoryModal}
+              // Add any other props required by the TransactionHistory modal
+            />
+          )}
+          {isAddNewSemOpen && (
+            <AddNewSem
+              isOpen={isAddNewSemOpen}
+              onClose={closeAddNewSem}
               // Add any other props required by the TransactionHistory modal
             />
           )}
