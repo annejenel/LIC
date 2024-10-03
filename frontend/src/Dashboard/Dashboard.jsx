@@ -33,9 +33,13 @@ const AddStudent = lazy(() => import("../Modals/AddStudent"));
 const StudentTransaction = lazy(() => import("../Modals/StudentTransaction"));
 const TransactionHistory = lazy(() => import("../Modals/TransactionHistory"));
 const AddNewSem = lazy(() => import("../Modals/AddNewSem"));
+const Import = lazy(() => import("../Modals/ImportStudents"));
+
 import "../Modals/AddNewSem.css";
 import "./Dashboard.css";
 import "../Modals/AddStudent.css";
+import "../Modals/ImportStudents.css";
+import ImportStudents from "../Modals/ImportStudents";
 
 const theme = extendTheme({
   components: {
@@ -73,6 +77,7 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(false);
   const [isAddStudentModalOpen, setIsAddStudentModalOpen] = useState(false);
   const [isAddNewSemOpen, setIsAddNewSemOpen] = useState(false);
+  const [upload, setUpload] = useState(false);
   const [isTransactionModalOpen, setIsTransactionModalOpen] = useState(false);
   const [selectedStudentID, setSelectedStudentID] = useState(null);
   const navigate = useNavigate();
@@ -153,15 +158,13 @@ export default function Dashboard() {
   };
 
   const openAddStudentModal = () => setIsAddStudentModalOpen(true);
-  const closeAddStudentModal = () => setIsAddStudentModalOpen(false);
+  const closeAddStudentModal = () => {setIsAddStudentModalOpen(false); console.log("Closing modal");}
 
-  const openAddNewSem = () => {
-    console.log("Opening modal");
-    setIsAddNewSemOpen(true);
-  };
-    
-  const closeAddNewSem = () => setIsAddNewSemOpen(false);
+  const openAddNewSem = () => {setIsAddNewSemOpen(true); console.log("Opening modal");}
+  const closeAddNewSem = () => {setIsAddNewSemOpen(false); console.log("Closing modal");}
 
+  const openUpload = () => {setUpload(true); console.log("Opening modal");}
+  const closeUpload = () => {setUpload(false); console.log("Closing modal");}
   
   const openTransactionModal = (studentID) => {
     setSelectedStudentID(studentID);
@@ -406,7 +409,7 @@ export default function Dashboard() {
                   height: "20px",
                   margin: 0,
                 }}
-                onClick={openAddStudentModal}  
+                onClick={openUpload}  
               >
                 Import
               </Button>
@@ -606,6 +609,13 @@ export default function Dashboard() {
             <AddNewSem
               isOpen={isAddNewSemOpen}
               onClose={closeAddNewSem}
+              // Add any other props required by the TransactionHistory modal
+            />
+          )}
+          {upload && (
+            <ImportStudents
+              isOpen={upload}
+              onClose={closeUpload}
               // Add any other props required by the TransactionHistory modal
             />
           )}
