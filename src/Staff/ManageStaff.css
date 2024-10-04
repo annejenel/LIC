@@ -27,23 +27,24 @@
   display: flex;
   align-items: center;
   padding: 8px;
-  border-radius: 8px;
+  border-radius: 0;
   min-width: 100%;
   margin-bottom: 10px;
-  background-color: #ffd404;
+  background-color: #ffd000;
   width: 100%;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
 .logo {
   display: flex;
   align-items: center;
-  width: 80px;
-  height: 80px;
+  width: 70px;
+  height: 70px;
   background-image: url('images/gui_logo.png');
   background-size: contain;
   background-repeat: no-repeat;
   background-position: left center;
-  margin-right: 8px;
+  margin-right: 20px;
 }
 
 .header-content {
@@ -58,6 +59,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
+  padding-right: 20px;
 }
 
 .search-input {
@@ -65,40 +67,118 @@
   display: flex;
   font-size: 20px;
   height: 40px;
-  border: 2px solid #a94442;
+  border: 2px solid #89343b;
 }
 
 .logout {
   border-radius: 50%;
   height: 50px;
   background-color: transparent;
-}
-
-.hello-world-container {
-  flex: 1;
-  display: flex;
-  align-items: flex-start;
-  justify-content: top;
-  position: relative;
-  width: 100%;
-}
-
-.hello-world-content {
-  flex: 1;
-  text-align: center;
+  color: #89343b;
 }
 
 .menu-button,
 .analytics-button {
   transition: all 0.3s ease;
   color: white;
-  background-color: #B53737;
+  background-color: #89343b;
 }
 
 .menu-button:hover,
 .analytics-button:hover {
-  color: #a94442;
+  color: #89343b;
   background-color: white;
+}
+
+.header-text {
+  font-family: "SUSE", sans-serif;
+  font-weight: bold;
+  font-size: 36px;
+  color: #a94442;
+  margin: 20px 0;
+}
+
+.hello-world-container {
+  flex: 1;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  position: relative;
+  width: 100%;
+  margin-top: -30px;
+}
+
+.add-staff-button {
+  position: absolute; 
+  top: -40px; 
+  right: 0; 
+  background-color: #28a745; 
+  color: white;
+  font-size: 17px;
+  margin-right: 10vw;
+  margin-top: 5vw;
+  border-radius: 10px;
+}
+
+.table-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start; /* Align items to start */
+  width: 130vw;
+  max-width: 1000px;
+  margin-top: 20px;
+  position: relative;
+  gap: 50px;
+  height: 200vw;
+  margin-top: 80px;
+}
+
+.table {
+  background-color: white; /* White background for each table */
+  width: 45%; /* Fixed width for each table */
+  min-width: 80vh; /* Minimum width to prevent shrinking */
+  display: flex;
+  flex-direction: column; /* Make it a column layout for the header and body */
+  border: 1px solid #ccc; /* Light gray border */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
+  margin: 0 10px; /* Margin between tables */
+  min-height: 80vh;
+}
+
+.table-title {
+  font-size: 18px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.staff-table {
+  width: 100%; /* Use full width of the container */
+  margin-top: 20px;
+}
+
+.staff-table table {
+  width: 100%;
+  border-collapse: collapse; /* Ensures borders don't double */
+}
+
+.staff-table th,
+.staff-table td {
+  border: 1px solid #ddd; /* Light gray border */
+  padding: 10px; /* Add some padding for better spacing */
+  text-align: left; /* Align text to the left */
+}
+
+.staff-table th {
+  background-color: #f0f0f0; /* Light gray background for headers */
+  font-weight: bold; /* Bold text for headers */
+}
+
+.staff-table tr:nth-child(even) {
+  background-color: #f9f9f9; /* Zebra striping for even rows */
+}
+
+.staff-table tr:hover {
+  background-color: #e2e2e2; /* Highlight on hover */
 }
 
 .analytics-container {
@@ -108,90 +188,21 @@
 
 .tooltip-text {
   visibility: hidden;
-  width: 120px;
   background-color: #555;
   color: #fff;
   text-align: center;
   border-radius: 6px;
-  padding: 5px 0;
   position: absolute;
   z-index: 1;
   bottom: -80%;
   left: 50%;
-  margin-left: -80px; 
-  opacity: 0;
+  margin-left: -80px;
+  opacity: 5;
   transition: opacity 0.3s;
+  font-size: 10px;
 }
 
 .analytics-container:hover .tooltip-text {
   visibility: visible;
   opacity: 1;
-}
-
-.header-text {
-  font-family: "SUSE", sans-serif;
-  font-optical-sizing: auto;
-  font-weight: bold;
-  font-style: normal;
-}
-
-.h1-text {
-  display: flex;
-}
-
-.container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-}
-
-.hello-world-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
-  padding: 20px;
-  background-color: #fff0f2;
-}
-
-.header-text {
-  text-align: center;
-  font-size: 36px;
-  font-weight: bold;
-  color: #a94442;
-  margin: 20px 0;
-}
-
-.add-staff-button {
-  display: flex;
-  justify-content: flex-end;
-  width: 100%;
-  max-width: 900px;
-  margin-bottom: 20px;
-}
-
-.table-container {
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  width: 100%;
-  max-width: 900px;
-  margin-top: 20px;
-}
-
-.table {
-  background-color: #d3d3d3;
-  width: 40%;
-  height: 200px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border: 1px solid #ccc;
-}
-
-.table-title {
-  font-size: 18px;
-  font-weight: bold;
-  text-align: center;
 }
