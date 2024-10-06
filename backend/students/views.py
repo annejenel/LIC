@@ -1,10 +1,10 @@
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
-from .models import Student, Transaction
-from .serializers import StudentSerializer, TransactionSerializer
+from .models import Student, Transaction, Staff
+from .serializers import StudentSerializer, TransactionSerializer, StaffSerializer
 from rest_framework.views import APIView
-from rest_framework import generics
+from rest_framework import generics, viewsets
 
 
 
@@ -63,3 +63,37 @@ class TransactionCreateView(APIView):
 class TransactionListView(generics.ListAPIView):
     queryset = Transaction.objects.all()
     serializer_class = TransactionSerializer
+
+class StaffViewSet(viewsets.ModelViewSet):
+    queryset = Staff.objects.all()
+    serializer_class = StaffSerializer
+    lookup_field = 'staffID'
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        
+        staff_id = request.data.get('staffID')
+        if Staff.objects.filter(staffID=staff_id).exists():
+            return Response({
+                "alert": {
+                    "type": "error",
+                    "message": f"Error: Staff ID '{staff_id}' already exists."
+                }
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        if serializer.is_valid():
+            self.perform_create(serializer)
+            return Response({
+                "alert": {
+                    "type": "success",
+                    "message": "Staff member created successfully!",
+                },
+                "data": serializer.data
+            }, status=status.HTTP_201_CREATED)
+
+        return Response({
+            "alert": {
+                "type": "error",
+                "message": "Error: " + str(serializer.errors), 
+            }
+        }, status=status.HTTP_400_BAD_REQUEST)

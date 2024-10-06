@@ -94,7 +94,7 @@ const ManageStaff = () => {
   };
 
   return (
-    <div className="container">
+    <div className="containerStaff">
       <Sheet variant="outlined" className="sheet">
         {/* Header Section */}
         <Sheet

@@ -43,3 +43,11 @@ class Transaction(models.Model):
 
     def __str__(self):
         return f"Transaction {self.reference_number} for {self.student.name}"
+
+class Staff(models.Model):
+    staffID = models.CharField(max_length=15, unique=True) 
+    name = models.CharField(max_length=100)
+    password = models.CharField(max_length=128, default=make_password('licstaffmem')) 
+
+    def __str__(self):
+        return self.name
