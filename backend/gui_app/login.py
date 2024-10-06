@@ -6,6 +6,32 @@ import time
 from tkinter import PhotoImage
 import os
 from PIL import Image, ImageTk
+import django
+import sys
+from django.conf import settings
+from pathlib import Path
+
+# Determine the Django project directory
+# Adjust this path to point to your Django project directory
+DJANGO_PROJECT_PATH = str(Path(__file__).resolve().parent.parent)
+sys.path.append(DJANGO_PROJECT_PATH)
+
+# Django setup
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'LIC_Connect.settings')  # Replace with your actual settings module
+django.setup()
+
+# Django setup test code - ADD THIS HERE
+try:
+    print(f"Django Version: {django.get_version()}")
+    print(f"Settings module: {os.environ['DJANGO_SETTINGS_MODULE']}")
+    print(f"Database name: {settings.DATABASES['default']['NAME']}")
+    print("Django configured successfully!")
+except Exception as e:
+    print(f"Django configuration error: {e}")
+    sys.exit(1)
+
+# Now you can safely import Django models and utilities
+from students.models import Student, Session  # Adjust import based on your actual model names
 
 class StudentApp:
     def __init__(self, root):
@@ -22,18 +48,11 @@ class StudentApp:
         # Create login screen
         self.create_login_screen()
 
-        # Connect to MySQL
-        self.conn = MySQLdb.connect(user='root', password='mysqlpass', 
-                                    host='localhost', database='lic_database')
-        self.cursor = self.conn.cursor()
-        
-        # Timer label
-        self.timer_label = tk.Label(self.root, text="", font=("Helvetica", 16))
         
     def create_login_screen(self):
         self.clear_screen()
         # Disable switching tabs
-        self.root.wm_attributes("-topmost", 1)
+        # self.root.wm_attributes("-topmost", 1)
 
          # Disable closing application
         #self.root.protocol("WM_DELETE_WINDOW", lambda: messagebox.showinfo("Information", "Request denied"))
@@ -79,6 +98,52 @@ class StudentApp:
         # image_label.image = image  # Keep a reference to avoid garbage collection
     def on_menu_screen_close(self):
         self.logout()
+    def create_change_password_screen(self, student_id):
+        # Open a new window for changing password
+        change_password_window = tk.Toplevel(self.root)
+        change_password_window.title("Change Password")
+
+        tk.Label(change_password_window, text="Old Password:").grid(row=0, column=0, padx=10, pady=10)
+        old_password_entry = tk.Entry(change_password_window, show="*")
+        old_password_entry.grid(row=0, column=1, padx=10, pady=10)
+
+        tk.Label(change_password_window, text="New Password:").grid(row=1, column=0, padx=10, pady=10)
+        new_password_entry = tk.Entry(change_password_window, show="*")
+        new_password_entry.grid(row=1, column=1, padx=10, pady=10)
+
+        tk.Label(change_password_window, text="Confirm New Password:").grid(row=2, column=0, padx=10, pady=10)
+        confirm_password_entry = tk.Entry(change_password_window, show="*")
+        confirm_password_entry.grid(row=2, column=1, padx=10, pady=10)
+
+        tk.Button(change_password_window, text="Change Password", 
+                  command=lambda: self.change_password(student_id, old_password_entry.get(), 
+                                                         new_password_entry.get(), 
+                                                         confirm_password_entry.get())).grid(row=3, columnspan=2, pady=10)
+        
+    def change_password(self, student_id, old_password, new_password, confirm_password):
+        if new_password != confirm_password:
+            messagebox.showerror("Error", "New passwords do not match.")
+            return
+
+        try:
+            # Assuming self.logged_in_student is set after login
+            student = Student.objects.get(studentID=student_id)
+
+            # Verify old password
+            from django.contrib.auth.hashers import check_password
+            if not check_password(old_password, student.password):
+                messagebox.showerror("Error", "Old password is incorrect.")
+                return
+
+            # Update the password
+            from django.contrib.auth.hashers import make_password
+            student.password = make_password(new_password)
+            student.save()
+
+            messagebox.showinfo("Success", "Password changed successfully!")
+        except Exception as e:
+            messagebox.showerror("Error", f"An error occurred: {e}")
+
     def create_menu_screen(self):
         self.clear_screen()
 
@@ -113,87 +178,99 @@ class StudentApp:
         for widget in self.root.winfo_children():
             widget.destroy()
         
+    def debug_password_verification(self):
+        student_id = self.entry1.get()
+        password = self.entry2.get()
+        
+        
+        try:
+
+            student = Student.objects.get(studentID=student_id)
+            stored_password = student.password
+
+            print(f"Debugging password verification:")
+            print(f"1. Entered password: {password}")
+            print(f"2. Stored hashed password: {stored_password}")
+
+           
+            from django.contrib.auth.hashers import check_password
+            is_valid = check_password(password, stored_password)
+            print(f"3. Verification: {is_valid}")
+            
+            return is_valid
+        except Student.DoesNotExist:
+            print(f"No student found with ID: {student_id}")
+            return False
+        except Exception as e:
+            print(f"Error during password verification: {e}")
+            return False
+
     def login(self):
         student_id = self.entry1.get()
         password = self.entry2.get()
-
         
         try:
-            # Query to select all columns from the webapp_student table for the given studentID and password
-            self.cursor.execute("SELECT * FROM students_student WHERE studentID = %s AND password = %s", 
-                                (student_id, password))
-            student = self.cursor.fetchone()
-            
-            if student:
-                time_left_minutes = student[4]  # time_left is the fifth column
-                
-                # Prevent login if time_left is 0
-                if time_left_minutes == 0:
-                    messagebox.showerror("Error", "No time left. Login not allowed.")
-                    return
-                
-                self.logged_in_student = student_id
-                self.time_left = timedelta(minutes=time_left_minutes)
-                self.login_time = datetime.now()
-                
-                # Insert a new session record
-                session_date = self.login_time.date()
-                session_time = self.login_time.time()
-                
-                self.cursor.execute(
-                    "INSERT INTO students_student (date, loginTime, parent_id, course) VALUES (%s, %s, %s, %s)",
-                    (session_date, session_time, student_id, student[2])  # course is the third column
-                )
-                self.conn.commit()
-                
-                # messagebox.showinfo("Login", "Login Successful!")
-                self.create_menu_screen()
-                self.start_timer()
-            else:
+            student = Student.objects.get(studentID=student_id)
+            is_valid = self.debug_password_verification()
+
+            # Check if the password is valid and if it matches the default password
+            if not is_valid:
                 messagebox.showerror("Error", "Invalid StudentID or Password")
-        except MySQLdb.ProgrammingError as e:
-            print("MySQL Programming Error:", e)
-            messagebox.showerror("Database Error", f"An error occurred: {e}")
-        except IndexError as e:
-            print("Index Error:", e)
-            messagebox.showerror("Index Error", f"An error occurred: {e}")
+                return
+                # Call the function to create/change password screen
+            if (password == '123456'):
+                self.create_change_password_screen(student_id)
+                return
+
+            if student.time_left == 0:
+                messagebox.showerror("Error", "No time left. Login not allowed.")
+                return
+        
+            self.logged_in_student = student
+            self.time_left = timedelta(minutes=student.time_left)
+            self.login_time = datetime.now()
+            
+            Session.objects.create(
+                date=self.login_time.date(),
+                loginTime=self.login_time.time(),
+                parent=student,
+                course=student.course
+            )
+            messagebox.showinfo("Login", "Login successful!")
+            self.create_menu_screen()
+            self.start_timer()
+        except Student.DoesNotExist:
+            messagebox.showerror("Error", "Invalid StudentID or Password")
+        except Exception as e:
+            print(f"Login error: {e}")
+            messagebox.showerror("Error", f"An error occurred during login: {e}")
+        
+
 
 
     def logout(self):
         if self.logged_in_student and self.login_time:
             logout_time = datetime.now()
-
-            # Time consumed converted to minutes
             time_logged_in = (logout_time - self.login_time).total_seconds() // 60
 
-            print(time_logged_in)
+            # Update session using Django model
+            session = Session.objects.filter(
+                parent=self.logged_in_student,
+                logoutTime__isnull=True
+            ).latest('loginTime')
+            
+            session.logoutTime = logout_time
+            session.consumedTime = time_logged_in
+            session.save()
 
-            # Fetch current time left of student
-            self.cursor.execute("SELECT time_left FROM webapp_student WHERE studentID = %s", 
-                                (self.logged_in_student,))
-            current_time_left = self.cursor.fetchone()[0]
+            # Update student's time left
+            self.logged_in_student.time_left -= time_logged_in
+            self.logged_in_student.save()
 
-            new_time_left = current_time_left - time_logged_in
-            
-            # Placing logout time
-            self.cursor.execute("UPDATE webapp_session SET logoutTime = %s WHERE parent_id = %s AND logoutTime IS NULL",
-                    (logout_time, self.logged_in_student))
-            
-            # Placing time_consumed
-            self.cursor.execute("UPDATE webapp_session SET consumedTime = %s WHERE parent_id = %s AND consumedTime IS NULL",
-                    (time_logged_in, self.logged_in_student))
-            
-            # Updating time left
-            self.cursor.execute("UPDATE webapp_student SET time_left = %s WHERE studentID = %s", 
-                                (new_time_left, self.logged_in_student))
-            self.conn.commit()
-            
             self.logged_in_student = None
             self.login_time = None
             self.elapsed_time = timedelta(0)
-            # messagebox.showinfo("Logout", "Logout Successful!")
             
-            # Return to fullscreen login screen
             self.root.attributes('-fullscreen', True)
             self.create_login_screen()
         else:
@@ -201,7 +278,7 @@ class StudentApp:
 
     def check_history(self):
         if self.logged_in_student:
-            self.cursor.execute("SELECT * FROM webapp_session WHERE parent_id = %s", 
+            self.cursor.execute("SELECT * FROM students_session WHERE parent_id = %s", 
                                 (self.logged_in_student,))
             sessions = self.cursor.fetchall()
             
@@ -255,7 +332,10 @@ class StudentApp:
         # Update every second
         self.root.after(1000, self.update_timer)
 
-if __name__ == "__main__":
+def main():
     root = tk.Tk()
     app = StudentApp(root)
     root.mainloop()
+
+if __name__ == "__main__":
+    main()
