@@ -2,7 +2,6 @@
 backend/venv
 backend/LIC_Connect/__pycache__
 backend/students/__pycache__
-backend/students/migrations
 
 # Frontend
 

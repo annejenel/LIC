@@ -34,6 +34,7 @@ class Student(models.Model):
 
     def __str__(self):
         return self.name
+    
 
 class Transaction(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
@@ -43,6 +44,7 @@ class Transaction(models.Model):
     def __str__(self):
         return f"Transaction {self.reference_number} for {self.student.name}"
 
+#Staff
 class Staff(models.Model):
     staffID = models.CharField(max_length=15, unique=True) 
     name = models.CharField(max_length=100)
