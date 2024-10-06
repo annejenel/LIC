@@ -6,7 +6,7 @@ const AddStudent = ({ isOpen, onClose, onStudentAdded }) => {
   const [studentID, setStudentID] = useState('');
   const [name, setName] = useState('');
   const [course, setCourse] = useState('');
-  const [status, setStatus] = useState('Active'); 
+  const [status, setStatus] = useState('Student'); 
   const [password, setPassword] = useState('hashed_default_password'); 
   const [timeLeft, setTimeLeft] = useState(60); 
   const [error, setError] = useState('');
@@ -53,7 +53,7 @@ const AddStudent = ({ isOpen, onClose, onStudentAdded }) => {
       setStudentID('');
       setName('');
       setCourse('');
-      setStatus('Active'); 
+      setStatus('Student'); 
       setPassword('hashed_default_password'); 
       setTimeLeft(60); 
 
