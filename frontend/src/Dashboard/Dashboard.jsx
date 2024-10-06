@@ -519,21 +519,21 @@ export default function Dashboard() {
                                 onClick={() =>
                                   handleStatusChange(
                                     student.studentID,
-                                    "Active"
+                                    "Student"
                                   )
                                 }
                               >
-                                Active
+                                Student
                               </MenuItem>
                               <MenuItem
                                 onClick={() =>
                                   handleStatusChange(
                                     student.studentID,
-                                    "Inactive"
+                                    "Alumnus"
                                   )
                                 }
                               >
-                                Inactive
+                                Alumnus
                               </MenuItem>
                             </Menu>
                           </Dropdown>

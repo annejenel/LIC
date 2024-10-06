@@ -4,9 +4,8 @@ from django.contrib.auth.hashers import make_password
 
 class Student(models.Model):
     STATUS_CHOICES = [
-        ('Active', 'Active'),
-        ('Inactive', 'Inactive'),
-        ('Dropped_out', 'Dropped Out'),
+        ('Student', 'Student'),
+        ('Alumnus', 'Alumnus'),
     ]
 
     studentID = models.CharField(
@@ -30,7 +29,7 @@ class Student(models.Model):
     status = models.CharField(
         max_length=15,
         choices=STATUS_CHOICES,
-        default='Active'
+        default='Student'
     )
 
     def __str__(self):
