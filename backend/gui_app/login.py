@@ -159,29 +159,44 @@ class StudentApp:
         self.clear_screen()
 
         self.root.attributes('-fullscreen', False)
-        self.root.geometry('300x200')
+        self.root.geometry('250x200')
         
         self.root.protocol("WM_DELETE_WINDOW", self.on_menu_screen_close)
         
         self.elapsed_time = timedelta(0)
         self.login_time = datetime.now()
         
+        # Create a container frame
         container = tk.Frame(self.root)
         container.grid(row=0, column=0, sticky='nsew')
         container.grid_rowconfigure(0, weight=1)
         container.grid_columnconfigure(0, weight=1)
-        
-        menu_frame = tk.Frame(container)
-        menu_frame.grid(row=0, column=0)
 
-        self.check_history_button = tk.Button(menu_frame, text="Check History", command=self.check_history)
-        self.check_history_button.grid(row=0, column=0, padx=10, pady=10)
-        
-        self.logout_button = tk.Button(menu_frame, text="Logout", command=self.logout)
-        self.logout_button.grid(row=1, column=0, padx=10, pady=10)
-        
+        # Create the menu frame
+        menu_frame = tk.Frame(container)
+        menu_frame.grid(row=0, column=0, padx=10, pady=10)
+
+        # Timer label centered
         self.timer_label = tk.Label(menu_frame, text="Time Elapsed: 00:00:00", font=("Helvetica", 16))
-        self.timer_label.grid(row=2, column=0, padx=10, pady=10)
+        self.timer_label.grid(row=0, column=0, columnspan=2, padx=10, pady=10, sticky='nsew')  # Center label with columnspan
+
+        # Create a frame for buttons to manage their layout
+        button_frame = tk.Frame(menu_frame)
+        button_frame.grid(row=1, column=0, sticky='nsew')
+
+        # Check History button on the left
+        self.check_history_button = tk.Button(button_frame, text="Check History", command=self.check_history)
+        self.check_history_button.grid(row=0, column=0, padx=10, pady=10)
+
+        # Logout button on the right
+        self.logout_button = tk.Button(button_frame, text="Logout", command=self.logout)
+        self.logout_button.grid(row=0, column=1, padx=10, pady=10)
+
+        # Configure button frame to expand
+        button_frame.grid_columnconfigure(0, weight=1)  # Allow Check History button to expand
+        button_frame.grid_columnconfigure(1, weight=1)  # Allow Logout button to expand
+        
+        
         
         self.update_timer()
 
