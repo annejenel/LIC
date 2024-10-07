@@ -10,6 +10,7 @@ import django
 import sys
 from django.conf import settings
 from pathlib import Path
+from tkinter import ttk
 
 # Determine the Django project directory
 # Adjust this path to point to your Django project directory
@@ -304,30 +305,55 @@ class StudentApp:
 
     def check_history(self):
         if self.logged_in_student:
-            self.cursor.execute("SELECT * FROM students_session WHERE parent_id = %s", 
-                                (self.logged_in_student,))
-            sessions = self.cursor.fetchall()
-            
-            if sessions:
-                history_window = tk.Toplevel(self.root)
-                history_window.title("Session History")
-                history_window.geometry("400x300")
+            try:
+                # Use Django ORM to retrieve sessions for the logged-in student
+                sessions = Session.objects.filter(parent=self.logged_in_student)
 
-                text_widget = tk.Text(history_window)
-                text_widget.pack(expand=True, fill='both')
+                if sessions.exists():
+                    # Create a new window to display session history
+                    history_window = tk.Toplevel(self.root)
+                    history_window.title("Session History")
+                    history_window.geometry("500x300")
 
-                for i, session in enumerate(sessions, start=1):
-                    logintime = session[2]
-                    logouttime = session[3]
-                    timeconsumed = session[6]
-                    text_widget.insert(tk.END, f"Session {i}:\n")
-                    text_widget.insert(tk.END, f"Login Time: {logintime}\n")
-                    text_widget.insert(tk.END, f"Logout Time: {logouttime}\n")
-                    text_widget.insert(tk.END, f"Time Consumed: {timeconsumed} minutes\n\n")
-            else:
-                messagebox.showerror("Error", "No session history found for this student")
+                    # Create a Treeview widget to display the history in tabular form
+                    tree = ttk.Treeview(history_window, columns=("Date", "Login Time", "Logout Time", "Time Consumed"), show="headings", height=10)
+                    tree.pack(expand=True, fill='both')
+
+                    # Define column headings
+                    tree.heading("Date", text="Date")
+                    tree.heading("Login Time", text="Login")
+                    tree.heading("Logout Time", text="Logout")
+                    tree.heading("Time Consumed", text="Time Consumed(minutes)")
+
+                    # Define column widths
+                    tree.column("Date", width=100)
+                    tree.column("Login Time", width=100)
+                    tree.column("Logout Time", width=100)
+                    tree.column("Time Consumed", width=100)
+
+                    # Iterate through sessions and insert into the Treeview
+                    for session in sessions:
+                        date = session.date
+                        # Format loginTime and logoutTime to display only HH:MM:SS
+                        logintime = session.loginTime.strftime("%H:%M:%S")
+
+                        if session.logoutTime:
+                            logouttime = session.logoutTime.strftime("%H:%M:%S")
+                        else:
+                            logouttime = 'Still logged in'
+
+                        # Time consumed (assuming it is in minutes)
+                        timeconsumed = session.consumedTime
+
+                        # Insert session details as a new row in the tree
+                        tree.insert("", "end", values=(date, logintime, logouttime, timeconsumed))
+                else:
+                    messagebox.showerror("Error", "No session history found for this student")
+            except Exception as e:
+                messagebox.showerror("Error", f"An error occurred: {e}")
         else:
             messagebox.showerror("Error", "No student is logged in")
+
 
     def start_timer(self):
         self.update_timer()
