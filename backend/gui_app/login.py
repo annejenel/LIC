@@ -53,7 +53,7 @@ class StudentApp:
         self.clear_screen()
         # Disable switching tabs
         # self.root.wm_attributes("-topmost", 1)
-
+        
          # Disable closing application
         #self.root.protocol("WM_DELETE_WINDOW", lambda: messagebox.showinfo("Information", "Request denied"))
         container = tk.Frame(self.root)
@@ -63,10 +63,10 @@ class StudentApp:
         login_frame.grid(row=0, column=0)
 
         # Load and display the image
-        image_path = r"C:/Users/JohnO/OneDrive/Documents/GITHUB/Capstone/LIC_System/LIC_Connect/static/images/gui_logo.png"
+        image_path = r"backend/gui_app/gui_logo.png"
         if os.path.exists(image_path):
             img = Image.open(image_path)
-            img = img.resize((100, 100))
+            img.thumbnail((100, 100))
             image = ImageTk.PhotoImage(img)
             image_label = tk.Label(login_frame, image=image)
             image_label.grid(row=0, column=0, padx=10, pady=10, sticky='w')  # Place the image label in the leftmost column and spanning 4 rows
@@ -79,23 +79,31 @@ class StudentApp:
         self.label1 = tk.Label(login_frame, text="Student ID")
         self.label1.grid(row=1, column=0, padx=10, pady=10, sticky='e')  # Align label to the right
         
-        self.entry1 = tk.Entry(login_frame)
+        self.entry1 = tk.Entry(login_frame, width= 35)
         self.entry1.grid(row=1, column=1, padx=10, pady=10)
         
-        self.label2 = tk.Label(login_frame, text="Password")
+        self.label2 = tk.Label(login_frame, text="Password",)
         self.label2.grid(row=2, column=0, padx=10, pady=10, sticky='e')  # Align label to the right
         
-        self.entry2 = tk.Entry(login_frame, show="*")
+        self.entry2 = tk.Entry(login_frame, show="*", width= 35)
         self.entry2.grid(row=2, column=1, padx=10, pady=10)
         
-        self.login_button = tk.Button(login_frame, text="Login", command=self.login)
+        self.login_button = tk.Button(login_frame, text="Login", command=self.login, width= 45)
         self.login_button.grid(row=3, column=0, columnspan=2, pady=10)
-        
+        self.login_button.bind("<Enter>", self.on_enter)
+        self.login_button.bind("<Leave>", self.on_leave)
         # # Add an image
-        # image = PhotoImage(file="path_to_your_image.png")  # Change "path_to_your_image.png" to the actual path
+        # image = PhotoImage(file="gui_logo.png")  # Change "path_to_your_image.png" to the actual path
         # image_label = tk.Label(login_frame, image=image)
         # image_label.grid(row=3, column=0, columnspan=2, pady=10)
         # image_label.image = image  # Keep a reference to avoid garbage collection
+    # Function to change button color on hover
+
+    def on_enter(self, event):
+        event.widget.config(bg='lightblue')  # Change the color on hover
+
+    def on_leave(self, event):
+        event.widget.config(bg='SystemButtonFace')  # Reset to default color
     def on_menu_screen_close(self):
         self.logout()
     def create_change_password_screen(self, student_id):
