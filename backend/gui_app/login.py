@@ -109,46 +109,49 @@ class StudentApp:
     def create_change_password_screen(self, student_id):
         # Open a new window for changing password
         change_password_window = tk.Toplevel(self.root)
+        change_password_window.grab_set()
         change_password_window.title("Change Password")
 
-        tk.Label(change_password_window, text="Old Password:").grid(row=0, column=0, padx=10, pady=10)
-        old_password_entry = tk.Entry(change_password_window, show="*")
-        old_password_entry.grid(row=0, column=1, padx=10, pady=10)
+        
 
         tk.Label(change_password_window, text="New Password:").grid(row=1, column=0, padx=10, pady=10)
         new_password_entry = tk.Entry(change_password_window, show="*")
-        new_password_entry.grid(row=1, column=1, padx=10, pady=10)
+        new_password_entry.grid(row=1, column=1, padx=10, pady=5)
 
         tk.Label(change_password_window, text="Confirm New Password:").grid(row=2, column=0, padx=10, pady=10)
         confirm_password_entry = tk.Entry(change_password_window, show="*")
         confirm_password_entry.grid(row=2, column=1, padx=10, pady=10)
 
+        message_label = tk.Label(change_password_window, text="", fg="red")
+        message_label.grid(row=3, column=1, pady=5)
+
         tk.Button(change_password_window, text="Change Password", 
-                  command=lambda: self.change_password(student_id, old_password_entry.get(), 
+                  command=lambda: self.change_password(student_id,
+                                                       message_label,
                                                          new_password_entry.get(), 
-                                                         confirm_password_entry.get())).grid(row=3, columnspan=2, pady=10)
+                                                         confirm_password_entry.get(),
+                                                         change_password_window)).grid(row=4, columnspan=2, pady=10)
         
-    def change_password(self, student_id, old_password, new_password, confirm_password):
+    def change_password(self, student_id, message_label, new_password, confirm_password, change_password_window):
         if new_password != confirm_password:
-            messagebox.showerror("Error", "New passwords do not match.")
+            message_label.config(text="Password do not match.")
             return
 
         try:
-            # Assuming self.logged_in_student is set after login
+            # get student ID
             student = Student.objects.get(studentID=student_id)
-
-            # Verify old password
-            from django.contrib.auth.hashers import check_password
-            if not check_password(old_password, student.password):
-                messagebox.showerror("Error", "Old password is incorrect.")
-                return
-
             # Update the password
             from django.contrib.auth.hashers import make_password
             student.password = make_password(new_password)
             student.save()
 
             messagebox.showinfo("Success", "Password changed successfully!")
+            # Destroy the pop-up window
+            change_password_window.destroy()
+             # Clear login input fields
+            self.entry1.delete(0, tk.END)  # Assuming entry1 is the Student ID field
+            self.entry2.delete(0, tk.END)  # Assuming entry2 is the Password field
+
         except Exception as e:
             messagebox.showerror("Error", f"An error occurred: {e}")
 
