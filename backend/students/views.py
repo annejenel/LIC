@@ -6,6 +6,7 @@ from .serializers import StudentSerializer, TransactionSerializer, StaffSerializ
 from rest_framework.views import APIView
 from rest_framework import generics, viewsets
 from django.conf import settings 
+from django.contrib.auth.hashers import make_password, check_password
 
 
 
@@ -35,11 +36,13 @@ class ResetPasswordView(APIView):
             default_password = '123456'  # Replace with your actual default password
 
             # Check if the current password is already the default
-            if student.password == default_password:
+            is_valid = check_password(default_password, student.password)
+                
+            if(is_valid == True):
                 return Response({"message": "Current password is already the default."}, status=status.HTTP_400_BAD_REQUEST)
 
             # Reset the password to the default password
-            student.password = default_password  # Directly set it to the default password
+            student.password = make_password(default_password)  # Directly set it to the default password
             student.save()
 
             return Response({"message": "Password reset successful."}, status=status.HTTP_200_OK)

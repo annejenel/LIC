@@ -11,8 +11,8 @@ class StudentSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         # Set a default password if not provided
-        if 'password' not in validated_data or validated_data['password'] == '':
-            validated_data['password'] = '123456'  # Set a default password if needed
+        if 'password' in validated_data:
+            validated_data['password'] = '123456'
         
         validated_data['password'] = make_password(validated_data['password'])
         return super(StudentSerializer, self).create(validated_data)
