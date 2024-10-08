@@ -252,6 +252,11 @@ class StudentApp:
             if student.time_left == 0:
                 messagebox.showerror("Error", "No time left. Login not allowed.")
                 return
+            # Check if the user is already logged in (logoutTime is null)
+            current_session = Session.objects.filter(parent=student, logoutTime__isnull=True).first()
+            if current_session:
+                messagebox.showinfo("Info", "Current user is already logged in.")
+                return
         
             self.logged_in_student = student
             self.time_left = timedelta(minutes=student.time_left)
@@ -272,8 +277,6 @@ class StudentApp:
             print(f"Login error: {e}")
             messagebox.showerror("Error", f"An error occurred during login: {e}")
         
-
-
 
     def logout(self):
         if self.logged_in_student and self.login_time:
