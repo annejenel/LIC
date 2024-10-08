@@ -5,6 +5,8 @@ from .models import Student, Transaction, Staff
 from .serializers import StudentSerializer, TransactionSerializer, StaffSerializer
 from rest_framework.views import APIView
 from rest_framework import generics, viewsets
+from django.conf import settings 
+
 
 
 
@@ -20,7 +22,31 @@ class StudentViewSet(ModelViewSet):
             return Student.objects.get(studentID=student_id)
         except Student.DoesNotExist:
             # If studentID format fails, try without the format (or handle case)
-            return Student.objects.get(studentID=student_id.replace('-', ''))  # Adjust for no format
+            return Student.objects.get(studentID=student_id.replace('-', ''))  
+        
+
+class ResetPasswordView(APIView):
+    def post(self, request, studentID):
+        try:
+            # Retrieve the student instance
+            student = Student.objects.get(studentID=studentID)
+
+            # Define your default password
+            default_password = '123456'  # Replace with your actual default password
+
+            # Check if the current password is already the default
+            if student.password == default_password:
+                return Response({"message": "Current password is already the default."}, status=status.HTTP_400_BAD_REQUEST)
+
+            # Reset the password to the default password
+            student.password = default_password  # Directly set it to the default password
+            student.save()
+
+            return Response({"message": "Password reset successful."}, status=status.HTTP_200_OK)
+
+        except Student.DoesNotExist:
+            return Response({"error": "Student not found."}, status=status.HTTP_404_NOT_FOUND)
+    
 
 class TransactionCreateView(APIView):
     def post(self, request, *args, **kwargs):

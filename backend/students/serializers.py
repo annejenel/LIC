@@ -7,18 +7,26 @@ class StudentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Student
-        fields = ['studentID', 'name', 'course', 'time_left', 'password', 'status']  # Added status
+        fields = ['studentID', 'name', 'course', 'time_left', 'password', 'status']
 
     def create(self, validated_data):
-        if 'password' in validated_data:
-            validated_data['password'] = '123456'
+        # Set a default password if not provided
+        if 'password' not in validated_data or validated_data['password'] == '':
+            validated_data['password'] = '123456'  # Set a default password if needed
+        
         validated_data['password'] = make_password(validated_data['password'])
         return super(StudentSerializer, self).create(validated_data)
 
     def update(self, instance, validated_data):
+        # Update password only if provided
         if 'password' in validated_data:
-            validated_data['password'] = make_password(validated_data['password'])
+            # Check if the password is already set to default
+            if validated_data['password'] == 'your_default_password':  # Replace with your actual default password
+                instance.password = make_password('your_default_password')  # Keep it as the default password
+            else:
+                validated_data['password'] = make_password(validated_data['password'])
         return super(StudentSerializer, self).update(instance, validated_data)
+
 
 class TransactionSerializer(serializers.ModelSerializer):
     student_id = serializers.ReadOnlyField(source='student.studentID')  
