@@ -5,6 +5,9 @@ from .models import Student, Transaction, Staff
 from .serializers import StudentSerializer, TransactionSerializer, StaffSerializer
 from rest_framework.views import APIView
 from rest_framework import generics, viewsets
+from django.conf import settings 
+from django.contrib.auth.hashers import make_password, check_password
+
 
 
 
@@ -20,13 +23,40 @@ class StudentViewSet(ModelViewSet):
             return Student.objects.get(studentID=student_id)
         except Student.DoesNotExist:
             # If studentID format fails, try without the format (or handle case)
-            return Student.objects.get(studentID=student_id.replace('-', ''))  # Adjust for no format
+            return Student.objects.get(studentID=student_id.replace('-', ''))  
+        
+
+class ResetPasswordView(APIView):
+    def post(self, request, studentID):
+        try:
+            # Retrieve the student instance
+            student = Student.objects.get(studentID=studentID)
+
+            # Define your default password
+            default_password = '123456'  # Replace with your actual default password
+
+            # Check if the current password is already the default
+            is_valid = check_password(default_password, student.password)
+                
+            if(is_valid == True):
+                return Response({"message": "Current password is already the default."}, status=status.HTTP_400_BAD_REQUEST)
+
+            # Reset the password to the default password
+            student.password = make_password(default_password)  # Directly set it to the default password
+            student.save()
+
+            return Response({"message": "Password reset successful."}, status=status.HTTP_200_OK)
+
+        except Student.DoesNotExist:
+            return Response({"error": "Student not found."}, status=status.HTTP_404_NOT_FOUND)
+    
 
 class TransactionCreateView(APIView):
     def post(self, request, *args, **kwargs):
         reference_number = request.data.get('reference_number')
         student_id = request.data.get('student_id')
         hours_to_add = request.data.get('hours')
+        receipt_image = request.FILES.get('receipt')
 
         # Print received data for debugging
         print(f"Received data: reference_number={reference_number}, student_id={student_id}, hours_to_add={hours_to_add}")
@@ -48,7 +78,8 @@ class TransactionCreateView(APIView):
         # Create a new transaction
         transaction = Transaction.objects.create(
             student=student,
-            reference_number=reference_number
+            reference_number=reference_number,
+            receipt_image=receipt_image  # Save the image file in the transaction
         )
 
         # Update student's time_left (convert hours to minutes and add)

@@ -30,6 +30,7 @@ const StudentTransaction = lazy(() => import("../Modals/StudentTransaction"));
 const TransactionHistory = lazy(() => import("../Modals/TransactionHistory"));
 const AddNewSem = lazy(() => import("../Modals/AddNewSem"));
 const Import = lazy(() => import("../Modals/ImportStudents"));
+import EditStudentAction from '../Modals/EditStudentAction';
 
 import "../Modals/AddNewSem.css";
 import "./Dashboard.css";
@@ -75,6 +76,7 @@ export default function Dashboard() {
   const [upload, setUpload] = useState(false);
   const [isTransactionModalOpen, setIsTransactionModalOpen] = useState(false);
   const [selectedStudentID, setSelectedStudentID] = useState(null);
+  const [isEditStudentModalOpen, setIsEditStudentModalOpen] = useState(false);
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -120,6 +122,20 @@ export default function Dashboard() {
 
   const handleStudentAdded = () => {
     fetchStudents();
+  };
+
+  const handleEditStudent = (studentID) => {
+    setSelectedStudentID(studentID);
+    setIsEditStudentModalOpen(true);
+  };
+
+  const closeEditStudentModal = () => {
+    setIsEditStudentModalOpen(false);
+    setSelectedStudentID(null); // Reset selected ID
+  };
+
+  const handleStudentUpdated = () => {
+    fetchStudents(); // Fetch updated students
   };
 
   const handleStatusChange = (studentID, newStatus) => {
@@ -439,9 +455,9 @@ export default function Dashboard() {
                           >
                             <PaymentsRoundedIcon />
                           </IconButton>
-                          <IconButton>
-                            <BorderColorRoundedIcon />
-                          </IconButton>
+                          <IconButton onClick={() => handleEditStudent(student.studentID)}>
+                  <BorderColorRoundedIcon />
+                </IconButton>
                         </td>
                       </tr>
                     ))}
@@ -490,6 +506,14 @@ export default function Dashboard() {
               // Add any other props required by the TransactionHistory modal
             />
           )}
+          {isEditStudentModalOpen && (
+        <EditStudentAction
+          isOpen={isEditStudentModalOpen}
+          onClose={closeEditStudentModal}
+          studentID={selectedStudentID}
+          onPasswordReset={handleStudentUpdated}
+        />
+      )}
         </Suspense>
       </div>
     </CssVarsProvider>
