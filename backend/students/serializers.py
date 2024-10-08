@@ -33,7 +33,7 @@ class TransactionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Transaction
-        fields = ['id', 'student', 'student_id', 'reference_number', 'timestamp']
+        fields = ['id', 'student', 'student_id', 'reference_number', 'timestamp','receipt_image']
 
 class StaffSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, required=False)

@@ -56,6 +56,7 @@ class TransactionCreateView(APIView):
         reference_number = request.data.get('reference_number')
         student_id = request.data.get('student_id')
         hours_to_add = request.data.get('hours')
+        receipt_image = request.FILES.get('receipt')
 
         # Print received data for debugging
         print(f"Received data: reference_number={reference_number}, student_id={student_id}, hours_to_add={hours_to_add}")
@@ -77,7 +78,8 @@ class TransactionCreateView(APIView):
         # Create a new transaction
         transaction = Transaction.objects.create(
             student=student,
-            reference_number=reference_number
+            reference_number=reference_number,
+            receipt_image=receipt_image  # Save the image file in the transaction
         )
 
         # Update student's time_left (convert hours to minutes and add)

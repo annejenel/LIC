@@ -37,6 +37,7 @@ class Transaction(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     reference_number = models.CharField(max_length=100)
     timestamp = models.DateTimeField(auto_now_add=True)
+    receipt_image = models.ImageField(upload_to='receipts/', null=True, blank=True)  # Add image field
 
     def __str__(self):
         return f"Transaction {self.reference_number} for {self.student.name}"
