@@ -33,14 +33,14 @@ body {
   background: rgba(160, 90, 96, 0.8);
 }
 
-.container {
+.containerDashboard {
   display: flex;
   align-items: flex-start;
   justify-content: center;
   width: 100%;
   box-sizing: border-box;
   flex: 1;
-  min-height: 60vh;
+  min-height: 50vh;
   height: 150px;
 }
 

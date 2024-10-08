@@ -1,21 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom'; 
 import Sheet from '@mui/joy/Sheet';
-import Box from '@mui/joy/Box';
 import Button from '@mui/joy/Button';
-import Dropdown from '@mui/joy/Dropdown';
-import IconButton from '@mui/joy/IconButton';
-import ListDivider from '@mui/joy/ListDivider';
-import ListItemDecorator from '@mui/joy/ListItemDecorator';
-import Menu from '@mui/joy/Menu';
-import MenuButton from '@mui/joy/MenuButton';
-import MenuItem from '@mui/joy/MenuItem';
 import Typography from '@mui/joy/Typography';
 import AddIcon from '@mui/icons-material/Add';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
-import InsightsTwoTone from '@mui/icons-material/InsightsTwoTone';
-import ExitToAppOutlinedIcon from '@mui/icons-material/ExitToAppOutlined';
+import Header from '../Components/Header.jsx';
 
 import AddStaffModal from '../Modals/AddStaff'; // Import the modal component
 import './ManageStaff.css';
@@ -94,119 +83,10 @@ const ManageStaff = () => {
   };
 
   return (
+    
     <div className="containerStaff">
-      <Sheet variant="outlined" className="sheet">
-        {/* Header Section */}
-        <Sheet
-          variant="solid"
-          className="header"
-          sx={{
-            backgroundColor: "#ffd000",
-            borderRadius: "0",
-            marginTop: "0",
-            top: 0,
-            left: 0,
-            zIndex: 1000,
-          }}
-        >
-          <Box className="logo" />
-          <Typography
-            component="div"
-            sx={{ marginLeft: "16px", textAlign: "left", fontSize: "20px" }}
-          >
-            <div>LIC Connect</div>
-            <div>Library Internet Center</div>
-          </Typography>
-
-          <Box className="header-content">
-            <Dropdown>
-              <MenuButton
-                className="menu-button"
-                sx={{
-                  "--Button-radius": "1.5rem",
-                  backgroundColor: "#89343b",
-                  color: "white",
-                  fontSize: "12px",
-                  "&:hover": {
-                    color: "#89343b",
-                    backgroundColor: "white",
-                  },
-                }}
-                variant="outlined"
-                endDecorator={<KeyboardArrowDownIcon />}
-              >
-                Manage Staff
-              </MenuButton>
-              <Menu
-                variant="outlined"
-                placement="bottom-start"
-                disablePortal
-                size="sm"
-                sx={{
-                  "--ListItemDecorator-size": "24px",
-                  "--ListItem-minHeight": "40px",
-                  "--ListDivider-gap": "4px",
-                  minWidth: 200,
-                  fontSize: "12px",
-                }}
-              >
-                <MenuItem>
-                  <ListItemDecorator>
-                    <ManageAccountsIcon />
-                  </ListItemDecorator>
-                  Account
-                </MenuItem>
-                <ListDivider />
-                <MenuItem onClick={() => navigate("/dashboard")}>
-                  Dashboard
-                </MenuItem>
-                <MenuItem onClick={() => navigate("/settings")}>
-                  Settings
-                </MenuItem>
-              </Menu>
-            </Dropdown>
-
-            <Box
-              className="analytics-container"
-              onMouseEnter={() => setShowTooltip(true)}
-              onMouseLeave={() => setShowTooltip(false)}
-            >
-              <Button
-                className="analytics-button"
-                sx={{
-                  marginLeft: "8px",
-                  backgroundColor: "transparent",
-                  border: "2px solid #89343b",
-                  color: "#89343b",
-                  marginRight: "50px",
-                  "&:hover": {
-                    color: "white",
-                    backgroundColor: "#89343b",
-                    borderColor: "#89343b",
-                  },
-                }}
-              >
-                <InsightsTwoTone />
-              </Button>
-              {showTooltip && (
-                <div className="tooltip-text">View Analytics</div>
-              )}
-            </Box>
-          </Box>
-
-          <Box className="header-actions">
-            <IconButton
-              variant="none"
-              className="logout"
-              sx={{
-                color: "#89343b",
-              }}
-            >
-              <ExitToAppOutlinedIcon />
-            </IconButton>
-          </Box>
-        </Sheet>
-
+      <Header/>
+      <Sheet>
         <Typography
           component="h1"
           className="header-text"

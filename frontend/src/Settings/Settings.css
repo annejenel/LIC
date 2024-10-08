@@ -4,4 +4,6 @@
   padding: 0 25px 25px;
 }
 
-;
+.containerSettings {
+  min-height: 50vh;
+}

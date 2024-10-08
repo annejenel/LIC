@@ -7,26 +7,22 @@ import Button from "@mui/joy/Button";
 import Dropdown from "@mui/joy/Dropdown";
 import Input from "@mui/joy/Input";
 import IconButton from "@mui/joy/IconButton";
-import ListDivider from "@mui/joy/ListDivider";
-import ListItemDecorator from "@mui/joy/ListItemDecorator";
 import Menu from "@mui/joy/Menu";
 import MenuButton from "@mui/joy/MenuButton";
 import MenuItem from "@mui/joy/MenuItem";
 import Typography from "@mui/joy/Typography";
 import AddIcon from "@mui/icons-material/Add";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
 import SearchIcon from "@mui/icons-material/Search";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
-import InsightsTwoTone from "@mui/icons-material/InsightsTwoTone";
 import BorderColorRoundedIcon from "@mui/icons-material/BorderColorRounded";
 import HistoryEduRoundedIcon from "@mui/icons-material/HistoryEduRounded";
 import PaymentsRoundedIcon from "@mui/icons-material/PaymentsRounded";
 import { CssVarsProvider, extendTheme } from "@mui/joy/styles";
 import { ArrowBackIos, ArrowForwardIos } from "@mui/icons-material";
 import ReceiptLongIcon from "@mui/icons-material/ReceiptLong";
-import ListIcon from "@mui/icons-material/List";
 import DriveFolderUploadIcon from "@mui/icons-material/DriveFolderUpload";
+import PersonAddAltIcon from '@mui/icons-material/PersonAddAlt';
+import Header from '../Components/Header.jsx';
 
 // Lazy load the modals
 const AddStudent = lazy(() => import("../Modals/AddStudent"));
@@ -72,7 +68,6 @@ const statusColors = {
 };
 
 export default function Dashboard() {
-  const [showTooltip, setShowTooltip] = useState(false);
   const [students, setStudents] = useState([]);
   const [loading, setLoading] = useState(false);
   const [isAddStudentModalOpen, setIsAddStudentModalOpen] = useState(false);
@@ -214,118 +209,11 @@ export default function Dashboard() {
 
   return (
     <CssVarsProvider theme={theme}>
-      <div className="container">
+      <Header/>
+      <div className="containerDashboard">
         <Sheet variant="outlined" className="sheet">
           {/* Header Section */}
-          <Sheet
-            variant="solid"
-            className="header"
-            sx={{
-              backgroundColor: "#ffd000",
-              borderRadius: "0",
-              marginTop: "0",
-              top: 0,
-              left: 0,
-              zIndex: 1000,
-            }}
-          >
-            <Box className="logo" />
-            <Typography
-              component="div"
-              sx={{ marginLeft: "16px", textAlign: "left", fontSize: "20px" }}
-            >
-              <div>LIC Connect</div>
-              <div>Library Internet Center</div>
-            </Typography>
-
-            <Box className="header-content">
-              <Dropdown>
-                <MenuButton
-                  className="menu-button"
-                  sx={{
-                    "--Button-radius": "1.5rem",
-                    backgroundColor: "#89343b",
-                    color: "white",
-                    fontSize: "12px",
-                    "&:hover": {
-                      color: "#89343b",
-                      backgroundColor: "white",
-                    },
-                  }}
-                  variant="outlined"
-                  endDecorator={<KeyboardArrowDownIcon />}
-                >
-                  Dashboard
-                </MenuButton>
-                <Menu
-                  variant="outlined"
-                  placement="bottom-start"
-                  disablePortal
-                  size="sm"
-                  sx={{
-                    "--ListItemDecorator-size": "24px",
-                    "--ListItem-minHeight": "40px",
-                    "--ListDivider-gap": "4px",
-                    minWidth: 200,
-                    fontSize: "12px",
-                  }}
-                >
-                  <MenuItem>
-                    <ListItemDecorator>
-                      <ManageAccountsIcon />
-                    </ListItemDecorator>
-                    Account
-                  </MenuItem>
-                  <ListDivider />
-                  <MenuItem onClick={() => navigate("/staff")}>
-                    Manage Staff
-                  </MenuItem>
-                  <MenuItem onClick={() => navigate("/settings")}>
-                    Settings
-                  </MenuItem>
-                </Menu>
-              </Dropdown>
-
-              <Box
-                className="analytics-container"
-                onMouseEnter={() => setShowTooltip(true)}
-                onMouseLeave={() => setShowTooltip(false)}
-              >
-                <Button
-                  className="analytics-button"
-                  sx={{
-                    marginLeft: "8px",
-                    backgroundColor: "transparent",
-                    border: "2px solid #89343b",
-                    color: "#89343b",
-                    marginRight: "50px",
-                    "&:hover": {
-                      color: "white",
-                      backgroundColor: "#89343b",
-                      borderColor: "#89343b",
-                    },
-                  }}
-                >
-                  <InsightsTwoTone />
-                </Button>
-                {showTooltip && (
-                  <div className="tooltip-text">View Analytics</div>
-                )}
-              </Box>
-            </Box>
-
-            <Box className="header-actions">
-              <IconButton
-                variant="none"
-                className="logout"
-                sx={{
-                  color: "#89343b",
-                }}
-              >
-                <MoreVertIcon />
-              </IconButton>
-            </Box>
-          </Sheet>
+          
 
           {/* Search and Add Student Section */}
           <Box
@@ -340,7 +228,7 @@ export default function Dashboard() {
           >
             <Box className="button-group">
               <Button
-                startDecorator={<AddIcon />}
+                startDecorator={<PersonAddAltIcon />}
                 sx={{
                   backgroundColor: "#89343b",
                   color: "white",
@@ -394,7 +282,9 @@ export default function Dashboard() {
               >
                 Import
               </Button>
-              <Button sx={{                   
+              <Button 
+              startDecorator={<AddIcon />}
+              sx={{                   
                   backgroundColor: "#89343b",
                   color: "white",                   
                   fontSize: "12px",
