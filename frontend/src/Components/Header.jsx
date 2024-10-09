@@ -5,6 +5,8 @@ import InsightsTwoToneIcon from '@mui/icons-material/InsightsTwoTone';
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import { useNavigate, useLocation } from 'react-router-dom';
 import ExitToAppOutlinedIcon from '@mui/icons-material/ExitToAppOutlined';
+import axios from 'axios';
+import { getCookie } from "../utils/utils";
 
 const theme = extendTheme({
   components: {
@@ -43,6 +45,36 @@ const Header = () => {
   ];
 
   const activePage = menuItems.find(item => location.pathname === item.path)?.label || "Analytics";
+  const handleLogout = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const csrfToken = getCookie("csrftoken");
+
+      const response = await axios.post(
+        "http://localhost:8000/api/logout/",
+        {},
+        {
+          headers: {
+            Authorization: `Token ${token}`,
+            "X-CSRFToken": csrfToken,
+          },
+        }
+      );
+
+      if (response.status === 200) {
+        localStorage.removeItem("token"); // Clear token from local storage
+        navigate("/"); // Navigate to the login page after successful logout
+      } else {
+        console.error("Logout failed:", response.data);
+      }
+    } catch (error) {
+      if (error.response) {
+        console.error("Logout failed:", error.response.data);
+      } else {
+        console.error("Logout error:", error.message);
+      }
+    }
+  };
 
   return (
     <CssVarsProvider theme={theme}>
@@ -155,9 +187,10 @@ const Header = () => {
                 sx={{
                   color: "#89343b",
                 }}
-                onClick={() => navigate("/")}
+                onClick={handleLogout}
               >
                 <ExitToAppOutlinedIcon />
+              
               </IconButton>
             </Box>
           </Sheet>

@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Paper, TextField, Box, Button, Snackbar, Alert } from "@mui/material";
 import axios from "axios";
 import "./Login.css";
+import { getCookie } from '../utils/utils';
 
 const Login = () => {
   const navigate = useNavigate();
@@ -22,12 +23,18 @@ const Login = () => {
     }
 
     try {
+      const csrfToken = getCookie('csrftoken');
       const response = await axios.post("http://localhost:8000/api/login/", {
         username,
         password,
+      }, {
+          headers: {
+            'X-CSRFToken': csrfToken,
+          },
       });
 
       if (response.data.status === "success") {
+        localStorage.setItem('token', response.data.token); // Save the token
         navigate("/dashboard");
       } else {
         // Show custom error message in the Snackbar

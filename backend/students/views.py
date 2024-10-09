@@ -2,16 +2,19 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 from .models import Student, Transaction, Staff
-from .serializers import StudentSerializer, TransactionSerializer, StaffSerializer
+from .serializers import StudentSerializer, TransactionSerializer, StaffSerializer, UserLoginSerializer
 from rest_framework.views import APIView
 from rest_framework import generics, viewsets
 from django.conf import settings 
 from django.contrib.auth.hashers import make_password, check_password
-
+from rest_framework.authtoken.models import Token
+from rest_framework.permissions import IsAuthenticated
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 
 
 class StudentViewSet(ModelViewSet):
+    
     queryset = Student.objects.all()
     serializer_class = StudentSerializer
     lookup_field = 'studentID'  # Use studentID as the lookup field instead of pk
@@ -27,6 +30,7 @@ class StudentViewSet(ModelViewSet):
         
 
 class ResetPasswordView(APIView):
+   
     def post(self, request, studentID):
         try:
             # Retrieve the student instance
@@ -52,6 +56,7 @@ class ResetPasswordView(APIView):
     
 
 class TransactionCreateView(APIView):
+   
     def post(self, request, *args, **kwargs):
         reference_number = request.data.get('reference_number')
         student_id = request.data.get('student_id')
@@ -92,10 +97,12 @@ class TransactionCreateView(APIView):
     
 
 class TransactionListView(generics.ListAPIView):
+    
     queryset = Transaction.objects.all()
     serializer_class = TransactionSerializer
 
 class StaffViewSet(viewsets.ModelViewSet):
+
     queryset = Staff.objects.all()
     serializer_class = StaffSerializer
     lookup_field = 'username'
@@ -127,3 +134,29 @@ class StaffViewSet(viewsets.ModelViewSet):
                 "message": "Error: " + str(serializer.errors), 
             }
         }, status=status.HTTP_400_BAD_REQUEST)
+    
+class UserLoginView(generics.GenericAPIView):
+    serializer_class = UserLoginSerializer
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.validated_data['user']
+        token, created = Token.objects.get_or_create(user=user)
+        return Response({
+            'status': 'success',
+            'token': token.key,
+            'user_id': user.id,
+            'username': user.username
+        }, status=status.HTTP_200_OK) 
+    
+class LogoutView(APIView):
+    permission_classes = [IsAuthenticated]  # Ensure user is authenticated
+
+    def post(self, request):
+        try:
+            token = request.auth  # Get the user's token
+            token.delete()  # Delete the token to log out
+            return Response({"message": "Successfully logged out."}, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
