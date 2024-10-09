@@ -10,13 +10,11 @@ import AddStaffModal from '../Modals/AddStaff'; // Import the modal component
 import './ManageStaff.css';
 
 const ManageStaff = () => {
-  const [showTooltip, setShowTooltip] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false); // State to control modal visibility
   const [staffList, setStaffList] = useState([]); // State to hold staff list
   const [error, setError] = useState(null); // State to hold error messages
   const [selectedStaffID, setSelectedStaffID] = useState(null); // State to hold the selected staff ID
   const [loading, setLoading] = useState(false); // State to manage loading state
-  const navigate = useNavigate(); 
 
   // Function to fetch staff list
   const fetchStaffList = async () => {
@@ -83,10 +81,10 @@ const ManageStaff = () => {
   };
 
   return (
-    
-    <div className="containerStaff">
+  
+  <div className="containerStaff">
       <Header/>
-      <Sheet>
+      
         <Typography
           component="h1"
           className="header-text"
@@ -199,8 +197,9 @@ const ManageStaff = () => {
             </div>
           </div>
         </div>
-      </Sheet>
+      
     </div>
+
   );
 };
 
