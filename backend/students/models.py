@@ -44,7 +44,7 @@ class Transaction(models.Model):
 
 #Staff
 class Staff(models.Model):
-    staffID = models.CharField(max_length=15, unique=True) 
+    username = models.CharField(max_length=15, unique=True) 
     name = models.CharField(max_length=100)
     password = models.CharField(max_length=128, default=make_password('licstaffmem')) 
 

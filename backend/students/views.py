@@ -98,20 +98,19 @@ class TransactionListView(generics.ListAPIView):
 class StaffViewSet(viewsets.ModelViewSet):
     queryset = Staff.objects.all()
     serializer_class = StaffSerializer
-    lookup_field = 'staffID'
+    lookup_field = 'username'
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
-        
-        staff_id = request.data.get('staffID')
-        if Staff.objects.filter(staffID=staff_id).exists():
+
+        username = request.data.get('username')
+        if Staff.objects.filter(username=username).exists():
             return Response({
                 "alert": {
                     "type": "error",
-                    "message": f"Error: Staff ID '{staff_id}' already exists."
+                    "message": f"Error: Username '{username}' already exists."
                 }
             }, status=status.HTTP_400_BAD_REQUEST)
-
         if serializer.is_valid():
             self.perform_create(serializer)
             return Response({

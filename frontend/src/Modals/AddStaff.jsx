@@ -2,16 +2,16 @@ import React, { useState } from 'react';
 import './AddStaff.css';
 
 const AddStaffModal = ({ isOpen, onClose, onAddStaff }) => {
+  const [username, setUsername] = useState('');
   const [name, setName] = useState('');
-  const [staffID, setStaffID] = useState('');
   const defaultPassword = 'default password';
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const newStaff = { name, staffID, password: defaultPassword }; 
+    const newStaff = { username, name, password: defaultPassword }; 
     onAddStaff(newStaff);
+    setUsername('');
     setName('');
-    setStaffID('');
     onClose();
   };
 
@@ -24,20 +24,21 @@ const AddStaffModal = ({ isOpen, onClose, onAddStaff }) => {
         <h2>Add Staff</h2>
         <form onSubmit={handleSubmit}>
           <div>
-            <label>Name:</label>
+          <label>Username:</label>
+            <input
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              required
+            />
+            
+          </div>
+          <div>
+          <label>Name:</label>
             <input
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              required
-            />
-          </div>
-          <div>
-            <label>Staff ID:</label>
-            <input
-              type="text"
-              value={staffID}
-              onChange={(e) => setStaffID(e.target.value)}
               required
             />
           </div>

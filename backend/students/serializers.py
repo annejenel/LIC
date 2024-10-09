@@ -40,7 +40,7 @@ class StaffSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Staff
-        fields = ['staffID', 'name', 'password'] 
+        fields = ['username', 'name', 'password'] 
 
     def create(self, validated_data):
         if 'password' in validated_data:

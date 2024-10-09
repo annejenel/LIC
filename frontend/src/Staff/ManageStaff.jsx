@@ -13,7 +13,7 @@ const ManageStaff = () => {
   const [isModalOpen, setIsModalOpen] = useState(false); // State to control modal visibility
   const [staffList, setStaffList] = useState([]); // State to hold staff list
   const [error, setError] = useState(null); // State to hold error messages
-  const [selectedStaffID, setSelectedStaffID] = useState(null); // State to hold the selected staff ID
+  const [selectedUsername, setSelectedUsername] = useState(null); // State to hold the selected staff ID
   const [loading, setLoading] = useState(false); // State to manage loading state
 
   // Function to fetch staff list
@@ -64,15 +64,15 @@ const ManageStaff = () => {
 
 
   // Handle row click to show selected staff ID in the left table
-  const handleRowClick = (staffID) => {
+  const handleRowClick = (username) => {
     // If the same staff ID is clicked again, clear the selection
-    if (selectedStaffID === staffID) {
-      setSelectedStaffID(null); // Clear selection
+    if (selectedUsername === username) {
+      setSelectedUsername(null); // Clear selection
       return; // Exit the function
     }
 
     setLoading(true); // Set loading state
-    setSelectedStaffID(staffID); // Set the selected staff ID
+    setSelectedUsername(username); // Set the selected staff ID
 
     // Simulate loading delay
     setTimeout(() => {
@@ -84,7 +84,6 @@ const ManageStaff = () => {
   
   <div className="containerStaff">
       <Header/>
-      
         <Typography
           component="h1"
           className="header-text"
@@ -147,9 +146,9 @@ const ManageStaff = () => {
                       <tr>
                         <td>Loading...</td>
                       </tr>
-                    ) : selectedStaffID ? (
+                    ) : selectedUsername ? (
                       <tr>
-                        <td>{`Selected Staff ID: ${selectedStaffID}`}</td>
+                        <td>{`Selected Staff ID: ${selectedUsername}`}</td>
                       </tr>
                     ) : (
                       <tr>
@@ -175,11 +174,11 @@ const ManageStaff = () => {
                     {staffList.length > 0 ? (
                       staffList.map((staff) => (
                         <tr 
-                          key={staff.staffID} 
-                          onClick={() => handleRowClick(staff.staffID)} 
+                          key={staff.username} 
+                          onClick={() => handleRowClick(staff.username)} 
                           style={{ cursor: 'pointer' }}
                         >
-                          <td>{staff.staffID}</td>
+                          <td>{staff.username}</td>
                           <td>{staff.name}</td>
                           {/* Add more cells as needed */}
                         </tr>
