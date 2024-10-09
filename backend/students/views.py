@@ -108,7 +108,7 @@ class StaffViewSet(viewsets.ModelViewSet):
             return Response({
                 "alert": {
                     "type": "error",
-                    "message": f"Error: Username '{username}' already exists."
+                    "message": f"Username '{username}' already exists."
                 }
             }, status=status.HTTP_400_BAD_REQUEST)
         if serializer.is_valid():

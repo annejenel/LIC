@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom'; 
-import Sheet from '@mui/joy/Sheet';
 import Button from '@mui/joy/Button';
 import Typography from '@mui/joy/Typography';
 import AddIcon from '@mui/icons-material/Add';
 import Header from '../Components/Header.jsx';
+import SnackbarComponent from '../Components/SnackbarComponent.jsx';
 
 import AddStaffModal from '../Modals/AddStaff'; // Import the modal component
 import './ManageStaff.css';
@@ -15,7 +14,12 @@ const ManageStaff = () => {
   const [error, setError] = useState(null); // State to hold error messages
   const [selectedUsername, setSelectedUsername] = useState(null); // State to hold the selected staff ID
   const [loading, setLoading] = useState(false); // State to manage loading state
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [alert, setAlert] = useState({ type: '', message: '' });
 
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false);
+};
   // Function to fetch staff list
   const fetchStaffList = async () => {
     try {
@@ -50,15 +54,17 @@ const ManageStaff = () => {
 
     if (!response.ok) {
       // If the response is not okay, throw an error with the alert message
-      throw new Error(data.alert.message || 'Failed to add staff member.');
+      throw new Error(data.alert.message || 'Failed to add staff.');
     }
 
     // Display success alert
-    alert(data.alert.message); // Use a more sophisticated alert if necessary
+    setAlert({ type: 'success', message: data.alert.message });
+    setSnackbarOpen(true); // Open the Snackbar
     await fetchStaffList(); // Optionally refresh the staff list
   } catch (error) {
     // Display error alert
-    alert(error.message); // Show error message in alert
+    setAlert({ type: 'error', message: error.message });
+    setSnackbarOpen(true); // Open the Snackbar for error message
   }
 };
 
@@ -132,7 +138,11 @@ const ManageStaff = () => {
 
           <div className="table-container">
             <div className="table">
-              
+            <SnackbarComponent 
+                open={snackbarOpen} 
+                handleClose={handleSnackbarClose} 
+                alert={alert} 
+            />
               {/* Left table for transactions */}
               <div className="transaction-table">
                 <table>
