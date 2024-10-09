@@ -6,6 +6,7 @@
   width: 100vw;
   margin: 0;
   padding: 0;
+
 }
 
 body {
@@ -16,6 +17,8 @@ body {
 
 .containerStaff {
   margin-top: 0;
+  background-color: transparent;
+
 }
 
 .sheet {
@@ -27,6 +30,7 @@ body {
   background-color: #f5f5f5;
   align-items: center;
   position: relative;
+
 }
 
 .sheet-colored {
@@ -79,6 +83,8 @@ body {
   justify-content: top;
   position: relative;
   width: 100%;
+  background: url('images/background.jpg') no-repeat center center fixed;
+
 }
 
 .hello-world-content {

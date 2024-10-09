@@ -133,15 +133,13 @@ const ManageStaff = () => {
 
           <div className="table-container">
             <div className="table">
-              <Typography className="table-title">
-                STAFF/NAS TRANSACTION
-              </Typography>
+              
               {/* Left table for transactions */}
               <div className="transaction-table">
                 <table>
                   <thead>
                     <tr>
-                      <th>Transaction Info</th>
+                      <th>Logs</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -155,7 +153,7 @@ const ManageStaff = () => {
                       </tr>
                     ) : (
                       <tr>
-                        <td>No transactions yet.</td>
+                        <td>No logs yet...</td>
                       </tr>
                     )}
                   </tbody>
