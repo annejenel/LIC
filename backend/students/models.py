@@ -28,6 +28,7 @@ class Student(models.Model):
         choices=STATUS_CHOICES,
         default='Student'
     )
+    is_logged_in = models.BooleanField(default=False)
 
     def __str__(self):
         return self.name

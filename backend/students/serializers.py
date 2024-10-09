@@ -7,7 +7,7 @@ class StudentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Student
-        fields = ['studentID', 'name', 'course', 'time_left', 'password', 'status']
+        fields = ['studentID', 'name', 'course', 'time_left', 'password', 'status', 'is_logged_in']
 
     def create(self, validated_data):
         # Set a default password if not provided

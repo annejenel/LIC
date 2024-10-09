@@ -235,47 +235,55 @@ class StudentApp:
     def login(self):
         student_id = self.entry1.get()
         password = self.entry2.get()
-        
+
         try:
             student = Student.objects.get(studentID=student_id)
             is_valid = self.debug_password_verification()
 
-            # Check if the password is valid and if it matches the default password
             if not is_valid:
                 messagebox.showerror("Error", "Invalid StudentID or Password")
                 return
-                # Call the function to create/change password screen
-            if (password == '123456'):
+            
+            # Check if the user is already logged in
+            if student.is_logged_in:
+                messagebox.showinfo("Info", "This student is already logged in.")
+                return
+
+            # Check for default password and force change
+            if password == '123456':
                 self.create_change_password_screen(student_id)
                 return
 
+            # Check if student has time left
             if student.time_left == 0:
                 messagebox.showerror("Error", "No time left. Login not allowed.")
                 return
-            # Check if the user is already logged in (logoutTime is null)
-            current_session = Session.objects.filter(parent=student, logoutTime__isnull=True).first()
-            if current_session:
-                messagebox.showinfo("Info", "Current user is already logged in.")
-                return
-        
+
+            # Update is_logged_in to True
+            student.is_logged_in = True
+            student.save()
+
             self.logged_in_student = student
             self.time_left = timedelta(minutes=student.time_left)
             self.login_time = datetime.now()
-            
+
             Session.objects.create(
                 date=self.login_time.date(),
                 loginTime=self.login_time.time(),
                 parent=student,
                 course=student.course
             )
+
             messagebox.showinfo("Login", "Login successful!")
             self.create_menu_screen()
             self.start_timer()
+
         except Student.DoesNotExist:
             messagebox.showerror("Error", "Invalid StudentID or Password")
         except Exception as e:
             print(f"Login error: {e}")
             messagebox.showerror("Error", f"An error occurred during login: {e}")
+
         
 
     def logout(self):
@@ -295,6 +303,10 @@ class StudentApp:
 
             # Update student's time left
             self.logged_in_student.time_left -= time_logged_in
+            self.logged_in_student.save()
+
+            # Set is_logged_in to False
+            self.logged_in_student.is_logged_in = False
             self.logged_in_student.save()
 
             self.logged_in_student = None
