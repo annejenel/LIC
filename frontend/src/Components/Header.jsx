@@ -58,6 +58,7 @@ const Header = () => {
               marginRight: "0",
               top: 0,
               left: 0,
+              marginBottom: 0,
               zIndex: 1000,
             }}
             
