@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Sheet, Box, Typography, Dropdown, MenuButton, Menu, MenuItem, Button, CssVarsProvider, extendTheme, ListDivider, ListItemDecorator, IconButton } from '@mui/joy';
 import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
 import InsightsTwoToneIcon from '@mui/icons-material/InsightsTwoTone';
@@ -36,7 +36,14 @@ const Header = () => {
   const [showTooltip, setShowTooltip] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
+  const [userRole, setUserRole] = useState('');
 
+   // Fetch user role from localStorage
+   useEffect(() => {
+    const role = localStorage.getItem('userRole');
+    setUserRole(role);
+  }, []);
+  
   // Determine the current path and set the active page label
   const menuItems = [
     { label: "Dashboard", path: "/dashboard" },
@@ -170,27 +177,30 @@ const Header = () => {
                 onMouseEnter={() => setShowTooltip(true)}
                 onMouseLeave={() => setShowTooltip(false)}
               >
-                <Button
-                  className="analytics-button"
-                  sx={{
-                    marginLeft: "8px",
-                    backgroundColor: "transparent",
-                    border: "2px solid #89343b",
-                    color: "#89343b",
-                    marginRight: "50px",
-                    "&:hover": {
-                      color: "white",
-                      backgroundColor: "#89343b",
-                      borderColor: "#89343b",
-                    },
-                  }}
-                  onClick={() => navigate("/analytics")}
-                >
+                {/* Only show the Analytics button if the user is an admin */}
+                {userRole === 'admin' && (
+                  <Button
+                    className="analytics-button"
+                    sx={{
+                      marginLeft: "8px",
+                      backgroundColor: "transparent",
+                      border: "2px solid #89343b",
+                      color: "#89343b",
+                      marginRight: "50px",
+                      "&:hover": {
+                        color: "white",
+                        backgroundColor: "#89343b",
+                        borderColor: "#89343b",
+                      },
+                    }}
+                    onClick={() => navigate("/analytics")}
+                  >
                     {showTooltip && (
-                  <div className="tooltip-text">View Analytics</div>
+                      <div className="tooltip-text">View Analytics</div>
+                    )}
+                    <InsightsTwoToneIcon />
+                  </Button>
                 )}
-                  <InsightsTwoToneIcon />
-                </Button>
               </Box>
             </Box>
 

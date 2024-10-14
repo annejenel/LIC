@@ -21,7 +21,11 @@ const Login = () => {
       });
       return;
     }
-
+    if (username === 'admin') {
+      localStorage.setItem('userRole', 'admin');
+    } else {
+      localStorage.setItem('userRole', 'staff');
+    }
     try {
       const csrfToken = getCookie('csrftoken');
       const response = await axios.post("http://localhost:8000/api/login-admin/", {
