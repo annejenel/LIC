@@ -2,7 +2,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 from .models import Student, Transaction, Staff
-from .serializers import StudentSerializer, TransactionSerializer, StaffSerializer, UserLoginSerializer
+from .serializers import StudentSerializer, TransactionSerializer, StaffSerializer, UserLoginSerializer, StaffLoginSerializer, StaffUserSerializer, StaffStatusSerializer
 from rest_framework.views import APIView
 from rest_framework import generics, viewsets
 from django.conf import settings 
@@ -10,6 +10,8 @@ from django.contrib.auth.hashers import make_password, check_password
 from rest_framework.authtoken.models import Token
 from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth.mixins import LoginRequiredMixin
+from rest_framework.permissions import AllowAny 
+from django.contrib.auth.models import User
 
 
 
@@ -101,39 +103,21 @@ class TransactionListView(generics.ListAPIView):
     queryset = Transaction.objects.all()
     serializer_class = TransactionSerializer
 
-class StaffViewSet(viewsets.ModelViewSet):
+class StaffLoginView(generics.GenericAPIView):
+    serializer_class = StaffLoginSerializer
 
-    queryset = Staff.objects.all()
-    serializer_class = StaffSerializer
-    lookup_field = 'username'
-
-    def create(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)  # Validate the data
 
-        username = request.data.get('username')
-        if Staff.objects.filter(username=username).exists():
-            return Response({
-                "alert": {
-                    "type": "error",
-                    "message": f"Username '{username}' already exists."
-                }
-            }, status=status.HTTP_400_BAD_REQUEST)
-        if serializer.is_valid():
-            self.perform_create(serializer)
-            return Response({
-                "alert": {
-                    "type": "success",
-                    "message": "Staff member created successfully!",
-                },
-                "data": serializer.data
-            }, status=status.HTTP_201_CREATED)
+        staff = serializer.validated_data['staff']  # Get the authenticated user
 
         return Response({
-            "alert": {
-                "type": "error",
-                "message": "Error: " + str(serializer.errors), 
-            }
-        }, status=status.HTTP_400_BAD_REQUEST)
+            'status': 'success',
+            'user_id': staff.id,
+            'username': staff.username
+        }, status=status.HTTP_200_OK)
+
     
 class UserLoginView(generics.GenericAPIView):
     serializer_class = UserLoginSerializer
@@ -151,12 +135,63 @@ class UserLoginView(generics.GenericAPIView):
         }, status=status.HTTP_200_OK) 
     
 class LogoutView(APIView):
-    permission_classes = [IsAuthenticated]  # Ensure user is authenticated
+    # Remove or comment this out to allow unauthenticated access
+    # permission_classes = [IsAuthenticated]  
 
     def post(self, request):
         try:
             token = request.auth  # Get the user's token
-            token.delete()  # Delete the token to log out
+            print(token)
+            if token is None:
+                # If there is no token, just return a success message
+                return Response({"message": "No token found. Successfully logged out."}, status=status.HTTP_200_OK)
+
+            # Delete the token to log out
+            token.delete()  
             return Response({"message": "Successfully logged out."}, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        
+class StaffCreateView(APIView):
+    permission_classes = [AllowAny]  # Allow access to anyone
+
+    def post(self, request, *args, **kwargs):
+        serializer = StaffUserSerializer(data=request.data)
+
+        # Check if the serializer is valid
+        if serializer.is_valid():
+            # Create the user with the default values for is_staff and is_superuser
+            password = '123456'
+            staff = User.objects.create(
+                username=serializer.validated_data['username'],
+                first_name=serializer.validated_data['first_name'],
+                last_name=serializer.validated_data['last_name'],
+                is_staff=True,  # Default to staff
+                is_superuser=False  # Default to non-superuser
+            )
+            staff.set_password(password)  # Hash the password
+            staff.save()
+
+            return Response({
+                "message": "User created successfully",
+                "data": StaffUserSerializer(staff).data
+            }, status=status.HTTP_201_CREATED)
+        
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class StaffListView(generics.ListAPIView):
+    queryset = User.objects.filter(is_staff=True)  # Filter for staff users
+    serializer_class = StaffUserSerializer
+   
+class UpdateStaffStatusView(generics.UpdateAPIView):
+    queryset = User.objects.all()
+    serializer_class = StaffStatusSerializer
+
+    def get_object(self):
+        username = self.kwargs.get("username")
+        return generics.get_object_or_404(User, username=username)
+
+    def patch(self, request, *args, **kwargs):
+        # Retrieve the user instance based on the username
+        user = self.get_object()
+        return self.update(request, *args, **kwargs)

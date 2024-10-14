@@ -3,15 +3,17 @@ import './AddStaff.css';
 
 const AddStaffModal = ({ isOpen, onClose, onAddStaff }) => {
   const [username, setUsername] = useState('');
-  const [name, setName] = useState('');
+  const [first_name, setFirstname] = useState('');
+  const [last_name, setLastname] = useState('');
   const defaultPassword = 'default password';
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const newStaff = { username, name, password: defaultPassword }; 
+    const newStaff = { username, first_name, last_name }; 
     onAddStaff(newStaff);
     setUsername('');
-    setName('');
+    setFirstname('');
+    setLastname('');
     onClose();
   };
 
@@ -34,14 +36,24 @@ const AddStaffModal = ({ isOpen, onClose, onAddStaff }) => {
             
           </div>
           <div>
-          <label>Name:</label>
+          <label>First Name:</label>
             <input
               type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
+              value={first_name}
+              onChange={(e) => setFirstname(e.target.value)}
               required
             />
           </div>
+          <div>
+          <label>Last Name:</label>
+            <input
+              type="text"
+              value={last_name}
+              onChange={(e) => setLastname(e.target.value)}
+              required
+            />
+          </div>
+          <div></div>
           <div>
             <label>Password:</label>
             <input

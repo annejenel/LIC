@@ -50,6 +50,13 @@ const Header = () => {
       const token = localStorage.getItem("token");
       const csrfToken = getCookie("csrftoken");
 
+      // If there is no token, navigate to the login page
+      if (!token) {
+        console.log("No token found, logging out...");
+        navigate("/"); // Navigate to the login page
+        return;
+      }
+
       const response = await axios.post(
         "http://localhost:8000/api/logout/",
         {},
@@ -70,9 +77,16 @@ const Header = () => {
     } catch (error) {
       if (error.response) {
         console.error("Logout failed:", error.response.data);
+        // Handle 'Invalid token' error more gracefully
+        if (error.response.status === 403) {
+          localStorage.removeItem("token"); // Remove invalid token
+          console.log("Token was invalid, but logout proceeded.");
+          navigate("/"); // Redirect to login
+        }
       } else {
         console.error("Logout error:", error.message);
       }
+      navigate("/"); // Redirect to login on other errors
     }
   };
 

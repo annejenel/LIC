@@ -24,7 +24,7 @@ const Login = () => {
 
     try {
       const csrfToken = getCookie('csrftoken');
-      const response = await axios.post("http://localhost:8000/api/login/", {
+      const response = await axios.post("http://localhost:8000/api/login-admin/", {
         username,
         password,
       }, {
@@ -43,7 +43,20 @@ const Login = () => {
       }
     } catch (error) {
       console.error("Login error:", error);
-      setSnackbarMessage("Invalid credentials. Please try again.");
+      
+      // Check for specific error messages
+      if (error.response) {
+        // Handle different types of errors
+        if (error.response.data.username) {
+            setSnackbarMessage(error.response.data.username[0]); // Username not found
+        } else if (error.response.data.non_field_errors) {
+            setSnackbarMessage(error.response.data.non_field_errors[0]); // Invalid credentials
+        } else {
+            setSnackbarMessage("An error occurred. Please try again."); // Generic error
+        }
+    } else {
+        setSnackbarMessage("An error occurred. Please try again.");
+    }
       setOpenSnackbar(true);
     }
   };

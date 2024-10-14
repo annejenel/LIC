@@ -4,9 +4,13 @@ import Typography from '@mui/joy/Typography';
 import AddIcon from '@mui/icons-material/Add';
 import Header from '../Components/Header.jsx';
 import SnackbarComponent from '../Components/SnackbarComponent.jsx';
-
+import Menu from "@mui/joy/Menu";
+import MenuItem from "@mui/joy/MenuItem";
 import AddStaffModal from '../Modals/AddStaff'; // Import the modal component
 import './ManageStaff.css';
+import Dropdown from "@mui/joy/Dropdown";
+import MenuButton from "@mui/joy/MenuButton";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 
 const ManageStaff = () => {
   const [isModalOpen, setIsModalOpen] = useState(false); // State to control modal visibility
@@ -23,7 +27,7 @@ const ManageStaff = () => {
   // Function to fetch staff list
   const fetchStaffList = async () => {
     try {
-        const response = await fetch('http://localhost:8000/api/staff/'); // Adjust URL as needed
+        const response = await fetch('http://localhost:8000/api/staffview/'); // Adjust URL as needed
         if (!response.ok) {
             throw new Error('Network response was not ok: ' + response.statusText);
         }
@@ -42,7 +46,7 @@ const ManageStaff = () => {
 
   const handleAddStaff = async (newStaff) => {
   try {
-    const response = await fetch('http://localhost:8000/api/staff/', {
+    const response = await fetch('http://localhost:8000/api/create-user/', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -54,11 +58,11 @@ const ManageStaff = () => {
 
     if (!response.ok) {
       // If the response is not okay, throw an error with the alert message
-      throw new Error(data.alert.message || 'Failed to add staff.');
+      throw new Error(data.alert?.message || 'Failed to add staff.');
     }
 
     // Display success alert
-    setAlert({ type: 'success', message: data.alert.message });
+    setAlert({ type: 'success', message: data.alert?.message || 'Staff added successfully!'});
     setSnackbarOpen(true); // Open the Snackbar
     await fetchStaffList(); // Optionally refresh the staff list
   } catch (error) {
@@ -86,27 +90,72 @@ const ManageStaff = () => {
     }, 2000);
   };
 
+  // Handle Staff Status Change
+  const handleStatusChange = async (username, newStatus) => {
+    console.log("Updating status for:", username, "to:", newStatus); // Debugging line
+    try {
+      const response = await fetch(`http://localhost:8000/api/update-status/${username}/`, { // Adjust URL as needed
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ is_active: newStatus }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to update status');
+      }
+
+      // Refresh the staff list to reflect changes
+      await fetchStaffList();
+      setAlert({ type: 'success', message: 'Status updated successfully!' });
+      setSnackbarOpen(true);
+    } catch (error) {
+      setAlert({ type: 'error', message: error.message });
+      setSnackbarOpen(true);
+    }
+  };
   return (
   
-  <div className="containerStaff">
+  <div>
+    {/* Render the AddStaffModal */}
+    <AddStaffModal
+            isOpen={isModalOpen}
+            onClose={() => setIsModalOpen(false)} // Close the modal
+            onAddStaff={handleAddStaff} // Pass the add staff handler
+          />
+    {/* Display error message if there is one */}
+    {error && (
+      <Typography sx={{ color: 'red', textAlign: 'center' }}>
+        {error}
+      </Typography>
+    )}
+    <SnackbarComponent 
+                open={snackbarOpen} 
+                handleClose={handleSnackbarClose} 
+                alert={alert} 
+            />
       <Header/>
-        <Typography
-          component="h1"
-          className="header-text"
-          sx={{
-            textAlign: 'center',
-            fontSize: '36px',
-            fontWeight: 'bold',
-            color: '#a94442',
-            margin: '20px 0',
-          }}
-        >
-          MANAGE LIC STAFF
-        </Typography>
+      <div className="staff-container">
+        
+        <div className="staff-container-body">
 
-        <div className="hello-world-container">
-          <div className="add-staff-button">
-            <Button
+          <div className="staff-container-content">
+           
+            {/* Render the staff list here */}
+            <div className="staff-table">
+            <div className='staff-container-header'>
+          <Typography
+            component="h1"
+            sx={{
+              fontSize: '36px',
+              fontWeight: 'normal',
+              color: '#a94442',
+              
+            }}
+          >STAFF
+          </Typography>
+          <Button
               startDecorator={<AddIcon />}
               sx={{
                 backgroundColor: '#28a745',
@@ -120,35 +169,67 @@ const ManageStaff = () => {
             >
               Add Staff
             </Button>
-          </div>
-
-          {/* Render the AddStaffModal */}
-          <AddStaffModal
-            isOpen={isModalOpen}
-            onClose={() => setIsModalOpen(false)} // Close the modal
-            onAddStaff={handleAddStaff} // Pass the add staff handler
-          />
-
-          {/* Display error message if there is one */}
-          {error && (
-            <Typography sx={{ color: 'red', textAlign: 'center' }}>
-              {error}
-            </Typography>
-          )}
-
-          <div className="table-container">
-            <div className="table">
-            <SnackbarComponent 
-                open={snackbarOpen} 
-                handleClose={handleSnackbarClose} 
-                alert={alert} 
-            />
-              {/* Left table for transactions */}
-              <div className="transaction-table">
+        </div>
                 <table>
                   <thead>
                     <tr>
-                      <th>Logs</th>
+                      <th>Name</th>
+                      <th>Username</th>
+                      <th>Status</th>
+                      
+                      {/* Add more columns as needed */}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {staffList.length > 0 ? (
+                      staffList.map((staff) => (
+                        <tr 
+                          key={staff.username} 
+                          onClick={() => handleRowClick(staff.username)} 
+                          style={{ cursor: 'pointer' }}
+                        >
+                          <td>{staff.first_name}</td>
+                          <td>{staff.username}</td>
+                          <td>
+                          <Dropdown>
+                            <MenuButton
+                            variant="outlined"
+                            endDecorator={<KeyboardArrowDownIcon />}>
+                            {staff.is_active ? 'Active' : 'Inactive'}
+                            </MenuButton>
+                            <Menu>
+                              <MenuItem onClick={() => handleStatusChange(staff.username, true)}>Active</MenuItem>
+                              <MenuItem onClick={() => handleStatusChange(staff.username, false)}>Inactive</MenuItem>
+                            </Menu>
+                          </Dropdown>
+                          </td>
+                          
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td colSpan="2">No staff members found.</td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+              
+              {/* Left table for transactions */}
+              <div className="logs-table">
+              <Typography
+            component="h1"
+            sx={{
+              fontSize: '36px',
+              fontWeight: 'normal',
+              color: '#a94442',
+            }}
+          >LOGS
+          </Typography>
+                <table>
+                  <thead>
+                    <tr>
+                      
                     </tr>
                   </thead>
                   <tbody>
@@ -168,43 +249,13 @@ const ManageStaff = () => {
                   </tbody>
                 </table>
               </div>
-            </div>
-            <div className="table">
-              {/* Render the staff list here */}
-              <div className="staff-table">
-                <table>
-                  <thead>
-                    <tr>
-                      <th>Staff ID</th>
-                      <th>Name</th>
-                      {/* Add more columns as needed */}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {staffList.length > 0 ? (
-                      staffList.map((staff) => (
-                        <tr 
-                          key={staff.username} 
-                          onClick={() => handleRowClick(staff.username)} 
-                          style={{ cursor: 'pointer' }}
-                        >
-                          <td>{staff.username}</td>
-                          <td>{staff.name}</td>
-                          {/* Add more cells as needed */}
-                        </tr>
-                      ))
-                    ) : (
-                      <tr>
-                        <td colSpan="2">No staff members found.</td>
-                      </tr>
-                    )}
-                  </tbody>
-                </table>
-              </div>
-            </div>
+            
+            
+              
+            
           </div>
         </div>
-      
+        </div>
     </div>
 
   );

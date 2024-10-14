@@ -1,185 +1,85 @@
-.container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100vh;
-  width: 100vw;
-  margin: 0;
-  padding: 0;
-
-}
-
 body {
   background: url('images/background.jpg') no-repeat center center fixed;
-  margin-top: 0;
-  min-height: 100vh;
 }
 
-.containerStaff {
-  margin-top: 0;
+.staff-container-header {
   background-color: transparent;
-
-}
-
-.sheet {
-  padding: 16px;
-  width: 95vw;
-  height: 90vh;
   display: flex;
-  flex-direction: column;
-  background-color: #f5f5f5;
   align-items: center;
-  position: relative;
-
+  /* Align items vertically centered */
+  justify-content: space-between;
+  /* Align content to the left */
+  padding: 20px 0px;
+  /* Add some padding for better spacing */
 }
 
-.sheet-colored {
+/* Body Styles */
+.staff-container-body {
+  padding: 0 50px;
+  /* Set padding on the sides */
   background-color: transparent;
 }
 
-.header {
+/* Content Styles */
+.staff-container-content {
   display: flex;
-  align-items: center;
-  padding: 8px;
-  border-radius: 8px;
-  min-width: 100%;
-  margin-bottom: 10px;
-  background-color: #ffd404;
-  width: 100%;
+  /* Display children in a row */
+  justify-content: space-between;
+  /* Space between tables */
 }
 
-.header-content {
-  flex: 1;
-  display: flex;
-  gap: 8px;
-  padding: 0 8px;
-  justify-content: flex-end;
-}
-
-.header-actions {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.search-input {
-  width: 300px;
-  display: flex;
-  font-size: 20px;
-  height: 40px;
-  border: 2px solid #a94442;
-}
-
-.logout {
-  border-radius: 50%;
-  height: 50px;
+/* Staff Table Styles */
+.staff-table {
   background-color: transparent;
-}
-
-.hello-world-container {
   flex: 1;
-  display: flex;
-  align-items: flex-start;
-  justify-content: top;
-  position: relative;
-  width: 100%;
-  background: url('images/background.jpg') no-repeat center center fixed;
-
+  /* Make the staff table flexible */
+  margin-right: 20px;
+  /* Space between staff and logs */
+  /* Optionally, add max-width to limit table size */
+  max-width: 50%;
+  padding: 0 50px;
+  /* Adjust as needed */
 }
 
-.hello-world-content {
+/* Logs Table Styles */
+.logs-table {
+  background-color: transparent;
   flex: 1;
-  text-align: center;
+  /* Make the logs table flexible */
+  /* Optionally, add max-width to limit table size */
+  max-width: 50%;
+  margin-top: 30px;
+  padding: 0 50px;
+  /* Adjust as needed */
 }
 
-
-
-.tooltip-text {
-  visibility: hidden;
-  width: 120px;
-  background-color: #555;
-  color: #fff;
-  text-align: center;
-  border-radius: 6px;
-  padding: 5px 0;
-  position: absolute;
-  z-index: 1;
-  bottom: -80%;
-  left: 50%;
-  margin-left: -80px;
-  opacity: 0;
-  transition: opacity 0.3s;
-}
-
-.analytics-container:hover .tooltip-text {
-  visibility: visible;
-  opacity: 1;
-}
-
-.header-text {
-  font-family: "SUSE", sans-serif;
-  font-optical-sizing: auto;
-  font-weight: bold;
-  font-style: normal;
-}
-
-.h1-text {
-  display: flex;
-}
-
-.container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-}
-
-.hello-world-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+/* Additional styles for better table appearance */
+table {
   width: 100%;
-  padding: 20px;
-  background-color: #fff0f2;
+  /* Make tables take full width of their container */
+  border-collapse: collapse;
+  /* Remove space between table cells */
 }
 
-.header-text {
-  text-align: center;
-  font-size: 36px;
-  font-weight: bold;
-  color: #a94442;
-  margin: 20px 0;
-}
-
-.add-staff-button {
-  display: flex;
-  justify-content: flex-end;
-  width: 100%;
-  max-width: 900px;
-  margin-bottom: 20px;
-}
-
-.table-container {
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  width: 100%;
-  max-width: 900px;
-  margin-top: 20px;
-}
-
-.table {
-  background-color: #d3d3d3;
-  width: 40%;
-  height: 200px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+th,
+td {
   border: 1px solid #ccc;
+  /* Add borders to cells */
+  padding: 10px;
+  /* Add padding inside cells */
+  text-align: left;
+  /* Align text to the left */
+
 }
 
-.table-title {
-  font-size: 18px;
-  font-weight: bold;
-  text-align: center;
+table {
+  background-color: white;
+}
+
+.staff-table th {
+  background: linear-gradient(181.2deg, rgba(137, 52, 59, 1) 24.8%, rgba(198, 194, 149, 1) 80.5%);
+  color: rgb(0, 0, 0);
+  font-size: 17px;
+  border-top: 1px solid #89343b;
+  height: 15px;
 }

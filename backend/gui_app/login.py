@@ -222,7 +222,7 @@ class StudentApp:
            
             from django.contrib.auth.hashers import check_password
             is_valid = check_password(password, stored_password)
-            print(f"3. Verification: {is_valid}")
+        
             
             return is_valid
         except Student.DoesNotExist:
