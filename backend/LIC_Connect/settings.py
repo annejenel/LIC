@@ -84,7 +84,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'lic_database',  # Replace with your database name
         'USER': 'root',  # Replace with your database user
-        'PASSWORD': 'mysqlpass',  # Replace with your database password
+        'PASSWORD': 'vlackhole',  # Replace with your database password
         'HOST': 'localhost',  # Set to the host of your MySQL server
         'PORT': '3306',  # Default MySQL port
     }

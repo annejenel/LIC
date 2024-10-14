@@ -10,6 +10,7 @@ from django.contrib.auth.hashers import make_password, check_password
 from rest_framework.authtoken.models import Token
 from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth.mixins import LoginRequiredMixin
+import json
 
 
 
@@ -160,3 +161,38 @@ class LogoutView(APIView):
             return Response({"message": "Successfully logged out."}, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        
+
+
+class ImportStudentView(APIView):
+    def post(self, request, *args, **kwargs):
+        student_data = request.data  # Expecting JSON data (list of students)
+
+        # Check if the data is a list (multiple student records)
+        if not isinstance(student_data, list):
+            return Response({"error": "Invalid data format. Expected a list."}, status=status.HTTP_400_BAD_REQUEST)
+
+        inserted_students = []
+        duplicate_students = []
+
+        for student_info in student_data:
+            # Check if the student already exists based on studentID
+            if Student.objects.filter(studentID=student_info.get('studentID')).exists():
+                duplicate_students.append(student_info)  # Track duplicate records
+            else:
+                serializer = StudentSerializer(data=student_info)
+                if serializer.is_valid():
+                    serializer.save()
+                    inserted_students.append(serializer.data)  # Track inserted records
+                else:
+                    return Response({"errors": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Construct response messages
+        response_message = {
+            "message": "Students imported successfully",
+            "inserted": inserted_students,
+            "duplicates": duplicate_students,
+        }
+
+        # Return a message that indicates success but also lists duplicates
+        return Response(response_message, status=status.HTTP_201_CREATED)
