@@ -38,26 +38,27 @@ const Header = () => {
   const location = useLocation();
   const [userRole, setUserRole] = useState('');
 
-   // Fetch user role from localStorage
-   useEffect(() => {
+  // Fetch user role from localStorage
+  useEffect(() => {
     const role = localStorage.getItem('userRole');
     setUserRole(role);
   }, []);
   
-  // Determine the current path and set the active page label
+  // Menu items with role-based access control
   const menuItems = [
     { label: "Dashboard", path: "/dashboard" },
-    { label: "Manage Staff", path: "/staff" },
-    { label: "Settings", path: "/settings" },
+    { label: "Manage Staff", path: "/staff", restricted: true },  // Restricted for admin only
+    { label: "Settings", path: "/settings", restricted: true },   // Restricted for admin only
   ];
 
   const activePage = menuItems.find(item => location.pathname === item.path)?.label || "Analytics";
+
+  // Handle Logout
   const handleLogout = async () => {
     try {
       const token = localStorage.getItem("token");
       const csrfToken = getCookie("csrftoken");
 
-      // If there is no token, navigate to the login page
       if (!token) {
         console.log("No token found, logging out...");
         navigate("/"); // Navigate to the login page
@@ -76,15 +77,14 @@ const Header = () => {
       );
 
       if (response.status === 200) {
-        localStorage.removeItem("token"); // Clear token from local storage
-        navigate("/"); // Navigate to the login page after successful logout
+        localStorage.removeItem("token");
+        navigate("/"); // Navigate to login page after successful logout
       } else {
         console.error("Logout failed:", response.data);
       }
     } catch (error) {
       if (error.response) {
         console.error("Logout failed:", error.response.data);
-        // Handle 'Invalid token' error more gracefully
         if (error.response.status === 403) {
           localStorage.removeItem("token"); // Remove invalid token
           console.log("Token was invalid, but logout proceeded.");
@@ -114,7 +114,6 @@ const Header = () => {
               marginBottom: 0,
               zIndex: 1000,
             }}
-            
           >
             <Box className="logo" />
             <Typography
@@ -163,12 +162,20 @@ const Header = () => {
                   }}
                 >
                   {menuItems.map((item, index) => (
-                    <MenuItem key={index} onClick={() => navigate(item.path)}>
+                    <MenuItem 
+                      key={index} 
+                      onClick={() => {
+                        // Check if the page is restricted and if the user is allowed to access it
+                        if (item.restricted && userRole !== 'admin') {
+                          alert("Access Denied: Admins Only");
+                        } else {
+                          navigate(item.path);
+                        }
+                      }}
+                    >
                       {item.label}
                     </MenuItem>
                   ))}
-                  
-
                 </Menu>
               </Dropdown>
 
