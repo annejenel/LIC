@@ -10,7 +10,13 @@ import AddStaffModal from '../Modals/AddStaff'; // Import the modal component
 import './ManageStaff.css';
 import Dropdown from "@mui/joy/Dropdown";
 import MenuButton from "@mui/joy/MenuButton";
-import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import { ArrowBackIos, ArrowForwardIos } from "@mui/icons-material";
+import Pagination from '@mui/material/Pagination';
+import PaginationItem from '@mui/material/PaginationItem';
+import { IconButton } from '@mui/material';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 
 const ManageStaff = () => {
   const [isModalOpen, setIsModalOpen] = useState(false); // State to control modal visibility
@@ -20,6 +26,8 @@ const ManageStaff = () => {
   const [loading, setLoading] = useState(false); // State to manage loading state
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [alert, setAlert] = useState({ type: '', message: '' });
+  const [page, setPage] = useState(1); // Track current page
+  const itemsPerPage  = 5;  // Display 5 rows per page
 
   const handleSnackbarClose = () => {
     setSnackbarOpen(false);
@@ -115,108 +123,142 @@ const ManageStaff = () => {
       setSnackbarOpen(true);
     }
   };
-  return (
-  
-  <div>
-    {/* Render the AddStaffModal */}
-    <AddStaffModal
-            isOpen={isModalOpen}
-            onClose={() => setIsModalOpen(false)} // Close the modal
-            onAddStaff={handleAddStaff} // Pass the add staff handler
-          />
-    {/* Display error message if there is one */}
-    {error && (
-      <Typography sx={{ color: 'red', textAlign: 'center' }}>
-        {error}
-      </Typography>
-    )}
-    <SnackbarComponent 
-                open={snackbarOpen} 
-                handleClose={handleSnackbarClose} 
-                alert={alert} 
-            />
-      <Header/>
-      <div className="staff-container">
-        
-        <div className="staff-container-body">
 
+  // Handle page navigation
+  const handlePrevious = () => {
+    if (page > 1) {
+      setPage(page - 1);
+    }
+  };
+
+  const handleNext = () => {
+    if (page < Math.ceil(staffList.length / itemsPerPage)) {
+      setPage(page + 1);
+    }
+  };
+
+  // Get current staff to display based on pagination
+  const currentStaff = staffList.slice((page - 1) * itemsPerPage, page * itemsPerPage);
+  return (
+    <div>
+      <AddStaffModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onAddStaff={handleAddStaff}
+      />
+      {error && (
+        <Typography sx={{ color: 'red', textAlign: 'center' }}>
+          {error}
+        </Typography>
+      )}
+      <SnackbarComponent 
+        open={snackbarOpen} 
+        handleClose={handleSnackbarClose} 
+        alert={alert} 
+      />
+      <Header />
+      <div className="staff-container">
+        <div className="staff-container-body">
           <div className="staff-container-content">
-           
-            {/* Render the staff list here */}
             <div className="staff-table">
-            <div className='staff-container-header'>
-          <Typography
-            component="h1"
-            sx={{
-              fontSize: '36px',
-              fontWeight: 'normal',
-              color: '#a94442',
-              
-            }}
-          >STAFF
-          </Typography>
-          <Button
-              startDecorator={<AddIcon />}
-              sx={{
-                backgroundColor: '#28a745',
-                color: 'white',
-                fontSize: '12px',
-                '&:hover': {
-                  backgroundColor: '#218838',
-                },
-              }}
-              onClick={() => setIsModalOpen(true)} // Open the modal on click
-            >
-              Add Staff
-            </Button>
-        </div>
-                <table>
-                  <thead>
-                    <tr>
-                      <th>Name</th>
-                      <th>Username</th>
-                      <th>Status</th>
-                      
-                      {/* Add more columns as needed */}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {staffList.length > 0 ? (
-                      staffList.map((staff) => (
-                        <tr 
-                          key={staff.username} 
-                          onClick={() => handleRowClick(staff.username)} 
-                          style={{ cursor: 'pointer' }}
-                        >
-                          <td>{staff.first_name}</td>
-                          <td>{staff.username}</td>
-                          <td>
+              <div className='staff-container-header'>
+                <Typography
+                  component="h1"
+                  sx={{ fontSize: '36px', fontWeight: 'normal', color: '#a94442' }}
+                >
+                  STAFF
+                </Typography>
+                <div className="pagination-controls">
+                  {/* Previous Button */}
+                  <IconButton
+                    onClick={handlePrevious}
+                    disabled={page === 1} // Disable if on first page
+                  >
+                    <ArrowBackIos />
+                  </IconButton>
+
+                  {/* Current Page Number */}
+                  <Typography 
+                    variant="button" 
+                    sx={{ 
+                      color: 'white',
+                      backgroundColor: '#a94442',
+                      borderRadius: '50%', // Circular shape
+                      width: '30px',       // Adjust width to desired size
+                      height: '30px',      // Height equal to width
+                      display: 'flex',     // Flexbox to center content
+                      justifyContent: 'center',
+                      alignItems: 'center',  
+                    }}>
+                   {page}
+                  </Typography>
+
+                  {/* Next Button */}
+                  <IconButton
+                    onClick={handleNext}
+                    disabled={page === Math.ceil(staffList.length / itemsPerPage)} // Disable if on last page
+                  >
+                    <ArrowForwardIos />
+                  </IconButton>
+                </div>
+
+                <Button
+                  startDecorator={<AddIcon />}
+                  sx={{
+                    backgroundColor: '#28a745',
+                    color: 'white',
+                    fontSize: '12px',
+                    '&:hover': { backgroundColor: '#218838' },
+                  }}
+                  onClick={() => setIsModalOpen(true)}
+                >
+                  Add Staff
+                </Button>
+              </div>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Username</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {currentStaff.length > 0 ? (
+                    currentStaff.map((staff) => (
+                      <tr
+                        key={staff.username}
+                        onClick={() => handleRowClick(staff.username)}
+                        style={{ cursor: 'pointer' }}
+                      >
+                        <td>{staff.first_name}</td>
+                        <td>{staff.username}</td>
+                        <td>
                           <Dropdown>
                             <MenuButton
-                            variant="outlined"
-                            endDecorator={<KeyboardArrowDownIcon />}>
-                            {staff.is_active ? 'Active' : 'Inactive'}
+                              variant="outlined"
+                              endDecorator={<KeyboardArrowDownIcon />}
+                            >
+                              {staff.is_active ? 'Active' : 'Inactive'}
                             </MenuButton>
                             <Menu>
                               <MenuItem onClick={() => handleStatusChange(staff.username, true)}>Active</MenuItem>
                               <MenuItem onClick={() => handleStatusChange(staff.username, false)}>Inactive</MenuItem>
                             </Menu>
                           </Dropdown>
-                          </td>
-                          
-                        </tr>
-                      ))
-                    ) : (
-                      <tr>
-                        <td colSpan="2">No staff members found.</td>
+                        </td>
                       </tr>
-                    )}
-                  </tbody>
-                </table>
-              </div>
-              
-              {/* Left table for transactions */}
-              <div className="logs-table">
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan="3">No staff members found.</td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+             {/* right table for transactions */}
+             <div className="logs-table">
               <Typography
             component="h1"
             sx={{
@@ -249,15 +291,10 @@ const ManageStaff = () => {
                   </tbody>
                 </table>
               </div>
-            
-            
-              
-            
           </div>
         </div>
-        </div>
+      </div>
     </div>
-
   );
 };
 
