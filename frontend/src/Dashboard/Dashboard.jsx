@@ -31,6 +31,7 @@ const TransactionHistory = lazy(() => import("../Modals/TransactionHistory"));
 const AddNewSem = lazy(() => import("../Modals/AddNewSem"));
 const Import = lazy(() => import("../Modals/ImportStudents"));
 import EditStudentAction from '../Modals/EditStudentAction';
+import Footer from '../Components/Footer.jsx';
 
 import "../Modals/AddNewSem.css";
 import "./Dashboard.css";
@@ -332,40 +333,58 @@ export default function Dashboard() {
           </Box>
 
           {/* Student Table */}
-          <Box className="tables">
-            <Typography level="h6" className="studentlist">
-              Student List
-            </Typography>
-            {loading ? (
-              <p>Loading...</p>
-            ) : filteredStudents.length === 0 ? (
-              <p>No students available</p>
-            ) : (
-              <div className="table-wrapper">
-                {/* Pagination Controls */}
-                <div className="pagination">
-                  <button
-                    onClick={() => handlePageChange(currentPage - 1)}
-                    disabled={currentPage === 0}
-                  >
-                    <ArrowBackIos />
-                  </button>
-                  {Array.from({ length: totalPages }, (_, index) => (
-                    <button
-                      key={index}
-                      onClick={() => handlePageChange(index)}
-                      className={currentPage === index ? "active" : ""}
-                    >
-                      {index + 1}
-                    </button>
-                  ))}
-                  <button
-                    onClick={() => handlePageChange(currentPage + 1)}
-                    disabled={currentPage >= totalPages - 1}
-                  >
-                    <ArrowForwardIos />
-                  </button>
-                </div>
+<Box className="tables">
+  <Typography level="h6" className="studentlist">
+    Student List
+  </Typography>
+  {loading ? (
+    <p>Loading...</p>
+  ) : filteredStudents.length === 0 ? (
+    <p>No students available</p>
+  ) : (
+    <div className="table-wrapper">
+      {/* Pagination Controls */}
+      <div className="pagination">
+        {/* Back Button */}
+        <button
+          onClick={() => handlePageChange(currentPage - 1)}
+          disabled={currentPage === 0}
+        >
+          <ArrowBackIos />
+        </button>
+
+        {/* Page Numbers Logic */}
+        {Array.from({ length: 3 }, (_, index) => {
+          // Calculate the current page group (e.g., pages 1-3, 4-6, 7-9)
+          const startPage = Math.floor(currentPage / 3) * 3; // Start of current group (0-based)
+          const pageIndex = startPage + index;
+
+          // Only display the pages if they are within the total pages limit
+          if (pageIndex < totalPages) {
+            return (
+              <button
+                key={pageIndex}
+                onClick={() => handlePageChange(pageIndex)}
+                className={currentPage === pageIndex ? "active" : ""}
+              >
+                {pageIndex + 1}
+              </button>
+            );
+          } else {
+            return null; // No buttons for pages beyond totalPages
+          }
+        })}
+
+        {/* Forward Button */}
+        <button
+          onClick={() => handlePageChange(currentPage + 1)}
+          disabled={currentPage >= totalPages - 1}
+        >
+          <ArrowForwardIos />
+        </button>
+      </div>
+
+
 
                 <table className="student-table">
                   <thead>
@@ -374,7 +393,7 @@ export default function Dashboard() {
                       <th>NAME</th>
                       <th>COURSE</th>
                       <th>TIME LEFT</th>
-                      <th>STATUS</th>
+                      <th>TYPE</th>
                       <th>ACTIONS</th>
                     </tr>
                   </thead>
@@ -463,9 +482,16 @@ export default function Dashboard() {
                     ))}
                   </tbody>
                 </table>
+
+
+                
               </div>
+
+
+                    
             )}
           </Box>
+          <Footer/>
         </Sheet>
 
         {/* Modals */}
