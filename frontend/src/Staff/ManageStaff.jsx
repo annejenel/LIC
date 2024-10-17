@@ -17,6 +17,8 @@ import { IconButton } from '@mui/material';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import SearchIcon from "@mui/icons-material/Search";
+import Input from "@mui/joy/Input";
 
 const ManageStaff = () => {
   const [isModalOpen, setIsModalOpen] = useState(false); // State to control modal visibility
@@ -28,6 +30,12 @@ const ManageStaff = () => {
   const [alert, setAlert] = useState({ type: '', message: '' });
   const [page, setPage] = useState(1); // Track current page
   const itemsPerPage  = 5;  // Display 5 rows per page
+  const [searchQuery, setSearchQuery] = useState("");
+
+  // Fetch staff list on component mount
+  useEffect(() => {
+    fetchStaffList();
+  }, []);
 
   const handleSnackbarClose = () => {
     setSnackbarOpen(false);
@@ -47,10 +55,10 @@ const ManageStaff = () => {
     }
   };
 
-  // Fetch staff list when the component mounts
-  useEffect(() => {
-    fetchStaffList();
-  }, []);
+  // Filter staff based on search query
+  const filteredStaff = staffList.filter((staff) =>
+    staff.first_name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   const handleAddStaff = async (newStaff) => {
   try {
@@ -123,6 +131,12 @@ const ManageStaff = () => {
       setSnackbarOpen(true);
     }
   };
+
+   // Paginate filtered staff
+   const paginatedStaff = filteredStaff.slice(
+    (page - 1) * itemsPerPage,
+    page * itemsPerPage
+  );
 
   // Handle page navigation
   const handlePrevious = () => {
@@ -201,6 +215,20 @@ const ManageStaff = () => {
                     <ArrowForwardIos />
                   </IconButton>
                 </div>
+                <Input
+                  placeholder="Search staff..."
+                  variant="soft"
+                  size="sm"
+                  endDecorator={<SearchIcon />}
+                  className="search-input"
+                  sx={{
+                    width: "250px",
+                    height: "20px",
+                    fontSize: "13px",
+                  }}
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
 
                 <Button
                   startDecorator={<AddIcon />}
@@ -224,17 +252,17 @@ const ManageStaff = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {currentStaff.length > 0 ? (
-                    currentStaff.map((staff) => (
+                  {paginatedStaff.length > 0 ? (
+                    paginatedStaff.map((staff) => (
                       <tr
                         key={staff.username}
-                        onClick={() => handleRowClick(staff.username)}
+                        onClick={() => setSelectedUsername(staff.username)}
                         style={{ cursor: 'pointer' }}
                       >
                         <td>{staff.first_name}</td>
                         <td>{staff.username}</td>
                         <td>
-                          <Dropdown>
+                        <Dropdown>
                             <MenuButton
                               variant="outlined"
                               endDecorator={<KeyboardArrowDownIcon />}
