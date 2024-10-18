@@ -171,17 +171,26 @@ export default function Dashboard() {
       .then((response) => {
         console.log("Status updated successfully:", response.data);
         fetchStudents();
+        // Pass success to the Confirmation modal
+        setIsConfirmModalOpen(false);
       })
       .catch((error) => {
         console.error(
           "Error updating status:",
           error.response ? error.response.data : error.message
         );
-        setStudents(originalStudents); 
+        // Revert the status in case of error
+        setStudents(originalStudents);
+        // Show error in the Confirmation modal
+        setIsConfirmModalOpen(false);
+        setAlertType('error');
+        setSnackbarVisible(true);
+        setTimeout(() => {
+          setSnackbarVisible(false);
+        }, 2000);
       });
-
-    setIsConfirmModalOpen(false);
   };
+  
   
 
   const openAddStudentModal = () => setIsAddStudentModalOpen(true);
