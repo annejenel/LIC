@@ -30,6 +30,7 @@ const StudentTransaction = lazy(() => import("../Modals/StudentTransaction"));
 const TransactionHistory = lazy(() => import("../Modals/TransactionHistory"));
 const AddNewSem = lazy(() => import("../Modals/AddNewSem"));
 const Import = lazy(() => import("../Modals/ImportStudents"));
+const StudentHistory = lazy(() => import("../Modals/StudentHistory"));
 import EditStudentAction from '../Modals/EditStudentAction';
 import Footer from '../Components/Footer.jsx';
 
@@ -82,6 +83,7 @@ export default function Dashboard() {
   const [currentPage, setCurrentPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [searchQuery, setSearchQuery] = useState("");
+  const [isStudentHistory, setIsStudentHistory] = useState(false);
   const [isTransactionHistoryModalOpen, setIsTransactionHistoryModalOpen] =
     useState(false);
 
@@ -177,6 +179,13 @@ export default function Dashboard() {
 
   const openUpload = () => {setUpload(true); console.log("Opening modal");}
   const closeUpload = () => {setUpload(false); console.log("Closing modal");}
+
+  const openHistory = (studentID) => {
+    setIsStudentHistory(true); 
+    setSelectedStudentID(studentID);
+    console.log("Opening modal");
+  };
+  const closeHistory = () => {setIsStudentHistory(false); console.log("Closing modal");}
   
   const openTransactionModal = (studentID) => {
     setSelectedStudentID(studentID);
@@ -464,7 +473,11 @@ export default function Dashboard() {
                           </Dropdown>
                         </td>
                         <td>
-                          <IconButton>
+                          <IconButton
+                           onClick={() =>
+                            openHistory(student.studentID)
+                            }
+                          >
                             <HistoryEduRoundedIcon />
                           </IconButton>
                           <IconButton
@@ -533,13 +546,20 @@ export default function Dashboard() {
             />
           )}
           {isEditStudentModalOpen && (
-        <EditStudentAction
-          isOpen={isEditStudentModalOpen}
-          onClose={closeEditStudentModal}
-          studentID={selectedStudentID}
-          onPasswordReset={handleStudentUpdated}
-        />
-      )}
+            <EditStudentAction
+              isOpen={isEditStudentModalOpen}
+              onClose={closeEditStudentModal}
+              studentID={selectedStudentID}
+              onPasswordReset={handleStudentUpdated}
+            />
+          )}
+          {isStudentHistory && (
+            <StudentHistory
+              isOpen={isStudentHistory}
+              onClose={closeHistory}
+              studentID={selectedStudentID}
+            />
+          )}
         </Suspense>
       </div>
     </CssVarsProvider>

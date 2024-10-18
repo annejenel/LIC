@@ -1,8 +1,8 @@
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
-from .models import Student, Transaction, Staff
-from .serializers import StudentSerializer, TransactionSerializer, StaffSerializer, UserLoginSerializer, StaffLoginSerializer, StaffUserSerializer, StaffStatusSerializer
+from .models import Student, Transaction, Staff, Session
+from .serializers import StudentSerializer, TransactionSerializer, StaffSerializer, UserLoginSerializer, StaffLoginSerializer, StaffUserSerializer, StaffStatusSerializer, SessionSerializer
 from rest_framework.views import APIView
 from rest_framework import generics, viewsets
 from django.conf import settings 
@@ -228,3 +228,12 @@ class ImportStudentView(APIView):
 
         # Return a message that indicates success but also lists duplicates
         return Response(response_message, status=status.HTTP_201_CREATED)
+
+class SessionListByStudentID(generics.ListAPIView):
+    serializer_class = SessionSerializer
+
+    def get_queryset(self):
+        studentID = self.kwargs['studentID']
+        print(studentID)
+        # Filter sessions based on the foreign key's studentID
+        return Session.objects.filter(parent_id=studentID)

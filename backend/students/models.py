@@ -54,7 +54,7 @@ class Staff(models.Model):
     
     
 class Session(models.Model):
-    parent = models.ForeignKey(Student, on_delete=models.CASCADE, related_name='sessions_as_parent')
+    parent = models.ForeignKey(Student, on_delete=models.CASCADE, related_name='sessions_as_parent', to_field='studentID')
     course = models.CharField(max_length=255)
     date = models.DateField(auto_now_add=True)
     loginTime = models.TimeField(auto_now_add=True)

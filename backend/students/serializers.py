@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.hashers import make_password, check_password
-from .models import Student, Transaction, Staff
+from .models import Student, Transaction, Staff, Session
 from django.contrib.auth import authenticate
 from django.http import JsonResponse
 from django.contrib.auth.models import User
@@ -116,3 +116,22 @@ class StaffStatusSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['is_active']  # Make sure this field is included
+
+class SessionSerializer(serializers.ModelSerializer):
+    loginTime = serializers.SerializerMethodField()
+    logoutTime = serializers.SerializerMethodField()
+    class Meta:
+        model = Session
+        fields = ['date', 'loginTime', 'logoutTime', 'consumedTime']
+
+    def get_loginTime(self, obj):
+    # Format the loginTime as HH:MM:SS
+        if obj.loginTime:
+            return obj.loginTime.strftime('%H:%M:%S')
+        return None
+
+    def get_logoutTime(self, obj):
+        # Format the logoutTime as HH:MM:SS
+        if obj.logoutTime:
+            return obj.logoutTime.strftime('%H:%M:%S')
+        return None
