@@ -8,7 +8,7 @@ const AddStudent = ({ isOpen, onClose, onStudentAdded }) => {
   const [course, setCourse] = useState('');
   const [status, setStatus] = useState('Student'); 
   const [password, setPassword] = useState('hashed_default_password'); 
-  const [timeLeft, setTimeLeft] = useState(60); 
+  const [timeLeft, setTimeLeft] = useState(600); 
   const [error, setError] = useState('');
 
   if (!isOpen) return null;
@@ -55,7 +55,7 @@ const AddStudent = ({ isOpen, onClose, onStudentAdded }) => {
       setCourse('');
       setStatus('Student'); 
       setPassword('hashed_default_password'); 
-      setTimeLeft(60); 
+      setTimeLeft(600); 
 
       onClose(); 
       alert('Student added successfully!');
@@ -145,7 +145,7 @@ const AddStudent = ({ isOpen, onClose, onStudentAdded }) => {
             />
           </div>
           <div>
-            <label htmlFor="timeLeft">Time Left</label>
+            <label htmlFor="timeLeft">Time</label>
             <input
               type="text"
               id="timeLeft"

@@ -401,7 +401,7 @@ export default function Dashboard() {
                       <th>STUDENT ID</th>
                       <th>NAME</th>
                       <th>COURSE</th>
-                      <th>TIME LEFT</th>
+                      <th>TIME</th>
                       <th>TYPE</th>
                       <th>ACTIONS</th>
                     </tr>
