@@ -18,19 +18,7 @@ import axios from "axios";
 import Header from '../Components/Header.jsx';
 import "./Settings.css";
 const Settings = () => {
-  const navigate = useNavigate();
-
-  //Handle Logout
-  const handleLogout = async () => {
-    try {
-      await axios.post("http://localhost:8000/api/logout/"); // Adjust the URL to your logout endpoint
-      // On success, navigate to the login page or home page
-      navigate("/");
-    } catch (error) {
-      console.error("Logout failed:", error);
-    }
-  };
-
+  
   //State to store form values
   const [formValues, setFormValues] = useState({
     currentPassword: "",
