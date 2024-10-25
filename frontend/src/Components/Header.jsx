@@ -78,6 +78,7 @@ const Header = () => {
 
       if (response.status === 200) {
         localStorage.removeItem("token");
+        localStorage.removeItem('userRole');
         navigate("/"); // Navigate to login page after successful logout
       } else {
         console.error("Logout failed:", response.data);
