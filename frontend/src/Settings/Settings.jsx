@@ -26,6 +26,9 @@ const Settings = () => {
     confirmPassword: "",
   });
 
+  const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
+
   //Handle reset button click
   const handleReset = () => {
     //Clear all form values
@@ -43,6 +46,47 @@ const Settings = () => {
       ...prevValues,
       [name]: value,
     }));
+  };
+  // Handle password change
+  const handleChangePassword = async () => {
+    const { currentPassword, newPassword, confirmPassword } = formValues;
+
+    if (!currentPassword || !newPassword || !confirmPassword) {
+      setErrorMessage("All fields are required.");
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      setErrorMessage("New password and confirm password do not match.");
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.put("http://localhost:8000/api/change-password/", 
+        {
+          current_password: currentPassword,
+          new_password: newPassword,
+          confirm_password: confirmPassword,
+        },
+        {
+          headers: {
+            Authorization: `Token ${token}`,
+          },
+        }
+      );
+
+      if (response.status === 200) {
+        setSuccessMessage("Password changed successfully!");
+        setErrorMessage("");
+        handleReset(); // Clear form fields after successful change
+      }
+    } catch (error) {
+      setErrorMessage(
+        error.response?.data?.detail || "Error changing password. Please try again."
+      );
+      setSuccessMessage("");
+    }
   };
 
   return (
@@ -65,6 +109,8 @@ const Settings = () => {
               <Typography variant="h5" component="h2" gutterBottom>
                 Change Password
               </Typography>
+              {errorMessage && <Typography color="error">{errorMessage}</Typography>}
+              {successMessage && <Typography color="success">{successMessage}</Typography>}
               <TextField
                 label="Current Password"
                 variant="outlined"
@@ -95,6 +141,8 @@ const Settings = () => {
                 fullWidth
                 required
               />
+              {errorMessage && <p className="error">{errorMessage}</p>}
+              {successMessage && <p className="success">{successMessage}</p>}
               <Box
                 sx={{
                   display: "flex",
@@ -120,6 +168,7 @@ const Settings = () => {
                 <Button
                   variant="contained"
                   color="secondary"
+                  onClick={handleChangePassword}
                   sx={{
                     mt: 2,
                     backgroundColor: "#89343B",
