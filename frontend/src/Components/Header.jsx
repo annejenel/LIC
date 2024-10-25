@@ -48,7 +48,7 @@ const Header = () => {
   const menuItems = [
     { label: "Dashboard", path: "/dashboard" },
     { label: "Manage Staff", path: "/staff", restricted: true },  // Restricted for admin only
-    { label: "Settings", path: "/settings", restricted: true },   // Restricted for admin only
+    { label: "Settings", path: "/settings"},   
   ];
 
   const activePage = menuItems.find(item => location.pathname === item.path)?.label || "Analytics";
