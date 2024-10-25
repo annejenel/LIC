@@ -135,3 +135,22 @@ class SessionSerializer(serializers.ModelSerializer):
         if obj.logoutTime:
             return obj.logoutTime.strftime('%H:%M:%S')
         return None
+
+class StudentTypeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Student
+        fields = ['studentID', 'time_left', 'status']
+
+    def update(self, instance, validated_data):
+        # Update the status and check if it's 'Alumnus'
+        status = validated_data.get('status', instance.status)
+        print(validated_data['time_left'])
+        if status == 'Alumnus':
+             instance.time_left = 0
+             print(f"Time left set to 0 for student: {instance.time_left}", flush=True)
+        
+        instance.status = status
+        instance.time_left = validated_data.get('time_left', instance.time_left)
+        
+        instance.save()
+        return instance

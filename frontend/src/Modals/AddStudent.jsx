@@ -85,7 +85,7 @@ const AddStudent = ({ isOpen, onClose, onStudentAdded }) => {
       <div className="modal-content">
         <button className="modal-close" onClick={onClose}>
           &times;
-        </button>
+        </button> 
         <h2>Add Student</h2>
         {error && <p className="error-message">{error}</p>}
         <form onSubmit={handleSubmit}>

@@ -23,6 +23,8 @@ import ReceiptLongIcon from "@mui/icons-material/ReceiptLong";
 import DriveFolderUploadIcon from "@mui/icons-material/DriveFolderUpload";
 import PersonAddAltIcon from '@mui/icons-material/PersonAddAlt';
 import Header from '../Components/Header.jsx';
+import Confirmation from '../Modals/Confirmation.jsx';
+
 
 // Lazy load the modals
 const AddStudent = lazy(() => import("../Modals/AddStudent"));
@@ -82,6 +84,12 @@ export default function Dashboard() {
   const [currentPage, setCurrentPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [searchQuery, setSearchQuery] = useState("");
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+  const [studentToChange, setStudentToChange] = useState(null);
+  const [newStatus, setNewStatus] = useState('');
+
+
+
   const [isTransactionHistoryModalOpen, setIsTransactionHistoryModalOpen] =
     useState(false);
 
@@ -132,42 +140,62 @@ export default function Dashboard() {
 
   const closeEditStudentModal = () => {
     setIsEditStudentModalOpen(false);
-    setSelectedStudentID(null); // Reset selected ID
+    setSelectedStudentID(null); 
   };
 
   const handleStudentUpdated = () => {
-    fetchStudents(); // Fetch updated students
+    fetchStudents(); 
   };
 
-  const handleStatusChange = (studentID, newStatus) => {
-    const encodedStudentID = encodeURIComponent(studentID);
+  const handleStatusChange = (studentID, status) => {
+    setStudentToChange(studentID);  
+    setNewStatus(status);         
+    setIsConfirmModalOpen(true);   
+  };
 
+  const confirmStatusChange = () => {
+    const encodedStudentID = encodeURIComponent(studentToChange);
+    const originalStudents = [...students];
+  
     const updatedStudents = students.map((student) =>
-      student.studentID === studentID
-        ? { ...student, status: newStatus }
+      student.studentID === studentToChange
+        ? { ...student, status: newStatus, timeLeft: '0 hours 0 minutes' }
         : student
     );
-
-    const originalStudents = [...students];
-
     setStudents(updatedStudents);
+    
+    // Prepare the data to be sent in the request
+    const updateData = {
+      status: newStatus,
+      time_left: newStatus === 'Alumnus' ? 0 : undefined, // Set time_left to 0 if the status is 'Alumnus'
+    };
 
     axios
-      .patch(`http://localhost:8000/api/students/${encodedStudentID}/`, {
-        status: newStatus,
-      })
+      .patch(`http://localhost:8000/api/students/${encodedStudentID}/`, updateData) 
       .then((response) => {
         console.log("Status updated successfully:", response.data);
         fetchStudents();
+        // Pass success to the Confirmation modal
+        setIsConfirmModalOpen(false);
       })
       .catch((error) => {
         console.error(
           "Error updating status:",
           error.response ? error.response.data : error.message
         );
+        // Revert the status in case of error
         setStudents(originalStudents);
+        // Show error in the Confirmation modal
+        setIsConfirmModalOpen(false);
+        setAlertType('error');
+        setSnackbarVisible(true);
+        setTimeout(() => {
+          setSnackbarVisible(false);
+        }, 2000);
       });
   };
+  
+  
 
   const openAddStudentModal = () => setIsAddStudentModalOpen(true);
   const closeAddStudentModal = () => {setIsAddStudentModalOpen(false); console.log("Closing modal");}
@@ -188,6 +216,11 @@ export default function Dashboard() {
     setIsTransactionHistoryModalOpen(true);
   const closeTransactionHistoryModal = () =>
     setIsTransactionHistoryModalOpen(false);
+
+  const handleConfirmStatusChange = () => {
+    // Simulate the logic to change the status, e.g., an API call
+    console.log('Status changed successfully!');
+  };
 
   const filteredStudents = students.filter((student) =>
     student.studentID
@@ -210,7 +243,7 @@ export default function Dashboard() {
 
   const handleRowsPerPageChange = (event) => {
     setRowsPerPage(parseInt(event.target.value, 10));
-    setCurrentPage(0); // Reset to first page
+    setCurrentPage(0); 
   };
 
   const handlePageChange = (newPage) => {
@@ -277,7 +310,7 @@ export default function Dashboard() {
                   height: "20px",
                   margin: 0,
                 }}
-                onClick={openTransactionHistoryModal} // Open TransactionHistory modal
+                onClick={openTransactionHistoryModal} 
               >
                 Transaction
               </Button>
@@ -355,11 +388,9 @@ export default function Dashboard() {
 
         {/* Page Numbers Logic */}
         {Array.from({ length: 3 }, (_, index) => {
-          // Calculate the current page group (e.g., pages 1-3, 4-6, 7-9)
-          const startPage = Math.floor(currentPage / 3) * 3; // Start of current group (0-based)
+          const startPage = Math.floor(currentPage / 3) * 3; 
           const pageIndex = startPage + index;
 
-          // Only display the pages if they are within the total pages limit
           if (pageIndex < totalPages) {
             return (
               <button
@@ -371,7 +402,7 @@ export default function Dashboard() {
               </button>
             );
           } else {
-            return null; // No buttons for pages beyond totalPages
+            return null;
           }
         })}
 
@@ -515,21 +546,18 @@ export default function Dashboard() {
             <TransactionHistory
               isOpen={isTransactionHistoryModalOpen}
               onClose={closeTransactionHistoryModal}
-              // Add any other props required by the TransactionHistory modal
             />
           )}
           {isAddNewSemOpen && (
             <AddNewSem
               isOpen={isAddNewSemOpen}
               onClose={closeAddNewSem}
-              // Add any other props required by the TransactionHistory modal
             />
           )}
           {upload && (
             <ImportStudents
               isOpen={upload}
               onClose={closeUpload}
-              // Add any other props required by the TransactionHistory modal
             />
           )}
           {isEditStudentModalOpen && (
@@ -540,6 +568,15 @@ export default function Dashboard() {
           onPasswordReset={handleStudentUpdated}
         />
       )}
+
+{isConfirmModalOpen && (
+    <Confirmation
+      isOpen={isConfirmModalOpen}
+      onClose={() => setIsConfirmModalOpen(false)}
+      onConfirm={confirmStatusChange}
+      newStatus={newStatus}
+    />
+  )}
         </Suspense>
       </div>
     </CssVarsProvider>

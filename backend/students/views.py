@@ -2,7 +2,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 from .models import Student, Transaction, Staff, Session
-from .serializers import StudentSerializer, TransactionSerializer, StaffSerializer, UserLoginSerializer, StaffLoginSerializer, StaffUserSerializer, StaffStatusSerializer, SessionSerializer
+from .serializers import StudentSerializer, TransactionSerializer, StaffSerializer, UserLoginSerializer, StaffLoginSerializer, StaffUserSerializer, StaffStatusSerializer, SessionSerializer, StudentTypeSerializer
 from rest_framework.views import APIView
 from rest_framework import generics, viewsets
 from django.conf import settings 
@@ -237,3 +237,18 @@ class SessionListByStudentID(generics.ListAPIView):
         print(studentID)
         # Filter sessions based on the foreign key's studentID
         return Session.objects.filter(parent_id=studentID)
+    
+class StudentUpdateView(generics.UpdateAPIView):
+    queryset = Student.objects.all()
+    serializer_class = StudentTypeSerializer
+    
+    def partial_update(self, request, *args, **kwargs):
+        # Get the student instance
+        student = self.get_object()
+        
+         # Perform the partial update
+        serializer = self.get_serializer(student, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
