@@ -32,6 +32,7 @@ const StudentTransaction = lazy(() => import("../Modals/StudentTransaction"));
 const TransactionHistory = lazy(() => import("../Modals/TransactionHistory"));
 const AddNewSem = lazy(() => import("../Modals/AddNewSem"));
 const Import = lazy(() => import("../Modals/ImportStudents"));
+const StudentHistory = lazy(() => import("../Modals/StudentHistory"));
 import EditStudentAction from '../Modals/EditStudentAction';
 import Footer from '../Components/Footer.jsx';
 
@@ -87,7 +88,7 @@ export default function Dashboard() {
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [studentToChange, setStudentToChange] = useState(null);
   const [newStatus, setNewStatus] = useState('');
-
+  const [isStudentHistory, setIsStudentHistory] = useState(false);
 
 
   const [isTransactionHistoryModalOpen, setIsTransactionHistoryModalOpen] =
@@ -195,6 +196,12 @@ export default function Dashboard() {
       });
   };
   
+  const openHistory = (studentID) => {
+    setIsStudentHistory(true); 
+    setSelectedStudentID(studentID);
+    console.log("Opening modal");
+  };
+  const closeHistory = () => {setIsStudentHistory(false); console.log("Closing modal");}
   
 
   const openAddStudentModal = () => setIsAddStudentModalOpen(true);
@@ -495,7 +502,9 @@ export default function Dashboard() {
                           </Dropdown>
                         </td>
                         <td>
-                          <IconButton>
+                          <IconButton onClick={() =>
+                            openHistory(student.studentID)
+                            }>
                             <HistoryEduRoundedIcon />
                           </IconButton>
                           <IconButton
@@ -569,16 +578,23 @@ export default function Dashboard() {
         />
       )}
 
-{isConfirmModalOpen && (
-    <Confirmation
-      isOpen={isConfirmModalOpen}
-      onClose={() => setIsConfirmModalOpen(false)}
-      onConfirm={confirmStatusChange}
-      newStatus={newStatus}
-    />
-  )}
-        </Suspense>
-      </div>
-    </CssVarsProvider>
-  );
+    {isConfirmModalOpen && (
+        <Confirmation
+          isOpen={isConfirmModalOpen}
+          onClose={() => setIsConfirmModalOpen(false)}
+          onConfirm={confirmStatusChange}
+          newStatus={newStatus}
+        />
+      )}
+      {isStudentHistory && (
+            <StudentHistory
+              isOpen={isStudentHistory}
+              onClose={closeHistory}
+              studentID={selectedStudentID}
+            />
+          )}
+            </Suspense>
+          </div>
+        </CssVarsProvider>
+      );
 }
