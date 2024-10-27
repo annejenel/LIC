@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.hashers import make_password, check_password
-from .models import Student, Transaction, Staff, Session
+from .models import Student, Transaction, Staff, Session, Semester
 from django.contrib.auth import authenticate
 from django.http import JsonResponse
 from django.contrib.auth.models import User
@@ -164,3 +164,8 @@ class ChangePasswordSerializer(serializers.Serializer):
         if data["new_password"] != data["confirm_password"]:
             raise serializers.ValidationError("New passwords do not match.")
         return data
+    
+class SemesterSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Semester
+        fields = ['year', 'semester_name']

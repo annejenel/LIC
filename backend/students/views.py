@@ -1,8 +1,8 @@
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
-from .models import Student, Transaction, Staff, Session
-from .serializers import StudentSerializer, TransactionSerializer, StaffSerializer, UserLoginSerializer, StaffLoginSerializer, StaffUserSerializer, StaffStatusSerializer, SessionSerializer, StudentTypeSerializer, ChangePasswordSerializer
+from .models import Student, Transaction, Staff, Session, Semester
+from .serializers import StudentSerializer, TransactionSerializer, StaffSerializer, UserLoginSerializer, StaffLoginSerializer, StaffUserSerializer, StaffStatusSerializer, SessionSerializer, StudentTypeSerializer, ChangePasswordSerializer, SemesterSerializer
 from rest_framework.views import APIView
 from rest_framework import generics, viewsets
 from django.conf import settings 
@@ -278,5 +278,25 @@ class ChangePasswordView(generics.UpdateAPIView):
             user.save()
             return Response({"detail": "Password updated successfully."}, status=status.HTTP_200_OK)
 
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class SemesterUpsertView(APIView):
+    def put(self, request, *args, **kwargs):
+        # Check if a semester entry exists
+        semester = Semester.objects.first()
+        
+        # If no semester exists, create a new one
+        if not semester:
+            serializer = SemesterSerializer(data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+        # If semester exists, update the existing record
+        serializer = SemesterSerializer(semester, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
