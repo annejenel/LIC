@@ -60,6 +60,23 @@ class Session(models.Model):
     loginTime = models.TimeField(auto_now_add=True)
     logoutTime = models.TimeField(null=True, blank=True)
     consumedTime = models.IntegerField(null=True, blank=True)
+    year = models.CharField(max_length=10, blank=True)
+    semester_name = models.CharField(max_length=20, blank=True)
 
+    def save(self, *args, **kwargs):
+        # Fetch the single Semester record to set year and semester_name
+        semester = Semester.objects.first()
+        if semester:
+            self.year = semester.year
+            self.semester_name = semester.semester_name
+        super().save(*args, **kwargs)
+        
     def __str__(self):
         return str(self.parent)
+    
+class Semester(models.Model):
+    year = models.CharField(max_length=10)  
+    semester_name = models.CharField(max_length=20)  
+    
+    def __str__(self):
+        return f"{self.year} - {self.semester_name}"
