@@ -1,10 +1,48 @@
 import React, { useState } from 'react'
 import './AddNewSem.css';
+
+
+
 const AddNewSem = ({ isOpen, onClose}) => {
-    // const [year, setYear] = useState('');
-    // const [sem, setSem] = useState('');
-    // const [error, setError] = useState('');
+    const [year, setYear] = useState('');
+    const [sem, setSem] = useState('');
+    const [error, setError] = useState(null);
     if (!isOpen) return null;
+  
+
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+        
+        // Input validation (optional)
+        if (!year || !sem) {
+            setError('Please fill in all fields.');
+            return;
+        }
+
+        try {
+            const token = localStorage.getItem('token');
+            const response = await fetch('http://localhost:8000/api/semesters/', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                     Authorization: `Token ${token}`,
+                },
+                body: JSON.stringify({ year, semester_name: sem }),
+            });
+
+            if (response.ok) {
+                alert("Successfully added sem");
+                setYear('');
+                setSem('');
+                onClose();
+            } else {
+                alert("Failed to add sem");
+            }
+        } catch (error) {
+            alert("Failed to add sem");
+        }
+        
+    };
     
   return (
     <div className='containerNewSem'>
@@ -13,15 +51,17 @@ const AddNewSem = ({ isOpen, onClose}) => {
                 &times;
             </button>
             <h2>New Semester</h2>
-            <form>
+            {error && <div className="error">{error}</div>}
+            <form onSubmit={handleSubmit}>
                 <div className='input'>
                     <label htmlFor="year">
-                        <input type="text" placeholder='e.g. 2024-2025'/>
+                        <input type="text" placeholder='e.g. 2024-2025' value={year} onChange={(e) => setYear(e.target.value)}/>
                     </label>
                 </div>
                 <div>
                     <label htmlFor="Semester">
-                    <select name="semester" id="sem">
+                    <select name="semester" id="sem" value={sem} onChange={(e) => setSem(e.target.value)}>
+                       <option value="" disabled>Select semester</option>
                         <option value="firstsem">First Semester</option>
                         <option value="secondsem">Second Semester</option>
                         <option value="midyear">Midyear</option>
@@ -31,6 +71,7 @@ const AddNewSem = ({ isOpen, onClose}) => {
                 <button type='submit'>Add new semester</button>
             </form>
         </div>
+        
     </div>
   )
 }

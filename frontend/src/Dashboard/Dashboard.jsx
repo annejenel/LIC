@@ -189,10 +189,7 @@ export default function Dashboard() {
         // Show error in the Confirmation modal
         setIsConfirmModalOpen(false);
         setAlertType('error');
-        setSnackbarVisible(true);
-        setTimeout(() => {
-          setSnackbarVisible(false);
-        }, 2000);
+
       });
   };
   
@@ -223,11 +220,6 @@ export default function Dashboard() {
     setIsTransactionHistoryModalOpen(true);
   const closeTransactionHistoryModal = () =>
     setIsTransactionHistoryModalOpen(false);
-
-  const handleConfirmStatusChange = () => {
-    // Simulate the logic to change the status, e.g., an API call
-    console.log('Status changed successfully!');
-  };
 
   const filteredStudents = students.filter((student) =>
     student.studentID
