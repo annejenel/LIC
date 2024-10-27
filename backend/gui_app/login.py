@@ -11,6 +11,7 @@ import sys
 from django.conf import settings
 from pathlib import Path
 from tkinter import ttk
+from tkinter import Toplevel
 
 # Determine the Django project directory
 # Adjust this path to point to your Django project directory
@@ -22,14 +23,14 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'LIC_Connect.settings')  # Repla
 django.setup()
 
 # Django setup test code - ADD THIS HERE
-try:
-    print(f"Django Version: {django.get_version()}")
-    print(f"Settings module: {os.environ['DJANGO_SETTINGS_MODULE']}")
-    print(f"Database name: {settings.DATABASES['default']['NAME']}")
-    print("Django configured successfully!")
-except Exception as e:
-    print(f"Django configuration error: {e}")
-    sys.exit(1)
+# try:
+#     print(f"Django Version: {django.get_version()}")
+#     print(f"Settings module: {os.environ['DJANGO_SETTINGS_MODULE']}")
+#     print(f"Database name: {settings.DATABASES['default']['NAME']}")
+#     print("Django configured successfully!")
+# except Exception as e:
+#     print(f"Django configuration error: {e}")
+#     sys.exit(1)
 
 # Now you can safely import Django models and utilities
 from students.models import Student, Session  # Adjust import based on your actual model names
@@ -46,17 +47,22 @@ class StudentApp:
         self.login_time = None
         self.elapsed_time = timedelta(0)
         
+        
         # Create login screen
         self.create_login_screen()
 
         
     def create_login_screen(self):
         self.clear_screen()
-        # Disable switching tabs
-        # self.root.wm_attributes("-topmost", 1)
         
-         # Disable closing application
-        #self.root.protocol("WM_DELETE_WINDOW", lambda: messagebox.showinfo("Information", "Request denied"))
+        self.root.deiconify()
+        self.root.focus_force()
+        self.root.wm_attributes("-topmost", 1)
+
+        
+        
+         #Disable closing application
+        self.root.protocol("WM_DELETE_WINDOW", lambda: messagebox.showinfo("Information", "Request denied"))
         container = tk.Frame(self.root)
         container.place(relx=0.5, rely=0.5, anchor='center')
         
@@ -112,8 +118,27 @@ class StudentApp:
         change_password_window = tk.Toplevel(self.root)
         change_password_window.grab_set()
         change_password_window.title("Change Password")
+            
+        # Set dimensions for the child window
+        window_width = 300
+        window_height = 200
 
+        # Calculate position to center the window
+        root_x = self.root.winfo_x()
+        root_y = self.root.winfo_y()
+        root_width = self.root.winfo_width()
+        root_height = self.root.winfo_height()
+
+        pos_x = root_x + (root_width // 2) - (window_width // 2)
+        pos_y = root_y + (root_height // 2) - (window_height // 2)
+
+        change_password_window.geometry(f"{window_width}x{window_height}+{pos_x}+{pos_y}")
+
+        # Override Configure event to revert to the fixed position
+        def prevent_dragging(event):
+            change_password_window.geometry(f"{window_width}x{window_height}+{pos_x}+{pos_y}")
         
+        change_password_window.bind("<Configure>", prevent_dragging)
 
         tk.Label(change_password_window, text="New Password:").grid(row=1, column=0, padx=10, pady=10)
         new_password_entry = tk.Entry(change_password_window, show="*")
@@ -161,7 +186,6 @@ class StudentApp:
 
         self.root.attributes('-fullscreen', False)
         self.root.geometry('250x200')
-        
         self.root.protocol("WM_DELETE_WINDOW", self.on_menu_screen_close)
         
         self.elapsed_time = timedelta(0)
@@ -215,9 +239,9 @@ class StudentApp:
             student = Student.objects.get(studentID=student_id)
             stored_password = student.password
 
-            print(f"Debugging password verification:")
-            print(f"1. Entered password: {password}")
-            print(f"2. Stored hashed password: {stored_password}")
+            # print(f"Debugging password verification:")
+            # print(f"1. Entered password: {password}")
+            # print(f"2. Stored hashed password: {stored_password}")
 
            
             from django.contrib.auth.hashers import check_password
@@ -226,10 +250,10 @@ class StudentApp:
             
             return is_valid
         except Student.DoesNotExist:
-            print(f"No student found with ID: {student_id}")
+            # print(f"No student found with ID: {student_id}")
             return False
         except Exception as e:
-            print(f"Error during password verification: {e}")
+            # print(f"Error during password verification: {e}")
             return False
 
     def login(self):
@@ -274,47 +298,52 @@ class StudentApp:
                 course=student.course
             )
 
-            messagebox.showinfo("Login", "Login successful!")
+            
             self.create_menu_screen()
             self.start_timer()
 
         except Student.DoesNotExist:
             messagebox.showerror("Error", "Invalid StudentID or Password")
         except Exception as e:
-            print(f"Login error: {e}")
+            # print(f"Login error: {e}")
             messagebox.showerror("Error", f"An error occurred during login: {e}")
 
         
 
     def logout(self):
-        if self.logged_in_student and self.login_time:
-            logout_time = datetime.now()
-            time_logged_in = (logout_time - self.login_time).total_seconds() // 60
+        if self.logged_in_student:
+            if self.login_time:  # Ensure login_time is not None
+                logout_time = datetime.now()
+                time_logged_in = (logout_time - self.login_time).total_seconds() // 60
 
-            # Update session using Django model
-            session = Session.objects.filter(
-                parent=self.logged_in_student,
-                logoutTime__isnull=True
-            ).latest('loginTime')
-            
-            session.logoutTime = logout_time
-            session.consumedTime = time_logged_in
-            session.save()
+                # Update session using Django model
+                session = Session.objects.filter(
+                    parent=self.logged_in_student,
+                    logoutTime__isnull=True
+                ).latest('loginTime')
+                
+                session.logoutTime = logout_time
+                session.consumedTime = time_logged_in
+                session.save()
 
-            # Update student's time left
-            self.logged_in_student.time_left -= time_logged_in
-            self.logged_in_student.save()
+                # Update student's time left
+                self.logged_in_student.time_left -= time_logged_in
+                self.logged_in_student.save()
 
-            # Set is_logged_in to False
-            self.logged_in_student.is_logged_in = False
-            self.logged_in_student.save()
+                # Set is_logged_in to False
+                self.logged_in_student.is_logged_in = False
+                self.logged_in_student.save()
 
-            self.logged_in_student = None
-            self.login_time = None
-            self.elapsed_time = timedelta(0)
-            
-            self.root.attributes('-fullscreen', True)
-            self.create_login_screen()
+                self.logged_in_student = None
+                self.login_time = None
+                self.elapsed_time = timedelta(0)
+                self.root.deiconify()
+                self.root.focus_force()
+                self.root.attributes('-fullscreen', True)
+                self.create_login_screen()
+                
+            else:
+                messagebox.showerror("Error", "Login time is not set. Please log in again.")
         else:
             messagebox.showerror("Error", "No student is logged in")
 
@@ -374,30 +403,50 @@ class StudentApp:
         self.update_timer()
 
     def update_timer(self):
-        now = datetime.now()
-        elapsed = now - self.login_time
-        remaining_time = self.time_left - elapsed
-        
-        if remaining_time <= timedelta(seconds=0):
+        # Check if the user is logged in and login_time is set
+        if self.logged_in_student and self.login_time:
+            now = datetime.now()
+            elapsed = now - self.login_time
+            remaining_time = self.time_left - elapsed
+
+            if remaining_time <= timedelta(seconds=0):
+                self.timer_label.config(text="Time Left: 00:00:00")
+                self.logout()
+                return
+
+            remaining_seconds = int(remaining_time.total_seconds())
+            formatted_time = time.strftime("%H:%M:%S", time.gmtime(remaining_seconds))
+            self.timer_label.config(text=f"Time Left: {formatted_time}")
+
+            # Show warning messages at specific time intervals
+            if remaining_seconds == 600:  # 10 minutes
+                self.show_topmost_message("Warning", "Only 10 minutes left!")
+            elif remaining_seconds == 300:  # 5 minutes
+                self.show_topmost_message("Warning", "Only 5 minutes left!")
+            elif remaining_seconds == 60:  # 1 minute
+                self.show_topmost_message("Warning", "Only 1 minute left!")
+
+            # Update every second
+            self.root.after(1000, self.update_timer)
+        else:
+            # Handle the case where the user is not logged in
             self.timer_label.config(text="Time Left: 00:00:00")
-            messagebox.showwarning("Time Up", "Your time has expired.")
-            self.logout()
-            return
+            messagebox.showerror("Error", "User is not logged in. Please log in.")
+    
+    def show_topmost_message(self, title, message):
+        # Create a custom top-level window that behaves like a message box but stays on top
+        topmost_window = Toplevel(self.root)
+        topmost_window.title(title)
+        topmost_window.geometry("300x100")
+        topmost_window.attributes("-topmost", True)
+        topmost_window.grab_set()
+
+        # Configure the message label and OK button
+        message_label = tk.Label(topmost_window, text=message, padx=20, pady=10, wraplength=250)
+        message_label.pack()
         
-        remaining_seconds = int(remaining_time.total_seconds())
-        formatted_time = time.strftime("%H:%M:%S", time.gmtime(remaining_seconds))
-        self.timer_label.config(text=f"Time Left: {formatted_time}")
-        
-        # Show warning messages at specific time intervals
-        if remaining_seconds == 600:  # 10 minutes
-            messagebox.showwarning("Warning", "Only 10 minutes left!")
-        elif remaining_seconds == 300:  # 5 minutes
-            messagebox.showwarning("Warning", "Only 5 minutes left!")
-        elif remaining_seconds == 60:  # 1 minute
-            messagebox.showwarning("Warning", "Only 1 minute left!")
-        
-        # Update every second
-        self.root.after(1000, self.update_timer)
+        ok_button = tk.Button(topmost_window, text="OK", command=topmost_window.destroy)
+        ok_button.pack(pady=5)
 
 def main():
     root = tk.Tk()
