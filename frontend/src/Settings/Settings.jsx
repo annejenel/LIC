@@ -109,7 +109,7 @@ const Settings = () => {
               <Typography variant="h5" component="h2" gutterBottom>
                 Change Password
               </Typography>
-              {errorMessage && <Typography color="error">{errorMessage}</Typography>}
+              {errorMessage && <Typography sx={{ color: 'red', mt: 2 }}>{errorMessage}</Typography>}
               {successMessage && <Typography color="success">{successMessage}</Typography>}
               <TextField
                 label="Current Password"
@@ -141,8 +141,6 @@ const Settings = () => {
                 fullWidth
                 required
               />
-              {errorMessage && <p className="error">{errorMessage}</p>}
-              {successMessage && <p className="success">{successMessage}</p>}
               <Box
                 sx={{
                   display: "flex",
@@ -156,8 +154,10 @@ const Settings = () => {
                   color="secondary"
                   sx={{
                     mt: 2,
+                    color: "#89343B",
                     "&:hover": {
-                      color: "#FFD000",
+                      backgroundColor: "#FFD000",
+                      color: "white",
                     },
                   }}
                   onClick={handleReset}
