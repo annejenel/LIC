@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.hashers import make_password, check_password
-from .models import Student, Transaction, Staff, Session
+from .models import Student, Transaction, Staff, Session, StaffActivityLog, ActivityLog
 from django.contrib.auth import authenticate
 from django.http import JsonResponse
 from django.contrib.auth.models import User
@@ -135,3 +135,19 @@ class SessionSerializer(serializers.ModelSerializer):
         if obj.logoutTime:
             return obj.logoutTime.strftime('%H:%M:%S')
         return None
+    
+
+class StaffActivityLogSerializer(serializers.ModelSerializer):
+    timestamp = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S")
+
+    class Meta:
+        model = StaffActivityLog
+        fields = ['staff', 'action', 'timestamp']
+
+
+class ActivityLogSerializer(serializers.ModelSerializer):
+    timestamp = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S")
+
+    class Meta:
+        model = ActivityLog
+        fields = ['username', 'action', 'timestamp']

@@ -1,6 +1,7 @@
 from django.db import models
 from django.core.validators import RegexValidator
 from django.contrib.auth.hashers import make_password
+from django.utils import timezone
 
 class Student(models.Model):
     STATUS_CHOICES = [
@@ -63,3 +64,25 @@ class Session(models.Model):
 
     def __str__(self):
         return str(self.parent)
+    
+
+class StaffActivityLog(models.Model):
+    staff = models.ForeignKey(Staff, on_delete=models.CASCADE)
+    action = models.CharField(max_length=255)
+    timestamp = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return f"{self.staff.name} - {self.action} on {self.timestamp}"
+    
+
+class ActivityLog(models.Model):
+    username = models.CharField(max_length=255)
+    action = models.TextField()
+    timestamp = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return f"{self.username} - {self.action} at {self.timestamp}"
+    
+
+def log_staff_activity(staff, action):
+    StaffActivityLog.objects.create(staff=staff, action=action)

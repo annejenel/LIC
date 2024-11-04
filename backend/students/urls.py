@@ -1,6 +1,6 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from .views import StudentViewSet, TransactionCreateView, TransactionListView, ResetPasswordView, UserLoginView, LogoutView, StaffLoginView, StaffCreateView, StaffListView, UpdateStaffStatusView, ImportStudentView, SessionListByStudentID
+from .views import StudentViewSet, TransactionCreateView, TransactionListView, ResetPasswordView, UserLoginView, LogoutView, StaffLoginView, StaffCreateView, StaffListView, UpdateStaffStatusView, ImportStudentView, SessionListByStudentID, StaffLogsView, log_activity, ActivityLogView
 
 router = DefaultRouter()
 router.register(r'students', StudentViewSet, basename='student')
@@ -18,4 +18,7 @@ urlpatterns = [
     path('update-status/<str:username>/', UpdateStaffStatusView.as_view(), name='update-status'),
     path('import-student/', ImportStudentView.as_view(), name='import-student'),
     path('sessions/<str:studentID>/', SessionListByStudentID.as_view(), name='sessions_by_student'),
+    path('logs/<str:username>/', ActivityLogView.as_view(), name='activity_logs'),
+    path('activity-logs/', log_activity, name='log_activity'),
+    
 ]

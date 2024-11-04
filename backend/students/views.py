@@ -1,8 +1,8 @@
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
-from .models import Student, Transaction, Staff, Session
-from .serializers import StudentSerializer, TransactionSerializer, StaffSerializer, UserLoginSerializer, StaffLoginSerializer, StaffUserSerializer, StaffStatusSerializer, SessionSerializer
+from .models import Student, Transaction, Staff, Session, StaffActivityLog, ActivityLog, log_staff_activity
+from .serializers import StudentSerializer, TransactionSerializer, StaffSerializer, UserLoginSerializer, StaffLoginSerializer, StaffUserSerializer, StaffStatusSerializer, SessionSerializer, StaffActivityLogSerializer, ActivityLogSerializer
 from rest_framework.views import APIView
 from rest_framework import generics, viewsets
 from django.conf import settings 
@@ -13,7 +13,13 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from rest_framework.permissions import AllowAny 
 from django.contrib.auth.models import User
 import json
+from rest_framework.decorators import api_view
+import logging
+from django.utils import timezone
 
+
+
+logger = logging.getLogger(__name__)
 
 class StudentViewSet(ModelViewSet):
     
@@ -32,41 +38,50 @@ class StudentViewSet(ModelViewSet):
         
 
 class ResetPasswordView(APIView):
-   
+
     def post(self, request, studentID):
         try:
-            # Retrieve the student instance
+            # Fetch the student by studentID
             student = Student.objects.get(studentID=studentID)
-
-            # Define your default password
-            default_password = '123456'  # Replace with your actual default password
+            default_password = '123456'
 
             # Check if the current password is already the default
-            is_valid = check_password(default_password, student.password)
-                
-            if(is_valid == True):
+            if check_password(default_password, student.password):
                 return Response({"message": "Current password is already the default."}, status=status.HTTP_400_BAD_REQUEST)
 
-            # Reset the password to the default password
-            student.password = make_password(default_password)  # Directly set it to the default password
+            # Reset the password
+            student.password = make_password(default_password)
             student.save()
+
+            # Log the password reset action
+            staff_username = request.user.username  # The username of the staff performing the reset
+            
+            # Log activity
+            log_data = {
+                "username": staff_username,
+                "action": f"Reset password for student {studentID}",
+                "timestamp": timezone.now()  # Auto-generate the timestamp here
+            }
+            log_activity(request._request)  # Pass the raw Django request object
 
             return Response({"message": "Password reset successful."}, status=status.HTTP_200_OK)
 
         except Student.DoesNotExist:
             return Response({"error": "Student not found."}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            logger.error(f"An error occurred: {str(e)}")
+            return Response({"error": "An internal error occurred."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
     
 
 class TransactionCreateView(APIView):
-   
+    
     def post(self, request, *args, **kwargs):
+        # Retrieve data from the request
         reference_number = request.data.get('reference_number')
         student_id = request.data.get('student_id')
         hours_to_add = request.data.get('hours')
-        receipt_image = request.FILES.get('receipt')
-
-        # Print received data for debugging
-        print(f"Received data: reference_number={reference_number}, student_id={student_id}, hours_to_add={hours_to_add}")
+        receipt_image = request.FILES.get('receipt')  # Retrieve the uploaded receipt image
 
         # Validate required fields
         if not reference_number or not student_id or not hours_to_add:
@@ -90,7 +105,7 @@ class TransactionCreateView(APIView):
         )
 
         # Update student's time_left (convert hours to minutes and add)
-        student.time_left += int(hours_to_add) * 60
+        student.time_left += int(hours_to_add) * 60  # Adding hours in minutes
         student.save()
 
         # Serialize and return the created transaction
@@ -108,15 +123,19 @@ class StaffLoginView(generics.GenericAPIView):
 
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)  # Validate the data
+        serializer.is_valid(raise_exception=True)
 
-        staff = serializer.validated_data['staff']  # Get the authenticated user
+        staff = serializer.validated_data['staff']
+
+        # Log the login action (already implemented)
+        log_staff_activity(staff, "Logged in")
 
         return Response({
             'status': 'success',
             'user_id': staff.id,
             'username': staff.username
         }, status=status.HTTP_200_OK)
+
 
     
 class UserLoginView(generics.GenericAPIView):
@@ -237,3 +256,105 @@ class SessionListByStudentID(generics.ListAPIView):
         print(studentID)
         # Filter sessions based on the foreign key's studentID
         return Session.objects.filter(parent_id=studentID)
+    
+
+class ActivityLogView(APIView):
+    def get(self, request, username):
+        try:
+            logs = ActivityLog.objects.filter(username=username).order_by('-timestamp')
+
+            if not logs.exists():
+                return Response({'message': 'No logs found for this user.'}, status=status.HTTP_404_NOT_FOUND)
+
+            serializer = ActivityLogSerializer(logs, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Exception as e:
+            logger.error(f"Error fetching logs for {username}: {str(e)}")
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+
+class StaffLogsView(APIView):
+    def get(self, request, username=None):
+        logs = ActivityLog.objects.filter(user__username=username).order_by('-timestamp')
+        serializer = ActivityLogSerializer(logs, many=True)
+        return Response(serializer.data)
+
+
+
+
+class StaffLoginView(generics.GenericAPIView):
+    serializer_class = StaffLoginSerializer
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        staff = serializer.validated_data['staff']
+        
+        # Log the login action
+        StaffActivityLog.objects.create(staff=staff, action="Logged in")
+
+        return Response({
+            'status': 'success',
+            'user_id': staff.id,
+            'username': staff.username
+        }, status=status.HTTP_200_OK)
+
+    
+
+@api_view(['POST'])
+def log_activity(request):
+    username = request.data.get('username')
+    action = request.data.get('action')
+
+    if not username or not action:
+        return Response({"error": "Invalid data"}, status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        # Save the log entry to the database with current timestamp
+        ActivityLog.objects.create(
+            username=username, 
+            action=action, 
+            timestamp=timezone.now()  # Ensure correct timestamp assignment
+        )
+        return Response({"message": "Activity logged"}, status=status.HTTP_201_CREATED)
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+
+
+
+@api_view(['POST'])
+def reset_password(request, studentID):
+    try:
+        student = Student.objects.get(id=studentID)
+        
+        # Check if the password is already the default
+        if student.is_default_password():
+            logger.info(f"Password reset attempted for {studentID}, but password is already default.")
+            ActivityLog.objects.create(username=student.username, action="Attempted password reset (already default)", timestamp=timezone.now())
+            return Response({"message": "Current password is already the default."}, status=400)
+        
+        # Reset password logic
+        student.reset_password()  # Assuming this method exists
+        logger.info(f"Password reset successful for {studentID}")
+        
+        # Log the activity
+        try:
+            ActivityLog.objects.create(username=student.username, action="Password reset", timestamp=timezone.now())
+        except Exception as e:
+            logger.error(f"Failed to log activity for {student.username}: {e}")
+
+        return Response({"message": "Password reset successful"}, status=200)
+    except Student.DoesNotExist:
+        return Response({"error": "Student not found"}, status=404)
+
+
+def log_staff_activity(staff, action):
+    StaffActivityLog.objects.create(
+        staff=staff, 
+        action=action, 
+        timestamp=timezone.now()  # Explicitly pass the current timestamp
+    )

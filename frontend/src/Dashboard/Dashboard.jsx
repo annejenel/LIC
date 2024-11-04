@@ -23,6 +23,10 @@ import ReceiptLongIcon from "@mui/icons-material/ReceiptLong";
 import DriveFolderUploadIcon from "@mui/icons-material/DriveFolderUpload";
 import PersonAddAltIcon from '@mui/icons-material/PersonAddAlt';
 import Header from '../Components/Header.jsx';
+import Confirmation from '../Modals/Confirmation.jsx';
+
+import { useParams } from 'react-router-dom';
+
 
 // Lazy load the modals
 const AddStudent = lazy(() => import("../Modals/AddStudent"));
@@ -30,7 +34,6 @@ const StudentTransaction = lazy(() => import("../Modals/StudentTransaction"));
 const TransactionHistory = lazy(() => import("../Modals/TransactionHistory"));
 const AddNewSem = lazy(() => import("../Modals/AddNewSem"));
 const Import = lazy(() => import("../Modals/ImportStudents"));
-const StudentHistory = lazy(() => import("../Modals/StudentHistory"));
 import EditStudentAction from '../Modals/EditStudentAction';
 import Footer from '../Components/Footer.jsx';
 
@@ -71,6 +74,7 @@ const statusColors = {
 };
 
 export default function Dashboard() {
+  const { username } = useParams(); 
   const [students, setStudents] = useState([]);
   const [loading, setLoading] = useState(false);
   const [isAddStudentModalOpen, setIsAddStudentModalOpen] = useState(false);
@@ -83,7 +87,14 @@ export default function Dashboard() {
   const [currentPage, setCurrentPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [searchQuery, setSearchQuery] = useState("");
-  const [isStudentHistory, setIsStudentHistory] = useState(false);
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+  const [studentToChange, setStudentToChange] = useState(null);
+  const [newStatus, setNewStatus] = useState('');
+  const [activityLogs, setActivityLogs] = useState([]);
+
+
+
+
   const [isTransactionHistoryModalOpen, setIsTransactionHistoryModalOpen] =
     useState(false);
 
@@ -96,12 +107,30 @@ export default function Dashboard() {
     setCurrentPage(0);
   }, [searchQuery]);
 
-  
+
   const formatTimeLeft = (timeLeft) => {
     const hours = Math.floor(timeLeft / 60);
     const minutes = timeLeft % 60;
     return `${hours} hours ${minutes} minutes`;
   };
+
+  const logActivity = (action) => {
+    const timestamp = new Date().toISOString();
+  
+    const newLog = { username, action, timestamp };
+  
+    setActivityLogs((prevLogs) => [...prevLogs, newLog]);
+  
+    axios.post('http://localhost:8000/api/activity-logs/', newLog)
+      .then(() => {
+        console.log("Activity logged successfully.");
+      })
+      .catch((error) => {
+        console.error("Error logging activity:", error);
+      });
+  };
+  
+  
 
   const fetchStudents = () => {
     setLoading(true);
@@ -125,7 +154,9 @@ export default function Dashboard() {
 
   const handleStudentAdded = () => {
     fetchStudents();
+    logActivity("Added a new student");
   };
+  
 
   const handleEditStudent = (studentID) => {
     setSelectedStudentID(studentID);
@@ -134,26 +165,33 @@ export default function Dashboard() {
 
   const closeEditStudentModal = () => {
     setIsEditStudentModalOpen(false);
-    setSelectedStudentID(null); // Reset selected ID
+    setSelectedStudentID(null); 
   };
 
   const handleStudentUpdated = () => {
-    fetchStudents(); // Fetch updated students
+    logActivity(`Reset password for student ${selectedStudentID}`); 
+    fetchStudents(); 
+};
+
+
+  
+  const handleStatusChange = (studentID, status) => {
+    setStudentToChange(studentID);  
+    setNewStatus(status);         
+    setIsConfirmModalOpen(true);  
   };
-
-  const handleStatusChange = (studentID, newStatus) => {
-    const encodedStudentID = encodeURIComponent(studentID);
-
+  
+  const confirmStatusChange = () => {
+    const encodedStudentID = encodeURIComponent(studentToChange);
+  
+    const originalStudents = [...students];
     const updatedStudents = students.map((student) =>
-      student.studentID === studentID
+      student.studentID === studentToChange
         ? { ...student, status: newStatus }
         : student
     );
-
-    const originalStudents = [...students];
-
     setStudents(updatedStudents);
-
+  
     axios
       .patch(`http://localhost:8000/api/students/${encodedStudentID}/`, {
         status: newStatus,
@@ -161,16 +199,19 @@ export default function Dashboard() {
       .then((response) => {
         console.log("Status updated successfully:", response.data);
         fetchStudents();
+
+        logActivity(`Changed status for student ${studentToChange} to ${newStatus}`);
+        
+        setIsConfirmModalOpen(false); 
       })
       .catch((error) => {
-        console.error(
-          "Error updating status:",
-          error.response ? error.response.data : error.message
-        );
-        setStudents(originalStudents);
+        console.error("Error updating status:", error.response ? error.response.data : error.message);
+        setStudents(originalStudents); 
+        setIsConfirmModalOpen(true);
       });
   };
-
+  
+  
   const openAddStudentModal = () => setIsAddStudentModalOpen(true);
   const closeAddStudentModal = () => {setIsAddStudentModalOpen(false); console.log("Closing modal");}
 
@@ -180,13 +221,6 @@ export default function Dashboard() {
   const openUpload = () => {setUpload(true); console.log("Opening modal");}
   const closeUpload = () => {setUpload(false); console.log("Closing modal");}
 
-  const openHistory = (studentID) => {
-    setIsStudentHistory(true); 
-    setSelectedStudentID(studentID);
-    console.log("Opening modal");
-  };
-  const closeHistory = () => {setIsStudentHistory(false); console.log("Closing modal");}
-  
   const openTransactionModal = (studentID) => {
     setSelectedStudentID(studentID);
     setIsTransactionModalOpen(true);
@@ -197,6 +231,11 @@ export default function Dashboard() {
     setIsTransactionHistoryModalOpen(true);
   const closeTransactionHistoryModal = () =>
     setIsTransactionHistoryModalOpen(false);
+
+  const handleConfirmStatusChange = () => {
+    confirmStatusChange();  // Call the status update logic here
+  };
+  
 
   const filteredStudents = students.filter((student) =>
     student.studentID
@@ -219,7 +258,7 @@ export default function Dashboard() {
 
   const handleRowsPerPageChange = (event) => {
     setRowsPerPage(parseInt(event.target.value, 10));
-    setCurrentPage(0); // Reset to first page
+    setCurrentPage(0); 
   };
 
   const handlePageChange = (newPage) => {
@@ -231,7 +270,11 @@ export default function Dashboard() {
   const handleTransactionCompleted = () => {
     console.log("Transaction completed!");
     fetchStudents();
+    
+    // Log activity for the transaction
+    logActivity(`Processed a transaction for student ${selectedStudentID}`);
   };
+  
 
   return (
     <CssVarsProvider theme={theme}>
@@ -239,7 +282,7 @@ export default function Dashboard() {
       <div className="containerDashboard">
         <Sheet variant="outlined" className="sheet">
           {/* Header Section */}
-          
+
 
           {/* Search and Add Student Section */}
           <Box
@@ -271,7 +314,7 @@ export default function Dashboard() {
               >
                 Add Student
               </Button>
-              
+
               <Button
                 startDecorator={<ReceiptLongIcon />}
                 sx={{
@@ -286,7 +329,7 @@ export default function Dashboard() {
                   height: "20px",
                   margin: 0,
                 }}
-                onClick={openTransactionHistoryModal} // Open TransactionHistory modal
+                onClick={openTransactionHistoryModal} 
               >
                 Transaction
               </Button>
@@ -324,7 +367,7 @@ export default function Dashboard() {
                 }} onClick={openAddNewSem}>New Semester</Button>    
             </Box>
 
-            
+
             <Input
               placeholder="Search for student ID..."
               variant="soft"
@@ -364,11 +407,9 @@ export default function Dashboard() {
 
         {/* Page Numbers Logic */}
         {Array.from({ length: 3 }, (_, index) => {
-          // Calculate the current page group (e.g., pages 1-3, 4-6, 7-9)
-          const startPage = Math.floor(currentPage / 3) * 3; // Start of current group (0-based)
+          const startPage = Math.floor(currentPage / 3) * 3; 
           const pageIndex = startPage + index;
 
-          // Only display the pages if they are within the total pages limit
           if (pageIndex < totalPages) {
             return (
               <button
@@ -380,7 +421,7 @@ export default function Dashboard() {
               </button>
             );
           } else {
-            return null; // No buttons for pages beyond totalPages
+            return null;
           }
         })}
 
@@ -401,7 +442,7 @@ export default function Dashboard() {
                       <th>STUDENT ID</th>
                       <th>NAME</th>
                       <th>COURSE</th>
-                      <th>TIME</th>
+                      <th>TIME LEFT</th>
                       <th>TYPE</th>
                       <th>ACTIONS</th>
                     </tr>
@@ -473,11 +514,7 @@ export default function Dashboard() {
                           </Dropdown>
                         </td>
                         <td>
-                          <IconButton
-                           onClick={() =>
-                            openHistory(student.studentID)
-                            }
-                          >
+                          <IconButton>
                             <HistoryEduRoundedIcon />
                           </IconButton>
                           <IconButton
@@ -497,11 +534,11 @@ export default function Dashboard() {
                 </table>
 
 
-                
+
               </div>
 
 
-                    
+
             )}
           </Box>
           <Footer/>
@@ -528,38 +565,42 @@ export default function Dashboard() {
             <TransactionHistory
               isOpen={isTransactionHistoryModalOpen}
               onClose={closeTransactionHistoryModal}
-              // Add any other props required by the TransactionHistory modal
             />
           )}
           {isAddNewSemOpen && (
             <AddNewSem
               isOpen={isAddNewSemOpen}
               onClose={closeAddNewSem}
-              // Add any other props required by the TransactionHistory modal
             />
           )}
           {upload && (
             <ImportStudents
               isOpen={upload}
               onClose={closeUpload}
-              // Add any other props required by the TransactionHistory modal
+              username={username}
             />
           )}
+
           {isEditStudentModalOpen && (
             <EditStudentAction
               isOpen={isEditStudentModalOpen}
               onClose={closeEditStudentModal}
               studentID={selectedStudentID}
               onPasswordReset={handleStudentUpdated}
+              username={username} 
             />
           )}
-          {isStudentHistory && (
-            <StudentHistory
-              isOpen={isStudentHistory}
-              onClose={closeHistory}
-              studentID={selectedStudentID}
-            />
-          )}
+
+
+        {isConfirmModalOpen && (
+          <Confirmation
+            isOpen={isConfirmModalOpen}
+            onClose={() => setIsConfirmModalOpen(false)}
+            onConfirm={handleConfirmStatusChange}  
+            newStatus={newStatus}
+          />
+        )}
+
         </Suspense>
       </div>
     </CssVarsProvider>
