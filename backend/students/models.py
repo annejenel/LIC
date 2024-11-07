@@ -39,7 +39,18 @@ class Transaction(models.Model):
     reference_number = models.CharField(max_length=100)
     timestamp = models.DateTimeField(auto_now_add=True)
     receipt_image = models.ImageField(upload_to='receipts/', null=True, blank=True)  # Add image field
+    amount = models.IntegerField(null=True, blank=True)
+    year = models.CharField(max_length=10, blank=True)
+    semester_name = models.CharField(max_length=20, blank=True)
 
+    def save(self, *args, **kwargs):
+        # Fetch the single Semester record to set year and semester_name
+        semester = Semester.objects.first()
+        if semester:
+            self.year = semester.year
+            self.semester_name = semester.semester_name
+        super().save(*args, **kwargs)
+        
     def __str__(self):
         return f"Transaction {self.reference_number} for {self.student.name}"
 
