@@ -1,62 +1,61 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './Confirmation.css';
 
 const Confirmation = ({ isOpen, onClose, onConfirm, newStatus }) => {
   const [alertMessage, setAlertMessage] = useState('');
   const [alertType, setAlertType] = useState('');
-  const [snackbarVisible, setSnackbarVisible] = useState(false);
+  const [showSnackbar, setShowSnackbar] = useState(false);
 
-  const handleConfirm = () => {
+  const handleConfirm = async () => {
     try {
-      onConfirm(); // Call the confirm function from the parent
+      await onConfirm();
       setAlertMessage('Status changed successfully!');
       setAlertType('success');
-      setSnackbarVisible(true);
     } catch (error) {
-      // Handle error state
+      console.error('Error changing status:', error);
       setAlertMessage('Error changing status.');
       setAlertType('error');
-      setSnackbarVisible(true);
+    } finally {
+      setShowSnackbar(true); 
     }
-  
-    // Close the modal only after showing the snackbar for a bit
-    setTimeout(() => {
-      onClose(); // Close the modal
-      setSnackbarVisible(false);
-    }, 2000);
   };
-  
-  
-  
+
+  useEffect(() => {
+    if (showSnackbar) {
+      const timer = setTimeout(() => {
+        setShowSnackbar(false);
+        setAlertMessage('');
+        setAlertType('');
+        onClose();
+      }, 1000); 
+
+      return () => clearTimeout(timer); 
+    }
+  }, [showSnackbar, onClose]);
 
   if (!isOpen) return null;
 
   return (
-    <>
-      {/* Modal Content */}
-      <div className="modal-overlay">
-        <div className="modal-content">
-          <h2>Confirm Status Change</h2>
-          <p>
-            Are you sure you want to change the student's status to
-            <span className="status-pill">{newStatus}</span>?
-          </p>
-          <div className="modal-actions">
-            <button className="btn-confirm" onClick={handleConfirm}>
-              Confirm
-            </button>
-            <button className="btn-cancel" onClick={onClose}>
-              Cancel
-            </button>
-          </div>
+    <div className="modal-overlay">
+      <div className="modal-content">
+        <h2>Confirm Status Change</h2>
+        <p>
+          Are you sure you want to change the student's status to 
+          <span className="status-pill">{newStatus}</span>?
+        </p>
+        <div className="modal-actions">
+          <button className="btn-confirm" onClick={handleConfirm}>Confirm</button>
+          <button className="btn-cancel" onClick={onClose}>Cancel</button>
         </div>
-      </div>
 
-      {/* Snackbar/Alert outside the modal */}
-      <div className={`snackbar ${alertType} ${snackbarVisible ? 'show' : ''}`}>
-        {alertMessage}
+        {/* Snackbar Alert */}
+        {showSnackbar && (
+          <div className={`alert-message ${alertType} show`}>
+            {alertMessage}
+          </div>
+        )}
       </div>
-    </>
+    </div>
   );
 };
 

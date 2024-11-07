@@ -3,7 +3,7 @@ import axios from 'axios';
 import * as XLSX from 'xlsx';  // Make sure you are importing from 'xlsx' here
 import './ImportStudents.css';
 
-const ImportStudents = ({ isOpen, onClose }) => {
+const ImportStudents = ({ isOpen, onClose, username }) => {  // Add username prop
   const [file, setFile] = useState(null);
   const [fileName, setFileName] = useState('');
 
@@ -14,6 +14,23 @@ const ImportStudents = ({ isOpen, onClose }) => {
     if (selectedFile) {
       setFile(selectedFile);
       setFileName(selectedFile.name);
+    }
+  };
+
+  // Logging activity
+  const logActivity = async (action, username) => {
+    const logData = {
+      username: username,
+      action: action,
+      timestamp: new Date().toISOString(),
+    };
+
+    try {
+      console.log("Logging activity with data: ", logData);
+      await axios.post('http://localhost:8000/api/activity-logs/', logData);
+      console.log("Activity logged successfully");
+    } catch (error) {
+      console.error("Error logging activity:", error.response?.data || error.message);
     }
   };
 
@@ -39,7 +56,6 @@ const ImportStudents = ({ isOpen, onClose }) => {
           headers.forEach((header, index) => {
             const value = row[index];
             studentObj[header.trim()] = typeof value === 'string' ? value.trim() : value;
-            // Convert 'time_left' and 'is_logged_in' to integers
             if (header.trim() === 'time_left' || header.trim() === 'is_logged_in') {
               studentObj[header.trim()] = parseInt(value, 10);
             }
@@ -57,7 +73,6 @@ const ImportStudents = ({ isOpen, onClose }) => {
           headers.forEach((header, index) => {
             const value = row[index];
             studentObj[header.trim()] = typeof value === 'string' ? value.trim() : value;
-            // Convert 'time_left' and 'is_logged_in' to integers
             if (header.trim() === 'time_left' || header.trim() === 'is_logged_in') {
               studentObj[header.trim()] = parseInt(value, 10);
             }
@@ -79,6 +94,10 @@ const ImportStudents = ({ isOpen, onClose }) => {
         });
         console.log('File imported successfully:', response.data);
         alert('Students imported successfully!');
+
+        // Log the import activity
+        await logActivity(`Imported ${students.length} students`, username);
+
       } catch (error) {
         console.error('Error importing file:', error.response ? error.response.data : error);
         alert('Error importing students. Please check the console for details.');

@@ -6,7 +6,7 @@ import Header from '../Components/Header.jsx';
 import SnackbarComponent from '../Components/SnackbarComponent.jsx';
 import Menu from "@mui/joy/Menu";
 import MenuItem from "@mui/joy/MenuItem";
-import AddStaffModal from '../Modals/AddStaff'; // Import the modal component
+import AddStaffModal from '../Modals/AddStaff';
 import './ManageStaff.css';
 import Dropdown from "@mui/joy/Dropdown";
 import MenuButton from "@mui/joy/MenuButton";
@@ -21,37 +21,37 @@ import SearchIcon from "@mui/icons-material/Search";
 import Input from "@mui/joy/Input";
 
 const ManageStaff = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false); // State to control modal visibility
-  const [staffList, setStaffList] = useState([]); // State to hold staff list
-  const [error, setError] = useState(null); // State to hold error messages
-  const [selectedUsername, setSelectedUsername] = useState(null); // State to hold the selected staff ID
-  const [loading, setLoading] = useState(false); // State to manage loading state
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [staffList, setStaffList] = useState([]);
+  const [error, setError] = useState(null);
+  const [selectedUsername, setSelectedUsername] = useState(null);
+  const [loading, setLoading] = useState(false);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [alert, setAlert] = useState({ type: '', message: '' });
-  const [page, setPage] = useState(1); // Track current page
-  const itemsPerPage  = 5;  // Display 5 rows per page
+  const [page, setPage] = useState(1);
+  const itemsPerPage = 5;
   const [searchQuery, setSearchQuery] = useState("");
+  const [activityLogs, setActivityLogs] = useState([]);
 
-  // Fetch staff list on component mount
   useEffect(() => {
     fetchStaffList();
   }, []);
 
   const handleSnackbarClose = () => {
     setSnackbarOpen(false);
-};
-  // Function to fetch staff list
+  };
+
   const fetchStaffList = async () => {
     try {
-        const response = await fetch('http://localhost:8000/api/staffview/'); // Adjust URL as needed
-        if (!response.ok) {
-            throw new Error('Network response was not ok: ' + response.statusText);
-        }
-        const data = await response.json();
-        setStaffList(data); // Update staffList state with fetched data
+      const response = await fetch('http://localhost:8000/api/staffview/'); 
+      if (!response.ok) {
+        throw new Error('Network response was not ok: ' + response.statusText);
+      }
+      const data = await response.json();
+      setStaffList(data); 
     } catch (error) {
-        console.error('Failed to fetch staff list:', error);
-        setError('Failed to fetch staff list'); // Set error message
+      console.error('Failed to fetch staff list:', error);
+      setError('Failed to fetch staff list'); 
     }
   };
 
@@ -61,56 +61,89 @@ const ManageStaff = () => {
   );
 
   const handleAddStaff = async (newStaff) => {
-  try {
-    const response = await fetch('http://localhost:8000/api/create-user/', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(newStaff),
-    });
+    try {
+      const response = await fetch('http://localhost:8000/api/create-user/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(newStaff),
+      });
 
-    const data = await response.json();
+      const data = await response.json();
 
-    if (!response.ok) {
-      // If the response is not okay, throw an error with the alert message
-      throw new Error(data.alert?.message || 'Failed to add staff.');
+      if (!response.ok) {
+        throw new Error(data.alert?.message || 'Failed to add staff.');
+      }
+
+      setAlert({ type: 'success', message: data.alert?.message || 'Staff added successfully!' });
+      setSnackbarOpen(true); 
+      await fetchStaffList(); 
+    } catch (error) {
+      setAlert({ type: 'error', message: error.message });
+      setSnackbarOpen(true); 
+    }
+  };
+
+  const fetchActivityLogs = (username) => {
+    fetch(`http://localhost:8000/api/logs/${username}/`)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`Failed to fetch activity logs for ${username}`);
+        }
+        return response.json();
+      })
+      .then((data) => {
+        setActivityLogs(data);
+      })
+      .catch((error) => {
+        console.error('Error fetching logs:', error.message);
+        setActivityLogs([]);  // Empty out logs on error
+        setAlert({ type: 'error', message: error.message });
+        setSnackbarOpen(true);  // Show error message to user
+      });
+  };
+  
+  
+
+
+  const handleRowClick = (username) => {
+    console.log("Selected username:", username);  
+
+    if (selectedUsername === username) {
+        setSelectedUsername(null);
+        setActivityLogs([]);
+        return;
     }
 
-    // Display success alert
-    setAlert({ type: 'success', message: data.alert?.message || 'Staff added successfully!'});
-    setSnackbarOpen(true); // Open the Snackbar
-    await fetchStaffList(); // Optionally refresh the staff list
-  } catch (error) {
-    // Display error alert
-    setAlert({ type: 'error', message: error.message });
-    setSnackbarOpen(true); // Open the Snackbar for error message
-  }
+    setLoading(true);
+    setSelectedUsername(username);
+    fetchActivityLogs(username);
+
+    setTimeout(() => {
+        setLoading(false);
+    }, 2000);
 };
 
 
-  // Handle row click to show selected staff ID in the left table
-  const handleRowClick = (username) => {
-    // If the same staff ID is clicked again, clear the selection
-    if (selectedUsername === username) {
-      setSelectedUsername(null); // Clear selection
-      return; // Exit the function
+  const logActivity = async (username, action) => {
+    try {
+      await fetch(`http://localhost:8000/api/activity-logs/`, { 
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username, action }),
+      });
+    } catch (error) {
+      console.error('Failed to log activity:', error);
     }
-
-    setLoading(true); // Set loading state
-    setSelectedUsername(username); // Set the selected staff ID
-
-    // Simulate loading delay
-    setTimeout(() => {
-      setLoading(false); // Reset loading state after 2 seconds
-    }, 2000);
   };
 
-  // Handle Staff Status Change
   const handleStatusChange = async (username, newStatus) => {
-    console.log("Updating status for:", username, "to:", newStatus); // Debugging line
+    console.log("Updating status for:", username, "to:", newStatus);
     try {
-      const response = await fetch(`http://localhost:8000/api/update-status/${username}/`, { // Adjust URL as needed
+      const response = await fetch(`http://localhost:8000/api/update-status/${username}/`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -122,23 +155,23 @@ const ManageStaff = () => {
         throw new Error('Failed to update status');
       }
 
-      // Refresh the staff list to reflect changes
       await fetchStaffList();
       setAlert({ type: 'success', message: 'Status updated successfully!' });
       setSnackbarOpen(true);
+      
+      // Log the activity
+      await logActivity(username, newStatus ? 'Activated' : 'Deactivated');
     } catch (error) {
       setAlert({ type: 'error', message: error.message });
       setSnackbarOpen(true);
     }
   };
 
-   // Paginate filtered staff
-   const paginatedStaff = filteredStaff.slice(
+  const paginatedStaff = filteredStaff.slice(
     (page - 1) * itemsPerPage,
     page * itemsPerPage
   );
 
-  // Handle page navigation
   const handlePrevious = () => {
     if (page > 1) {
       setPage(page - 1);
@@ -146,13 +179,13 @@ const ManageStaff = () => {
   };
 
   const handleNext = () => {
-    if (page < Math.ceil(staffList.length / itemsPerPage)) {
+    if (page < Math.ceil(filteredStaff.length / itemsPerPage)) {
       setPage(page + 1);
     }
   };
 
-  // Get current staff to display based on pagination
   const currentStaff = staffList.slice((page - 1) * itemsPerPage, page * itemsPerPage);
+
   return (
     <div>
       <AddStaffModal
@@ -186,7 +219,7 @@ const ManageStaff = () => {
                   {/* Previous Button */}
                   <IconButton
                     onClick={handlePrevious}
-                    disabled={page === 1} // Disable if on first page
+                    disabled={page === 1}
                   >
                     <ArrowBackIos />
                   </IconButton>
@@ -197,20 +230,19 @@ const ManageStaff = () => {
                     sx={{ 
                       color: 'white',
                       backgroundColor: '#a94442',
-                      borderRadius: '50%', // Circular shape
-                      width: '30px',       // Adjust width to desired size
-                      height: '30px',      // Height equal to width
-                      display: 'flex',     // Flexbox to center content
+                      borderRadius: '50%', 
+                      width: '30px',     
+                      height: '30px',    
+                      display: 'flex',     
                       justifyContent: 'center',
                       alignItems: 'center',  
                     }}>
                    {page}
                   </Typography>
 
-                  {/* Next Button */}
                   <IconButton
                     onClick={handleNext}
-                    disabled={page === Math.ceil(staffList.length / itemsPerPage)} // Disable if on last page
+                    disabled={page === Math.ceil(filteredStaff.length / itemsPerPage)} 
                   >
                     <ArrowForwardIos />
                   </IconButton>
@@ -252,73 +284,92 @@ const ManageStaff = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {paginatedStaff.length > 0 ? (
+                {paginatedStaff.length > 0 ? (
                     paginatedStaff.map((staff) => (
-                      <tr
-                        key={staff.username}
-                        onClick={() => setSelectedUsername(staff.username)}
-                        style={{ cursor: 'pointer' }}
-                      >
-                        <td>{staff.first_name}</td>
-                        <td>{staff.username}</td>
-                        <td>
-                        <Dropdown>
-                            <MenuButton
-                              variant="outlined"
-                              endDecorator={<KeyboardArrowDownIcon />}
-                            >
-                              {staff.is_active ? 'Active' : 'Inactive'}
-                            </MenuButton>
-                            <Menu>
-                              <MenuItem onClick={() => handleStatusChange(staff.username, true)}>Active</MenuItem>
-                              <MenuItem onClick={() => handleStatusChange(staff.username, false)}>Inactive</MenuItem>
-                            </Menu>
-                          </Dropdown>
-                        </td>
-                      </tr>
+                        <tr
+                            key={staff.username}
+                            onClick={() => handleRowClick(staff.username)} 
+                            style={{ cursor: 'pointer' }}
+                        >
+                            <td>{staff.first_name}</td>
+                            <td>{staff.username}</td>
+                            <td>
+                                <Dropdown>
+                                    <MenuButton
+                                        variant="outlined"
+                                        endDecorator={<KeyboardArrowDownIcon />}
+                                    >
+                                        {staff.is_active ? 'Active' : 'Inactive'}
+                                    </MenuButton>
+                                    <Menu>
+                                        <MenuItem onClick={() => handleStatusChange(staff.username, true)}>Active</MenuItem>
+                                        <MenuItem onClick={() => handleStatusChange(staff.username, false)}>Inactive</MenuItem>
+                                    </Menu>
+                                </Dropdown>
+                            </td>
+                        </tr>
                     ))
-                  ) : (
+                ) : (
                     <tr>
-                      <td colSpan="3">No staff members found.</td>
+                        <td colSpan="3">No staff members found.</td>
                     </tr>
-                  )}
-                </tbody>
+                )}
+            </tbody>
+
               </table>
             </div>
-             {/* right table for transactions */}
-             <div className="logs-table">
-              <Typography
-            component="h1"
-            sx={{
-              fontSize: '36px',
-              fontWeight: 'normal',
-              color: '#a94442',
-            }}
-          >LOGS
-          </Typography>
-                <table>
-                  <thead>
-                    <tr>
-                      
+            <div className="logs-table">
+    <Typography
+        component="h1"
+        sx={{
+            fontSize: '36px',
+            fontWeight: 'normal',
+            color: '#a94442',
+        }}
+    >
+        LOGS
+    </Typography>
+    <table>
+        <thead>
+            <tr>
+                <th>Action</th>
+                <th>Timestamp</th> 
+            </tr>
+        </thead>
+        <tbody>
+        {loading ? (
+          <tr>
+              <td colSpan="2">Loading...</td>
+          </tr>
+        ) : selectedUsername ? (
+          <>
+              <tr>
+                <td colSpan="2">{`Selected Staff: ${selectedUsername}`}</td>
+              </tr>
+              {activityLogs.length > 0 ? (
+                activityLogs.map((log, index) => (
+                    <tr key={index}>
+                      <td>{log.action}</td> 
+                      <td>{new Date(log.timestamp).toLocaleString()}</td>
                     </tr>
-                  </thead>
-                  <tbody>
-                    {loading ? (
-                      <tr>
-                        <td>Loading...</td>
-                      </tr>
-                    ) : selectedUsername ? (
-                      <tr>
-                        <td>{`Selected Staff ID: ${selectedUsername}`}</td>
-                      </tr>
-                    ) : (
-                      <tr>
-                        <td>No logs yet...</td>
-                      </tr>
-                    )}
-                  </tbody>
-                </table>
-              </div>
+                ))
+              ) : (
+                <tr>
+                    <td colSpan="2">No logs found for this user.</td>
+                </tr>
+              )}
+          </>
+        ) : (
+          <tr>
+              <td colSpan="2">No logs yet...</td>
+          </tr>
+        )}
+
+        </tbody>
+    </table>
+</div>
+
+
           </div>
         </div>
       </div>

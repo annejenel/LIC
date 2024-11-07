@@ -39,7 +39,7 @@ const Login = () => {
 
       if (response.data.status === "success") {
         localStorage.setItem('token', response.data.token); // Save the token
-        navigate("/dashboard");
+        navigate(`/dashboard/${username}`);
       } else {
         // Show custom error message in the Snackbar
         setSnackbarMessage("Invalid credentials. Please try again.");

@@ -1,6 +1,6 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from .views import StudentViewSet, TransactionCreateView, TransactionListView, ResetPasswordView, UserLoginView, LogoutView, StaffLoginView, StaffCreateView, StaffListView, UpdateStaffStatusView, ImportStudentView, SessionListByStudentID, StudentUpdateView, ChangePasswordView, SemesterUpsertView, SessionHoursView, CountLoggedInView, ActiveUsersCountView, PaymentIncomeView, CoursesCountView, PreviousCoursesCountView
+from .views import StudentViewSet, TransactionCreateView, TransactionListView, ResetPasswordView, UserLoginView, LogoutView, StaffLoginView, StaffCreateView, StaffListView, UpdateStaffStatusView, ImportStudentView, SessionListByStudentID, StaffLogsView, log_activity, ActivityLogView, StudentUpdateView, ChangePasswordView, SemesterUpsertView, SessionHoursView, CountLoggedInView, ActiveUsersCountView, PaymentIncomeView, CoursesCountView, PreviousCoursesCountView
 
 router = DefaultRouter()
 router.register(r'students', StudentViewSet, basename='student')
@@ -27,4 +27,7 @@ urlpatterns = [
     path('transaction-income/', PaymentIncomeView.as_view(), name='transaction-income'), 
     path('courses-count/', CoursesCountView.as_view(), name='courses-count'), 
     path('previous-count/', PreviousCoursesCountView.as_view(), name='previous-count'),
+    path('logs/<str:username>/', ActivityLogView.as_view(), name='activity_logs'),
+    path('activity-logs/', log_activity, name='log_activity'),
+    
 ]

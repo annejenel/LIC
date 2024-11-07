@@ -18,7 +18,7 @@ export default function App() {
       <React.Suspense fallback={<div>Loading...</div>}>
         <Routes>
           <Route path="/" element={<LazyLogin />} />
-          <Route path="/dashboard" element={<LazyDashboard />} />
+          <Route path="/dashboard/:username" element={<LazyDashboard />} />
           <Route path="/staff" element={<LazyManageStaff />} />
           <Route path="/settings" element={<LazySettings />} />
           <Route path="/analytics" element={<LazyAnalytics />} />

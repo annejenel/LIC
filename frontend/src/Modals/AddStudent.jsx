@@ -63,14 +63,12 @@ const AddStudent = ({ isOpen, onClose, onStudentAdded }) => {
       console.error('Error adding student:', error.response ? error.response.data : error.message);
       
       if (error.response && error.response.data) {
-        // Extract specific error message from response data
         const errorData = error.response.data;
 
-        // Check for studentID-specific errors
         if (errorData.studentID) {
-          setError(errorData.studentID.join(', ')); // Join array elements into a single string
+          setError(errorData.studentID.join(', ')); 
         } else if (errorData.non_field_errors) {
-          setError(errorData.non_field_errors.join(', ')); // Handle non-field errors
+          setError(errorData.non_field_errors.join(', '));
         } else {
           setError('An error occurred. Please try again.');
         }

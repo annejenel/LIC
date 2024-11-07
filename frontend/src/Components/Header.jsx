@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Sheet, Box, Typography, Dropdown, MenuButton, Menu, MenuItem, Button, CssVarsProvider, extendTheme, ListDivider, ListItemDecorator, IconButton } from '@mui/joy';
-import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
+import { Sheet, Box, Typography, Dropdown, MenuButton, Menu, MenuItem, Button, CssVarsProvider, extendTheme, IconButton } from '@mui/joy';
 import InsightsTwoToneIcon from '@mui/icons-material/InsightsTwoTone';
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -32,23 +31,21 @@ const theme = extendTheme({
   },
 });
 
-const Header = () => {
+const Header = ({ username }) => {
   const [showTooltip, setShowTooltip] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
   const [userRole, setUserRole] = useState('');
 
-  // Fetch user role from localStorage
   useEffect(() => {
     const role = localStorage.getItem('userRole');
     setUserRole(role);
   }, []);
   
-  // Menu items with role-based access control
   const menuItems = [
     { label: "Dashboard", path: "/dashboard" },
-    { label: "Manage Staff", path: "/staff", restricted: true },  // Restricted for admin only
-    { label: "Settings", path: "/settings"},   
+    { label: "Manage Staff", path: "/staff", restricted: true },  
+    { label: "Settings", path: "/settings", restricted: true },   
   ];
 
   const activePage = menuItems.find(item => location.pathname === item.path)?.label || "Analytics";
@@ -170,7 +167,7 @@ const Header = () => {
                         if (item.restricted && userRole !== 'admin') {
                           alert("Access Denied: Admins Only");
                         } else {
-                          navigate(item.path);
+                          navigate(item.path === "/dashboard" ? `/dashboard/${username}` : item.path);
                         }
                       }}
                     >
@@ -222,7 +219,6 @@ const Header = () => {
                 onClick={handleLogout}
               >
                 <ExitToAppOutlinedIcon />
-              
               </IconButton>
             </Box>
           </Sheet>
