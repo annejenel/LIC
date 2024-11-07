@@ -36,7 +36,7 @@ class TransactionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Transaction
-        fields = ['id', 'student', 'student_id', 'reference_number', 'timestamp','receipt_image']
+        fields = ['id', 'student', 'student_id', 'reference_number', 'timestamp','receipt_image', 'amount']
 
 class StaffSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, required=False)
@@ -169,3 +169,12 @@ class SemesterSerializer(serializers.ModelSerializer):
     class Meta:
         model = Semester
         fields = ['year', 'semester_name']
+
+class SessionHoursSerializer(serializers.Serializer):
+    month = serializers.CharField()
+    total_hours = serializers.FloatField()
+
+class PaymentIncomeSerializer(serializers.Serializer):
+    month = serializers.CharField()
+    total_income = serializers.IntegerField()
+

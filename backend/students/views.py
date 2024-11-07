@@ -2,7 +2,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 from .models import Student, Transaction, Staff, Session, Semester
-from .serializers import StudentSerializer, TransactionSerializer, StaffSerializer, UserLoginSerializer, StaffLoginSerializer, StaffUserSerializer, StaffStatusSerializer, SessionSerializer, StudentTypeSerializer, ChangePasswordSerializer, SemesterSerializer
+from .serializers import StudentSerializer, TransactionSerializer, StaffSerializer, UserLoginSerializer, StaffLoginSerializer, StaffUserSerializer, StaffStatusSerializer, SessionSerializer, StudentTypeSerializer, ChangePasswordSerializer, SemesterSerializer, SessionHoursSerializer, PaymentIncomeSerializer
 from rest_framework.views import APIView
 from rest_framework import generics, viewsets
 from django.conf import settings 
@@ -13,7 +13,10 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from rest_framework.permissions import AllowAny 
 from django.contrib.auth.models import User
 import json
-
+from datetime import datetime
+from django.db.models import Sum
+from django.db.models.functions import ExtractMonth
+from django.db.models import Count
 
 class StudentViewSet(ModelViewSet):
     
@@ -82,11 +85,15 @@ class TransactionCreateView(APIView):
         if Transaction.objects.filter(reference_number=reference_number).exists():
             return Response({"error": "This reference number has already been used"}, status=status.HTTP_400_BAD_REQUEST)
 
+         # Calculate amount based on hours_to_add
+        amount = int(hours_to_add) * 15  # 15 for each hour (1 hour -> 15, 2 hours -> 30, etc.)
+
         # Create a new transaction
         transaction = Transaction.objects.create(
             student=student,
             reference_number=reference_number,
-            receipt_image=receipt_image  # Save the image file in the transaction
+            receipt_image=receipt_image,  # Save the image file in the transaction
+            amount = amount
         )
 
         # Update student's time_left (convert hours to minutes and add)
@@ -300,3 +307,188 @@ class SemesterUpsertView(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
+    def get(self, request):
+        # Get the first semester record
+        semester = Semester.objects.first()
+        if semester:
+            # Mapping semester_name to a formatted string
+            semester_name_mapping = {
+                'firstsem': 'First Semester',
+                'secondsem': 'Second Semester',
+                'midyear': 'Midyear',
+            }
+            
+            # Get the formatted semester name, default to original if not found
+            formatted_semester_name = semester_name_mapping.get(semester.semester_name, semester.semester_name)
+            
+            # Prepare the response data
+            data = {
+                'year': semester.year,
+                'semester_name': formatted_semester_name
+            }
+            return Response(data)
+        else:
+            return Response({'error': 'No semester found'}, status=404)
+    
+class SessionHoursView(APIView):
+    def get(self, request):
+        # Get the current semester and year
+        current_semester = Semester.objects.first()
+        if not current_semester:
+            return Response({"error": "Semester data not found"}, status=404)
+
+        # Aggregate the consumedTime by month and convert to hours
+        session_data = (
+            Session.objects
+            .filter(year=current_semester.year, semester_name=current_semester.semester_name)
+            .annotate(month=ExtractMonth('date'))
+            .values('month')
+            .annotate(total_minutes=Sum('consumedTime'))
+            .order_by('month')
+        )
+
+        # Convert minutes to hours and prepare data for serialization
+        data = [
+            {"month": datetime(2023, item['month'], 1).strftime('%B'), "total_hours": item['total_minutes'] / 60}
+            for item in session_data
+        ]
+
+        serializer = SessionHoursSerializer(data, many=True)
+        return Response(serializer.data)
+
+class PaymentIncomeView(APIView):
+    def get(self, request):
+        current_sem = Semester.objects.first()
+        if not current_sem:
+            return Response({"error": "Semester data not found"}, status=404)
+        
+        session_data = (
+            Transaction.objects
+            .filter(year=current_sem.year, semester_name=current_sem.semester_name)
+            .annotate(month=ExtractMonth('timestamp'))
+            .values('month')
+            .annotate(total_income=Sum('amount'))
+            .order_by('month')
+        )
+         # Convert minutes to hours and prepare data for serialization
+        data = [
+            {
+             "month": datetime(2023, item['month'], 1).strftime('%B'), 
+             "total_income": item['total_income'],
+             }
+            for item in session_data
+        ]
+        serializer = PaymentIncomeSerializer(data, many=True)
+        return Response(serializer.data)
+    
+class CountLoggedInView(APIView):
+    def get(self, request):
+        # Count the number of records where is_loggedin is True
+        logged_in_count = Student.objects.filter(is_logged_in=True).count()
+
+        # Send the count as a response
+        return Response({"logged_in_count": logged_in_count}, status=status.HTTP_200_OK)
+    
+class ActiveUsersCountView(APIView):
+    def get(self, request):
+        # Get the current semester details
+        current_semester = Semester.objects.first()
+        
+        if current_semester:
+            current_year = current_semester.year
+            current_semester_name = current_semester.semester_name
+            
+            # Filter sessions by the current year and semester, only where is_loggedin=True
+            active_users_count = Session.objects.filter(
+                year=current_year, 
+                semester_name=current_semester_name,
+            ).values('parent_id').distinct().count()
+            
+            return Response({"active_users_count": active_users_count}, status=status.HTTP_200_OK)
+        else:
+            return Response({"error": "No current semester found"}, status=status.HTTP_404_NOT_FOUND)
+        
+class CoursesCountView(APIView):
+    def get(self, request):
+        current_semester = Semester.objects.first()
+
+        if not current_semester:
+            return Response({"error": "Semester data not found"}, status=404)
+
+        courses = Session.objects.filter(
+            year=current_semester.year,
+            semester_name=current_semester.semester_name
+        ).values_list('course', flat=True).distinct()
+
+        session_data = {}
+        for course in courses:
+            course_data = (
+                Session.objects
+                .filter(year=current_semester.year, semester_name=current_semester.semester_name, course=course)
+                .annotate(month=ExtractMonth('date'))
+                .values('month')
+                .annotate(count=Count('id'))
+                .order_by('month')
+            )
+            # Format course data by month
+            session_data[course] = [
+                {
+                    "month": datetime(2023, item['month'], 1).strftime('%B'), 
+                    "count": item['count']
+                }
+                for item in course_data
+            ]
+
+        return Response({"data": session_data})
+
+class PreviousCoursesCountView(APIView):
+    def get(self, request):
+        # Get year and semester_name from query parameters
+        prev_year = request.query_params.get('year')
+        prev_semester_name = request.query_params.get('semester_name')
+
+        # Debug: Print received parameters
+        print("Received year:", prev_year)
+        print("Received semester name:", prev_semester_name)
+
+        if not prev_year or not prev_semester_name:
+            return Response({"error": "Both 'year' and 'semester_name' are required."}, status=400)
+
+        sample = Session.objects.filter(semester_name=prev_semester_name)
+        print("Sample:", sample)
+        # Filter courses based on the year and semester_name
+        courses = Session.objects.filter(
+            year=prev_year,  # Use the exact year passed in the query (e.g., '2024-2025')
+            semester_name=prev_semester_name
+        ).values_list('course', flat=True).distinct()
+
+        # Debug: Print courses found
+        print("Courses found:", list(courses))
+
+        session_data = {}
+        for course in courses:
+            course_data = (
+                Session.objects
+                .filter(year=prev_year, semester_name=prev_semester_name, course=course)
+                .annotate(month=ExtractMonth('date'))
+                .values('month')
+                .annotate(count=Count('id'))
+                .order_by('month')
+            )
+
+            # Debug: Print course data for each course
+            print(f"Data for course '{course}':", list(course_data))
+
+            # Format course data by month
+            session_data[course] = [
+                {
+                    "month": datetime(2023, item['month'], 1).strftime('%B'), 
+                    "count": item['count']
+                }
+                for item in course_data
+            ]
+
+        # Debug: Print final session data
+        print("Session data:", session_data)
+
+        return Response({"data": session_data})

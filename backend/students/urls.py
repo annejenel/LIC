@@ -1,6 +1,6 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from .views import StudentViewSet, TransactionCreateView, TransactionListView, ResetPasswordView, UserLoginView, LogoutView, StaffLoginView, StaffCreateView, StaffListView, UpdateStaffStatusView, ImportStudentView, SessionListByStudentID, StudentUpdateView, ChangePasswordView, SemesterUpsertView
+from .views import StudentViewSet, TransactionCreateView, TransactionListView, ResetPasswordView, UserLoginView, LogoutView, StaffLoginView, StaffCreateView, StaffListView, UpdateStaffStatusView, ImportStudentView, SessionListByStudentID, StudentUpdateView, ChangePasswordView, SemesterUpsertView, SessionHoursView, CountLoggedInView, ActiveUsersCountView, PaymentIncomeView, CoursesCountView, PreviousCoursesCountView
 
 router = DefaultRouter()
 router.register(r'students', StudentViewSet, basename='student')
@@ -21,4 +21,10 @@ urlpatterns = [
     path('students/<str:studentID>/', StudentUpdateView.as_view(), name='student-update'),
     path('change-password/', ChangePasswordView.as_view(), name='change_password'),
     path('semesters/', SemesterUpsertView.as_view(), name='semester-create'),
+    path('session-hours/', SessionHoursView.as_view(), name='session-hours'),
+    path('count_loggedin/', CountLoggedInView.as_view(), name='count_loggedin'),
+    path('active_users/', ActiveUsersCountView.as_view(), name='active_users_count'), 
+    path('transaction-income/', PaymentIncomeView.as_view(), name='transaction-income'), 
+    path('courses-count/', CoursesCountView.as_view(), name='courses-count'), 
+    path('previous-count/', PreviousCoursesCountView.as_view(), name='previous-count'),
 ]
