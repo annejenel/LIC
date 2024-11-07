@@ -66,3 +66,13 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 } */
+
+body {
+  background-image: url(../images/background.jpg);
+  background-size: cover;
+  /* Optional: scales the image to cover the whole background */
+  background-repeat: no-repeat;
+  /* Optional: prevents tiling */
+  background-position: center;
+  /* Optional: centers the image */
+}

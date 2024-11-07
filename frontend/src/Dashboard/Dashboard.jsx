@@ -34,6 +34,8 @@ const StudentTransaction = lazy(() => import("../Modals/StudentTransaction"));
 const TransactionHistory = lazy(() => import("../Modals/TransactionHistory"));
 const AddNewSem = lazy(() => import("../Modals/AddNewSem"));
 const Import = lazy(() => import("../Modals/ImportStudents"));
+const StudentHistory = lazy(() => import("../Modals/StudentHistory"));
+
 import EditStudentAction from '../Modals/EditStudentAction';
 import Footer from '../Components/Footer.jsx';
 
@@ -91,6 +93,7 @@ export default function Dashboard() {
   const [studentToChange, setStudentToChange] = useState(null);
   const [newStatus, setNewStatus] = useState('');
   const [activityLogs, setActivityLogs] = useState([]);
+  const [isStudentHistory, setIsStudentHistory] = useState(false);
 
 
 
@@ -595,6 +598,13 @@ export default function Dashboard() {
             />
           )}
 
+          {isStudentHistory && (
+                      <StudentHistory
+                        isOpen={isStudentHistory}
+                        onClose={closeHistory}
+                        studentID={selectedStudentID}
+                      />
+                    )}
           {isEditStudentModalOpen && (
             <EditStudentAction
               isOpen={isEditStudentModalOpen}
@@ -614,6 +624,7 @@ export default function Dashboard() {
             newStatus={newStatus}
           />
         )}
+        
 
         </Suspense>
       </div>
