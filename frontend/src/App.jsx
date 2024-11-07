@@ -8,6 +8,8 @@ const LazyDashboard = React.lazy(() => import("./Dashboard/Dashboard"));
 const LazyManageStaff = React.lazy(() => import("./Staff/ManageStaff"));
 const LazySettings = React.lazy(() => import("./Settings/Settings"));
 const LazyAnalytics = React.lazy(() => import("./Analytics/Analytics"));
+const LazyCompare = React.lazy(() => import("./Analytics/CompareAnalytics"));
+
 
 //what
 export default function App() {
@@ -20,6 +22,7 @@ export default function App() {
           <Route path="/staff" element={<LazyManageStaff />} />
           <Route path="/settings" element={<LazySettings />} />
           <Route path="/analytics" element={<LazyAnalytics />} />
+          <Route path="/compare_analytics" element={<LazyCompare />} />
         </Routes>
       </React.Suspense>
     </Router>
