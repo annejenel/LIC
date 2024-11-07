@@ -56,13 +56,13 @@ class StudentApp:
         self.clear_screen()
         
         self.root.deiconify()
-        self.root.focus_force()
-        self.root.wm_attributes("-topmost", 1)
+        # self.root.focus_force()
+        # self.root.wm_attributes("-topmost", 1)
 
         
         
          #Disable closing application
-        self.root.protocol("WM_DELETE_WINDOW", lambda: messagebox.showinfo("Information", "Request denied"))
+        # self.root.protocol("WM_DELETE_WINDOW", lambda: messagebox.showinfo("Information", "Request denied"))
         container = tk.Frame(self.root)
         container.place(relx=0.5, rely=0.5, anchor='center')
         
