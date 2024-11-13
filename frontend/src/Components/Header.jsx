@@ -45,10 +45,10 @@ const Header = ({ username }) => {
   const menuItems = [
     { label: "Dashboard", path: "/dashboard" },
     { label: "Manage Staff", path: "/staff", restricted: true },  
-    { label: "Settings", path: "/settings", restricted: true },   
+    { label: "Settings", path: "/settings"},   
   ];
 
-  const activePage = menuItems.find(item => location.pathname === item.path)?.label || "Analytics";
+  const activePage = menuItems.find(item => location.pathname === item.path)?.label || "Dashboard";
 
   // Handle Logout
   const handleLogout = async () => {
