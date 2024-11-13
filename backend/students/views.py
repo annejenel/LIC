@@ -374,6 +374,37 @@ class SessionHoursView(APIView):
 
         serializer = SessionHoursSerializer(data, many=True)
         return Response(serializer.data)
+class PreviousSessionHoursView(APIView):
+    def get(self, request):
+        # Get the current semester and year
+        year = request.query_params.get('year')
+        semester_name = request.query_params.get('semester_name')
+
+        if not year or not semester_name:
+            return Response(
+                {"error": "Both 'year' and 'semester_name' are required query parameters."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # Aggregate the consumedTime by month and convert to hours
+        session_data = (
+            Session.objects
+            .filter(year=year, semester_name=semester_name)
+            .annotate(month=ExtractMonth('date'))
+            .values('month')
+            .annotate(total_minutes=Sum('consumedTime'))
+            .order_by('month')
+        )
+
+        # Convert minutes to hours and prepare data for serialization
+        data = [
+            {"month": datetime(2023, item['month'], 1).strftime('%B'), "total_hours": item['total_minutes'] / 60}
+            for item in session_data
+        ]
+
+        serializer = SessionHoursSerializer(data, many=True)
+        return Response(serializer.data)
+
 
 class PaymentIncomeView(APIView):
     def get(self, request):
@@ -384,6 +415,38 @@ class PaymentIncomeView(APIView):
         session_data = (
             Transaction.objects
             .filter(year=current_sem.year, semester_name=current_sem.semester_name)
+            .annotate(month=ExtractMonth('timestamp'))
+            .values('month')
+            .annotate(total_income=Sum('amount'))
+            .order_by('month')
+        )
+         # Convert minutes to hours and prepare data for serialization
+        data = [
+            {
+             "month": datetime(2023, item['month'], 1).strftime('%B'), 
+             "total_income": item['total_income'],
+             }
+            for item in session_data
+        ]
+        serializer = PaymentIncomeSerializer(data, many=True)
+        return Response(serializer.data)
+    
+
+class PreviousPaymentIncomeView(APIView):
+    def get(self, request):
+        
+        year = request.query_params.get('year')
+        semester_name = request.query_params.get('semester_name')
+
+        if not year or not semester_name:
+            return Response(
+                {"error": "Both 'year' and 'semester_name' are required query parameters."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        session_data = (
+            Transaction.objects
+            .filter(year=year, semester_name=semester_name)
             .annotate(month=ExtractMonth('timestamp'))
             .values('month')
             .annotate(total_income=Sum('amount'))
@@ -462,42 +525,30 @@ class CoursesCountView(APIView):
 
 class PreviousCoursesCountView(APIView):
     def get(self, request):
-        # Get year and semester_name from query parameters
-        prev_year = request.query_params.get('year')
-        prev_semester_name = request.query_params.get('semester_name')
+        year = request.query_params.get('year')
+        semester_name = request.query_params.get('semester_name')
 
-        # Debug: Print received parameters
-        print("Received year:", prev_year)
-        print("Received semester name:", prev_semester_name)
+        if not year or not semester_name:
+            return Response(
+                {"error": "Both 'year' and 'semester_name' are required query parameters."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
-        if not prev_year or not prev_semester_name:
-            return Response({"error": "Both 'year' and 'semester_name' are required."}, status=400)
-
-        sample = Session.objects.filter(semester_name=prev_semester_name)
-        print("Sample:", sample)
-        # Filter courses based on the year and semester_name
         courses = Session.objects.filter(
-            year=prev_year,  # Use the exact year passed in the query (e.g., '2024-2025')
-            semester_name=prev_semester_name
+            year=year,
+            semester_name=semester_name
         ).values_list('course', flat=True).distinct()
-
-        # Debug: Print courses found
-        print("Courses found:", list(courses))
 
         session_data = {}
         for course in courses:
             course_data = (
                 Session.objects
-                .filter(year=prev_year, semester_name=prev_semester_name, course=course)
+                .filter(year=year, semester_name=semester_name, course=course)
                 .annotate(month=ExtractMonth('date'))
                 .values('month')
                 .annotate(count=Count('id'))
                 .order_by('month')
             )
-
-            # Debug: Print course data for each course
-            print(f"Data for course '{course}':", list(course_data))
-
             # Format course data by month
             session_data[course] = [
                 {
@@ -506,9 +557,6 @@ class PreviousCoursesCountView(APIView):
                 }
                 for item in course_data
             ]
-
-        # Debug: Print final session data
-        print("Session data:", session_data)
 
         return Response({"data": session_data})
     

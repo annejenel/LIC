@@ -76,7 +76,7 @@ const LoadPayments = () => {
   return (
     <div>
       <div style={{ display: 'flex', justifyContent:'space-between'}}>
-      <h2 style={{ textAlign: 'center', marginBottom: '20px' }}>Course Session Counts by Month</h2> {/* Title */}
+      <h2 style={{ textAlign: 'center', marginBottom: '20px' }}>Course Session Frequency by Month</h2> {/* Title */}
       {/* Select All / Deselect All checkbox */}
       <FormControlLabel
           control={

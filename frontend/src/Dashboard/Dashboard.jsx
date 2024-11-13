@@ -39,10 +39,10 @@ const StudentHistory = lazy(() => import("../Modals/StudentHistory"));
 import EditStudentAction from '../Modals/EditStudentAction';
 import Footer from '../Components/Footer.jsx';
 
-import "../Modals/AddNewSem.css";
+// import "../Modals/AddNewSem.css";
 import "./Dashboard.css";
-import "../Modals/AddStudent.css";
-import "../Modals/ImportStudents.css";
+// import "../Modals/AddStudent.css";
+// import "../Modals/ImportStudents.css";
 import ImportStudents from "../Modals/ImportStudents";
 
 const theme = extendTheme({

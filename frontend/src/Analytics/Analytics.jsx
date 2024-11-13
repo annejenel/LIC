@@ -53,7 +53,7 @@ const Analytics = () => {
     <div className='headerMenu'>
     <Box sx={{ display: 'flex', justifyContent: 'space-between', padding: 1, margin: 4 }}>
         <Typography variant="h4" gutterBottom sx={{ color: '#8C383E', fontWeight: 'bold' }}>SY: {semester.year} {semester.semester_name} </Typography>
-        <Link to="/compare_analytics"><Button variant="contained" sx={{backgroundColor:'#8C383E'}} >Report</Button></Link>
+        <Link to="/compare_analytics"><Button variant="contained" sx={{backgroundColor:'#8C383E'}} >Compare</Button></Link>
       </Box>
     </div>
       

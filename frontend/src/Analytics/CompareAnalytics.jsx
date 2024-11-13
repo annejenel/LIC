@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom'; // Import Link from react-router-dom for routing
 import { Button, Box } from '@mui/material'; // Material UI components for styling
-import PreviousLineChart from '../Charts/PreviousLineChart.jsx';
+import PreviousLineChart from '../Charts/PreviousCharts.jsx';
 
 const CompareAnalytics = () => {
    
@@ -14,7 +14,7 @@ const CompareAnalytics = () => {
           
           style={{ marginBottom: '20px', backgroundColor:'#8C383E' }}
         >
-          Back to Analytics
+           Back to Analytics
         </Button>
       </Link>
       
