@@ -323,6 +323,13 @@ class SemesterUpsertView(APIView):
         serializer = SemesterSerializer(semester, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
+            students = Student.objects.all()
+            for student in students:
+                if student.status == 'Alumnus':
+                    student.time_left = 0
+                elif student.status == 'Student':
+                    student.time_left = 600
+                student.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
