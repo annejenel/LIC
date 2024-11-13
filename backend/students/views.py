@@ -54,6 +54,7 @@ class ResetPasswordView(APIView):
 
             # Reset the password
             student.password = make_password(default_password)
+            student.is_logged_in = False
             student.save()
 
             # Log the password reset action
