@@ -11,12 +11,8 @@ import './ManageStaff.css';
 import Dropdown from "@mui/joy/Dropdown";
 import MenuButton from "@mui/joy/MenuButton";
 import { ArrowBackIos, ArrowForwardIos } from "@mui/icons-material";
-import Pagination from '@mui/material/Pagination';
-import PaginationItem from '@mui/material/PaginationItem';
 import { IconButton } from '@mui/material';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import SearchIcon from "@mui/icons-material/Search";
 import Input from "@mui/joy/Input";
 
@@ -141,7 +137,14 @@ const ManageStaff = () => {
   };
 
   const handleStatusChange = async (username, newStatus) => {
-    console.log("Updating status for:", username, "to:", newStatus);
+    // Find the current staff member in the list
+    const currentStaff = staffList.find(staff => staff.username === username);
+    
+    // Check if the status is already the same
+    if (currentStaff && currentStaff.is_active === newStatus) {
+      return; // Exit the function without making an API call
+    }
+    
     try {
       const response = await fetch(`http://localhost:8000/api/update-status/${username}/`, {
         method: 'PATCH',
