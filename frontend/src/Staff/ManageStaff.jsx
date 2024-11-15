@@ -85,7 +85,7 @@ const ManageStaff = () => {
     fetch(`http://localhost:8000/api/logs/${username}/`)
       .then((response) => {
         if (!response.ok) {
-          throw new Error(`Failed to fetch activity logs for ${username}`);
+          console.log('Failed Fetching')
         }
         return response.json();
       })
@@ -278,7 +278,7 @@ const ManageStaff = () => {
                   Add Staff
                 </Button>
               </div>
-              <table>
+              <table className='staff-actual-table'>
                 <thead>
                   <tr>
                     <th>Name</th>
@@ -332,7 +332,7 @@ const ManageStaff = () => {
     >
         LOGS
     </Typography>
-    <table>
+    <table style={{ display: 'block', maxHeight: '400px', overflowY: 'auto', width: '100%' }}>
         <thead>
             <tr>
                <strong><td colSpan="2">{`Staff: ${selectedUsername || ""}`}</td></strong> 
