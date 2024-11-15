@@ -335,6 +335,9 @@ const ManageStaff = () => {
     <table>
         <thead>
             <tr>
+               <strong><td colSpan="2">{`Staff: ${selectedUsername || ""}`}</td></strong> 
+              </tr>
+            <tr>
                 <th>Action</th>
                 <th>Timestamp</th> 
             </tr>
@@ -346,9 +349,7 @@ const ManageStaff = () => {
           </tr>
         ) : selectedUsername ? (
           <>
-              <tr>
-                <td colSpan="2">{`Selected Staff: ${selectedUsername}`}</td>
-              </tr>
+              
               {activityLogs.length > 0 ? (
                 activityLogs.map((log, index) => (
                     <tr key={index}>
