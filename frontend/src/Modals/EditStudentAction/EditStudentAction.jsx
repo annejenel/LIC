@@ -96,11 +96,7 @@ export default function EditStudentModal({ isOpen, onClose, studentID, username 
                 <div className="modal-content">
                     <div className="modal-header">
                         <h2 className="header-title">
-                            <span className="warning-icon" role="img" aria-label="warning">⚠️</span>
-                            Warning
-                            <button className="close-button" onClick={onClose}>
-                                <HighlightOffIcon />
-                            </button>
+                           Reset Password
                         </h2>
                     </div>
                     <div className="modal-body">
@@ -108,8 +104,8 @@ export default function EditStudentModal({ isOpen, onClose, studentID, username 
                             <p>Loading...</p>
                         ) : (
                             <p>
-                                Are you sure you want to reset student ID: <strong>{studentID}</strong>'s password?
-                                This action is not reversible!
+                                Are you sure you want to Reset student <strong>{studentID}</strong>'s password?
+                                
                             </p>
                         )}
                     </div>

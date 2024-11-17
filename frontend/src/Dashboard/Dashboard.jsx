@@ -23,27 +23,27 @@ import ReceiptLongIcon from "@mui/icons-material/ReceiptLong";
 import DriveFolderUploadIcon from "@mui/icons-material/DriveFolderUpload";
 import PersonAddAltIcon from '@mui/icons-material/PersonAddAlt';
 import Header from '../Components/Header.jsx';
-import Confirmation from '../Modals/Confirmation.jsx';
+import Confirmation from '../Modals/Confirmation/Confirmation.jsx';
 
 import { useParams } from 'react-router-dom';
 
 
 // Lazy load the modals
-const AddStudent = lazy(() => import("../Modals/AddStudent"));
-const StudentTransaction = lazy(() => import("../Modals/StudentTransaction"));
-const TransactionHistory = lazy(() => import("../Modals/TransactionHistory"));
-const AddNewSem = lazy(() => import("../Modals/AddNewSem"));
-const Import = lazy(() => import("../Modals/ImportStudents"));
-const StudentHistory = lazy(() => import("../Modals/StudentHistory"));
+const AddStudent = lazy(() => import("../Modals/AddStudent/AddStudent"));
+const StudentTransaction = lazy(() => import("../Modals/StudentTransaction/StudentTransaction"));
+const TransactionHistory = lazy(() => import("../Modals/TransactionHistory/TransactionHistory"));
+const AddNewSem = lazy(() => import("../Modals/AddNewSem/AddNewSem"));
+const Import = lazy(() => import("../Modals/ImportStudents/ImportStudents"));
+const StudentHistory = lazy(() => import("../Modals/StudentHistory/StudentHistory"));
 
-import EditStudentAction from '../Modals/EditStudentAction';
+import EditStudentAction from '../Modals/EditStudentAction/EditStudentAction';
 import Footer from '../Components/Footer.jsx';
 
 // import "../Modals/AddNewSem.css";
 import "./Dashboard.css";
 // import "../Modals/AddStudent.css";
 // import "../Modals/ImportStudents.css";
-import ImportStudents from "../Modals/ImportStudents";
+import ImportStudents from "../Modals/ImportStudents/ImportStudents";
 
 const theme = extendTheme({
   components: {
@@ -295,7 +295,9 @@ export default function Dashboard() {
     <CssVarsProvider theme={theme}>
       <Header/>
       <div className="containerDashboard">
-        <Sheet variant="outlined" className="sheet">
+        <Sheet variant="plain" className="sheet" sx={{
+          background: 'rgba(0, 0, 0, 0)'
+        }}>
           {/* Header Section */}
 
 

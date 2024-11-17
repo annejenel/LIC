@@ -93,7 +93,9 @@ const Settings = () => {
     <>
     <Header></Header>
       <div className="containerSettings">
-        <Sheet variant="outlined" className="sheet">
+        <Sheet variant="plain" className="sheet" sx={{
+          background: 'rgba(0, 0, 0, 0)'
+        }}>
           {/* Header Section */}
           
           <Container maxWidth="sm" className="passwordForm">

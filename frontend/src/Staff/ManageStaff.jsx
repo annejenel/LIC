@@ -6,7 +6,7 @@ import Header from '../Components/Header.jsx';
 import SnackbarComponent from '../Components/SnackbarComponent.jsx';
 import Menu from "@mui/joy/Menu";
 import MenuItem from "@mui/joy/MenuItem";
-import AddStaffModal from '../Modals/AddStaff';
+import AddStaffModal from '../Modals/AddStaff/AddStaff.jsx';
 import './ManageStaff.css';
 import Dropdown from "@mui/joy/Dropdown";
 import MenuButton from "@mui/joy/MenuButton";

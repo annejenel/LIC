@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-
+import './AddStudent.css';
 
 const AddStudent = ({ isOpen, onClose, onStudentAdded }) => {
   const [studentID, setStudentID] = useState('');
@@ -79,36 +79,16 @@ const AddStudent = ({ isOpen, onClose, onStudentAdded }) => {
   };
 
   return (
-    <div className="modal-overlay" style={{
-      position: 'fixed',
-      top: 0,
-      left: 0,
-      right: 0,
-      bottom: 0,
-      background: 'rgba(0, 0, 0, 0.5)',
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-      zIndex: 1300
-    }}>
-      <div className="modal-content" style={{
-        background: '#fff',
-        padding: '20px',
-        borderRadius: '8px',
-        position: 'relative',
-        width: '500px',
-      }}>
-        <button className="modal-close" onClick={onClose} style={{
-          backgroundColor: '#89343b',
-          color: 'white',
-        }}>
+    <div className="modal-overlay">
+      <div className="modal-content">
+        <button className="modal-close" onClick={onClose}>
           &times;
         </button> 
         <h2>Add Student</h2>
         {error && <p className="error-message">{error}</p>}
         <form onSubmit={handleSubmit}>
-          <div style={{ marginBottom: '15px'}}>
-            <label htmlFor="studentID" style={{display: 'block'}}>Student ID</label>
+          <div>
+            <label htmlFor="studentID">Student ID</label>
             <input
               type="text"
               id="studentID"
