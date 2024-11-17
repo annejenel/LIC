@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Paper, TextField, Box, Button, Snackbar, Alert } from "@mui/material";
 import axios from "axios";
-import "./Login.css";
+import styles from "./Login.module.css";
 import { getCookie } from '../utils/utils';
 
 const Login = () => {
@@ -99,7 +99,7 @@ const Login = () => {
           height: 300,
         }}
       >
-        <h2 className="loginHeader" style={{ fontWeight: "bolder" }}>
+        <h2 className={styles.loginHeader} style={{ fontWeight: "bolder" }}>
           <span style={{ color: "#FFD404" }}>LIC</span>{" "}
           <span style={{ color: "#A83332" }}>Connect</span>
         </h2>
