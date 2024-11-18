@@ -56,9 +56,9 @@ const StudentTransaction = ({ isOpen, onClose, studentID, onTransactionCompleted
   };
 
   return (
-    <div className="modal-overlay">
-      <div className="modal-content">
-        <button className="modal-close" onClick={onClose}>
+    <div className="studentTransaction_modal-overlay">
+      <div className="studentTransaction_modal-content">
+        <button className="studentTransaction_modal-close" onClick={onClose}>
           &times;
         </button>
         <h2>New Transaction</h2>

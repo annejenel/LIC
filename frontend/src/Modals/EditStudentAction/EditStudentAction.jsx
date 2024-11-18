@@ -1,14 +1,13 @@
 import React, { useEffect, useState } from "react";
 import './EditStudentAction.css';
-import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import axios from 'axios';
+
 
 export default function EditStudentModal({ isOpen, onClose, studentID, username }) {
     const [isLoading, setIsLoading] = useState(false);
     const [currentPasswordIsDefault, setCurrentPasswordIsDefault] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState("");
     const [isSnackbarVisible, setIsSnackbarVisible] = useState(false); 
-    const [staffUsername, setStaffUsername] = useState('');
 
 
     useEffect(() => {
@@ -92,14 +91,14 @@ export default function EditStudentModal({ isOpen, onClose, studentID, username 
 
     return (
         isOpen && (
-            <div className="modal-overlay">
-                <div className="modal-content">
-                    <div className="modal-header">
-                        <h2 className="header-title">
+            <div className="resetpass_modal-overlay">
+                <div className="resetpass_modal-content">
+                    <div className="resetpass_modal-header">
+                        <h2 className="resetpass_header-title">
                            Reset Password
                         </h2>
                     </div>
-                    <div className="modal-body">
+                    <div className="resetpass_modal-body">
                         {isLoading ? (
                             <p>Loading...</p>
                         ) : (
@@ -109,11 +108,11 @@ export default function EditStudentModal({ isOpen, onClose, studentID, username 
                             </p>
                         )}
                     </div>
-                    <div className="modal-footer">
-                        <button className="confirm-button" onClick={handleResetPassword} disabled={isLoading}>
+                    <div className="resetpass_modal-footer">
+                        <button className="resetpass_confirm-button" onClick={handleResetPassword} disabled={isLoading}>
                             Yes
                         </button>
-                        <button className="cancel-button" onClick={onClose} disabled={isLoading}>
+                        <button className="resetpass_cancel-button" onClick={onClose} disabled={isLoading}>
                             No
                         </button>
                     </div>

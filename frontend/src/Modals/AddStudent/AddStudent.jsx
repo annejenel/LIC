@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './AddStudent.css';
 
@@ -11,13 +11,13 @@ const AddStudent = ({ isOpen, onClose, onStudentAdded }) => {
   const [timeLeft, setTimeLeft] = useState(600); 
   const [error, setError] = useState('');
 
+
   if (!isOpen) return null;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(''); 
-
-    const studentIDRegex = /^\d{2}-\d{4}-\d{3}$/;
+    
 
     console.log('Student ID:', studentID);
     console.log('Name:', name);
@@ -28,11 +28,6 @@ const AddStudent = ({ isOpen, onClose, onStudentAdded }) => {
 
     if (!studentID || !name || !course) {
       setError('Please fill in all fields');
-      return;
-    }
-
-    if (!studentIDRegex.test(studentID)) {
-      setError('Student ID must be in the format XX-XXXX-XXX');
       return;
     }
 
@@ -48,6 +43,7 @@ const AddStudent = ({ isOpen, onClose, onStudentAdded }) => {
     try {
       const response = await axios.post('http://localhost:8000/api/students/', newStudent);
       console.log('Student added successfully:', response.data);
+
       onStudentAdded(); 
 
       setStudentID('');
@@ -78,10 +74,10 @@ const AddStudent = ({ isOpen, onClose, onStudentAdded }) => {
     }
   };
 
-  return (
-    <div className="modal-overlay">
-      <div className="modal-content">
-        <button className="modal-close" onClick={onClose}>
+    return (
+    <div className="addstudent_modal-overlay">
+      <div className="addstudent_modal-content">
+        <button className="addstudent_modal-close" onClick={onClose}>
           &times;
         </button> 
         <h2>Add Student</h2>

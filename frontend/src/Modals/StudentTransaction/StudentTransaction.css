@@ -1,5 +1,5 @@
 /* Ensure the modal overlay is positioned correctly */
-.modal-overlay {
+.studentTransaction_modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -13,21 +13,24 @@
 }
 
 /* Ensure modal content fits within viewport and scrolls if necessary */
-.modal-content {
+.studentTransaction_modal-content {
   background: #fff;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   padding: 20px;
   width: 400px;
   max-width: 100%;
-  max-height: 80vh; /* Ensure it doesn’t exceed 80% of viewport height */
-  overflow: auto; /* Enable scrolling if content overflows */
-  box-sizing: border-box; /* Ensure padding is included in width */
+  max-height: 80vh;
+  /* Ensure it doesn’t exceed 80% of viewport height */
+  overflow: auto;
+  /* Enable scrolling if content overflows */
+  box-sizing: border-box;
+  /* Ensure padding is included in width */
   position: relative;
 }
 
 /* Position close button correctly */
-.modal-close {
+.studentTransaction_modal-close {
   background: transparent;
   border: none;
   font-size: 24px;
@@ -36,16 +39,13 @@
   position: absolute;
   top: 10px;
   right: 10px;
-  z-index: 1010; /* Ensure it’s on top of the modal content */
+  z-index: 1010;
+  /* Ensure it’s on top of the modal content */
 }
 
-.modal-close:hover {
-  color: #666;
-}
-
-/* Ensure headings have correct margin */
-h2 {
-  margin-top: 0;
+.studentTransaction_modal-close:hover {
+  color: white;
+  background-color: #89343b;
 }
 
 /* Style error messages */
@@ -55,10 +55,7 @@ h2 {
   margin: 10px 0;
 }
 
-/* Style form elements */
-form div {
-  margin-bottom: 15px;
-}
+
 
 form label {
   display: block;
@@ -83,9 +80,6 @@ button {
   font-size: 16px;
 }
 
-button:hover {
-  background-color: #0056b3;
-}
 
 /* Style image preview */
 .image-preview {

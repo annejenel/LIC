@@ -31,9 +31,9 @@ const TransactionHistory = ({ isOpen, onClose }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="modal-overlay">
-      <div className="modal-content">
-        <button className="modal-close" onClick={onClose}>
+    <div className="transactionHistory_modal-overlay">
+      <div className="transactionHistory_modal-content">
+        <button className="transactionHistory_modal-close" onClick={onClose}>
           &times;
         </button>
         <h2>Transaction History</h2>

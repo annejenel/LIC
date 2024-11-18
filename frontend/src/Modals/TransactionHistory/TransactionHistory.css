@@ -1,4 +1,4 @@
-.modal-overlay {
+.transactionHistory_modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -11,7 +11,7 @@
   z-index: 1000;
 }
 
-.modal-content {
+.transactionHistory_modal-content {
   background: #fff;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
@@ -26,7 +26,7 @@
   /* Ensure padding is included in width */
 }
 
-.modal-close {
+.transactionHistory_modal-close {
   background: transparent;
   border: none;
   font-size: 24px;
@@ -41,14 +41,11 @@
   /* Ensure it can be clicked */
 }
 
-.modal-close:hover {
+.transactionHistory_modal-close:hover {
   color: white;
   background-color: #89343b;
 }
 
-h2 {
-  margin-top: 0;
-}
 
 .error-message {
   color: red;
