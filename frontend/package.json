@@ -18,6 +18,7 @@
     "@mui/material": "^6.1.7",
     "@mui/x-charts": "^7.22.0",
     "axios": "^1.7.7",
+    "exceljs": "^4.4.0",
     "lic-reactver": "file:",
     "notistack": "^3.0.1",
     "react": "^18.3.1",
