@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import * as XLSX from 'xlsx';  // Make sure you are importing from 'xlsx' here
+import ExcelJS from 'exceljs';  // Import exceljs
 import './ImportStudents.css';
+import { useSnackbar } from 'notistack';
 
 const ImportStudents = ({ isOpen, onClose, username }) => {  // Add username prop
   const [file, setFile] = useState(null);
   const [fileName, setFileName] = useState('');
+  const { enqueueSnackbar } = useSnackbar();
 
   if (!isOpen) return null;
 
@@ -36,7 +38,7 @@ const ImportStudents = ({ isOpen, onClose, username }) => {  // Add username pro
 
   const handleImport = async () => {
     if (!file) {
-      alert("Please select a file.");
+      enqueueSnackbar('No file attached', { variant: 'error' });
       return;
     }
 
@@ -63,24 +65,29 @@ const ImportStudents = ({ isOpen, onClose, username }) => {  // Add username pro
           return studentObj;
         });
       } else if (file.name.endsWith('.xls') || file.name.endsWith('.xlsx')) {
-        // Handle Excel file
-        const workbook = XLSX.read(data, { type: 'array' });
-        const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
-        const jsonData = XLSX.utils.sheet_to_json(firstSheet, { header: 1 });
-        const headers = jsonData[0];
-        students = jsonData.slice(1).map(row => {
+        // Handle Excel file using exceljs
+        const workbook = new ExcelJS.Workbook();
+        await workbook.xlsx.load(data);
+
+        // Read data from the first sheet
+        const worksheet = workbook.worksheets[0];
+        const rows = worksheet.getSheetValues();
+        const headers = rows[0];
+        students = rows.slice(1).map(row => {
           const studentObj = {};
-          headers.forEach((header, index) => {
-            const value = row[index];
-            studentObj[header.trim()] = typeof value === 'string' ? value.trim() : value;
-            if (header.trim() === 'time_left' || header.trim() === 'is_logged_in') {
-              studentObj[header.trim()] = parseInt(value, 10);
+          row.forEach((value, index) => {
+            const header = headers[index];
+            if (header) {
+              studentObj[header.trim()] = typeof value === 'string' ? value.trim() : value;
+              if (header.trim() === 'time_left' || header.trim() === 'is_logged_in') {
+                studentObj[header.trim()] = parseInt(value, 10);
+              }
             }
           });
           return studentObj;
         });
       } else {
-        alert("Unsupported file type. Please upload a CSV or Excel file.");
+        enqueueSnackbar('Unsupported file type. Please upload a CSV or Excel file.', { variant: 'error' });
         return;
       }
 
@@ -93,20 +100,21 @@ const ImportStudents = ({ isOpen, onClose, username }) => {  // Add username pro
           },
         });
         console.log('File imported successfully:', response.data);
-        alert('Students imported successfully!');
+        enqueueSnackbar('Imported file succesffully!', { variant: 'success' });
+        
 
         // Log the import activity
         await logActivity(`Imported ${students.length} students`, username);
 
       } catch (error) {
         console.error('Error importing file:', error.response ? error.response.data : error);
-        alert('Error importing students. Please check the console for details.');
+        enqueueSnackbar('Error importing students. Please check the console for details', { variant: 'error' });
       }
     };
 
     reader.onerror = (error) => {
       console.error("File reading error:", error);
-      alert("Error reading file. Please try again.");
+      enqueueSnackbar('Error reading file. Please try again', { variant: 'error' });
     };
 
     reader.readAsArrayBuffer(file); // Reading the file as ArrayBuffer
