@@ -15,6 +15,7 @@ import { IconButton } from '@mui/material';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import SearchIcon from "@mui/icons-material/Search";
 import Input from "@mui/joy/Input";
+import { useSnackbar } from 'notistack';
 
 const ManageStaff = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -22,20 +23,15 @@ const ManageStaff = () => {
   const [error, setError] = useState(null);
   const [selectedUsername, setSelectedUsername] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [alert, setAlert] = useState({ type: '', message: '' });
   const [page, setPage] = useState(1);
   const itemsPerPage = 5;
   const [searchQuery, setSearchQuery] = useState("");
   const [activityLogs, setActivityLogs] = useState([]);
+  const { enqueueSnackbar } = useSnackbar();
 
   useEffect(() => {
     fetchStaffList();
   }, []);
-
-  const handleSnackbarClose = () => {
-    setSnackbarOpen(false);
-  };
 
   const fetchStaffList = async () => {
     try {
@@ -72,12 +68,10 @@ const ManageStaff = () => {
         throw new Error(data.alert?.message || 'Failed to add staff.');
       }
 
-      setAlert({ type: 'success', message: data.alert?.message || 'Staff added successfully!' });
-      setSnackbarOpen(true); 
+      enqueueSnackbar('Staff added successfully!', {variant: 'success'}); 
       await fetchStaffList(); 
     } catch (error) {
-      setAlert({ type: 'error', message: error.message });
-      setSnackbarOpen(true); 
+      enqueueSnackbar('Failed', {variant: 'error'}); 
     }
   };
 
@@ -95,8 +89,7 @@ const ManageStaff = () => {
       .catch((error) => {
         console.error('Error fetching logs:', error.message);
         setActivityLogs([]);  // Empty out logs on error
-        setAlert({ type: 'error', message: error.message });
-        setSnackbarOpen(true);  // Show error message to user
+        enqueueSnackbar('Failed', {variant: 'error'}); 
       });
   };
   
@@ -159,14 +152,12 @@ const ManageStaff = () => {
       }
 
       await fetchStaffList();
-      setAlert({ type: 'success', message: 'Status updated successfully!' });
-      setSnackbarOpen(true);
+      enqueueSnackbar('Status updated successfully!', {variant: 'success'}); 
       
       // Log the activity
       await logActivity(username, newStatus ? 'Activated' : 'Deactivated');
     } catch (error) {
-      setAlert({ type: 'error', message: error.message });
-      setSnackbarOpen(true);
+      enqueueSnackbar('Failed', {variant: 'error'}); 
     }
   };
 
@@ -201,11 +192,6 @@ const ManageStaff = () => {
           {error}
         </Typography>
       )}
-      <SnackbarComponent 
-        open={snackbarOpen} 
-        handleClose={handleSnackbarClose} 
-        alert={alert} 
-      />
       <Header />
       <div className="staff-container">
         <div className="staff-container-body">

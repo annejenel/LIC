@@ -1,17 +1,17 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Paper, TextField, Box, Button, Snackbar, Alert } from "@mui/material";
+import { Paper, TextField, Box, Button, Alert } from "@mui/material";
 import axios from "axios";
 import styles from "./Login.module.css";
 import { getCookie } from '../utils/utils';
+import { useSnackbar } from 'notistack';
 
 const Login = () => {
   const navigate = useNavigate();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState({ username: false, password: false });
-  const [openSnackbar, setOpenSnackbar] = useState(false); // State for snackbar visibility
-  const [snackbarMessage, setSnackbarMessage] = useState(""); // State for snackbar message
+  const { enqueueSnackbar } = useSnackbar();
 
   const handleLogin = async () => {
     if (!username || !password) {
@@ -21,7 +21,7 @@ const Login = () => {
       });
       return;
     }
-    if (username === 'admin') {
+    if (username === 'licadmin24') {
       localStorage.setItem('userRole', 'admin');
     } else {
       localStorage.setItem('userRole', 'staff');
@@ -39,11 +39,11 @@ const Login = () => {
 
       if (response.data.status === "success") {
         localStorage.setItem('token', response.data.token); // Save the token
+        enqueueSnackbar('Logged in successful!', { variant: 'success' });
         navigate(`/dashboard/${username}`);
       } else {
         // Show custom error message in the Snackbar
-        setSnackbarMessage("Invalid credentials. Please try again.");
-        setOpenSnackbar(true);
+        enqueueSnackbar('Login failed', { variant: 'error' });
       }
     } catch (error) {
       console.error("Login error:", error);
@@ -52,22 +52,18 @@ const Login = () => {
       if (error.response) {
         // Handle different types of errors
         if (error.response.data.username) {
-            setSnackbarMessage(error.response.data.username[0]); // Username not found
+            enqueueSnackbar('Username not found', { variant: 'error' }); // Username not found
         } else if (error.response.data.non_field_errors) {
-            setSnackbarMessage(error.response.data.non_field_errors[0]); // Invalid credentials
+           enqueueSnackbar('Invalid credentials', { variant: 'error' }); // Invalid credentials
         } else {
-            setSnackbarMessage("An error occurred. Please try again."); // Generic error
+          enqueueSnackbar('An error occurred. Please try again.', { variant: 'error' }); // Generic error
         }
     } else {
-        setSnackbarMessage("An error occurred. Please try again.");
+      enqueueSnackbar('An error occurred. Please try again.', { variant: 'error' });
     }
-      setOpenSnackbar(true);
     }
   };
 
-  const handleCloseSnackbar = () => {
-    setOpenSnackbar(false);
-  };
 
   return (
     <Box
@@ -148,22 +144,6 @@ const Login = () => {
           <strong>Login</strong>
         </Button>
       </Paper>
-
-      {/* Custom Snackbar for error messages */}
-      <Snackbar
-        open={openSnackbar}
-        autoHideDuration={3000} // Snackbar closes automatically after 3 seconds
-        onClose={handleCloseSnackbar}
-        anchorOrigin={{ vertical: "top", horizontal: "center" }} // Position of the Snackbar
-      >
-        <Alert
-          onClose={handleCloseSnackbar}
-          severity="error"
-          sx={{ width: "100%" }}
-        >
-          {snackbarMessage}
-        </Alert>
-      </Snackbar>
     </Box>
   );
 };

@@ -1,24 +1,16 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import Sheet from "@mui/joy/Sheet";
 import Box from "@mui/joy/Box";
 import Button from "@mui/joy/Button";
-import Dropdown from "@mui/joy/Dropdown";
-import ListDivider from "@mui/joy/ListDivider";
-import ListItemDecorator from "@mui/joy/ListItemDecorator";
-import Menu from "@mui/joy/Menu";
-import MenuButton from "@mui/joy/MenuButton";
-import MenuItem from "@mui/joy/MenuItem";
 import Typography from "@mui/joy/Typography";
-import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
 import { Container, TextField } from "@mui/material";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
 import axios from "axios";
 import Header from '../Components/Header.jsx';
+import { useSnackbar } from 'notistack';
 import "./Settings.css";
+
 const Settings = () => {
-  
+  const { enqueueSnackbar } = useSnackbar();
   //State to store form values
   const [formValues, setFormValues] = useState({
     currentPassword: "",
@@ -77,7 +69,7 @@ const Settings = () => {
       );
 
       if (response.status === 200) {
-        setSuccessMessage("Password changed successfully!");
+        enqueueSnackbar('Password changed successfully!', { variant: 'success' });
         setErrorMessage("");
         handleReset(); // Clear form fields after successful change
       }

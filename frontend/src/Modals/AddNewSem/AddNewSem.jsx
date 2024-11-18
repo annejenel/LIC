@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import './AddNewSem.css';
+import { useSnackbar } from 'notistack';
 
 
 
@@ -7,6 +8,7 @@ const AddNewSem = ({ isOpen, onClose}) => {
     const [year, setYear] = useState('');
     const [sem, setSem] = useState('');
     const [error, setError] = useState(null);
+    const { enqueueSnackbar } = useSnackbar();
     if (!isOpen) return null;
   
 
@@ -31,15 +33,15 @@ const AddNewSem = ({ isOpen, onClose}) => {
             });
 
             if (response.ok) {
-                alert("Successfully added sem");
+                enqueueSnackbar('Semester updated!', {variant: 'success'});
                 setYear('');
                 setSem('');
                 onClose();
             } else {
-                alert("Failed to add sem");
+                enqueueSnackbar('Failed to update semester!', {variant: 'error'});
             }
         } catch (error) {
-            alert("Failed to add sem");
+            enqueueSnackbar('Failed to update semester!', {variant: 'error'});
         }
         
     };

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './AddStudent.css';
+import { useSnackbar } from 'notistack';
 
 const AddStudent = ({ isOpen, onClose, onStudentAdded }) => {
   const [studentID, setStudentID] = useState('');
@@ -10,6 +11,7 @@ const AddStudent = ({ isOpen, onClose, onStudentAdded }) => {
   const [password, setPassword] = useState('hashed_default_password'); 
   const [timeLeft, setTimeLeft] = useState(600); 
   const [error, setError] = useState('');
+  const { enqueueSnackbar } = useSnackbar();
 
 
   if (!isOpen) return null;
@@ -54,7 +56,7 @@ const AddStudent = ({ isOpen, onClose, onStudentAdded }) => {
       setTimeLeft(600); 
 
       onClose(); 
-      alert('Student added successfully!');
+      enqueueSnackbar('Student added successfully!', { variant: 'success' });
     } catch (error) {
       console.error('Error adding student:', error.response ? error.response.data : error.message);
       

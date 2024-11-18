@@ -2,12 +2,14 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import './StudentTransaction.css';
 import { Typography } from '@mui/joy';
+import { useSnackbar } from 'notistack';
 
 const StudentTransaction = ({ isOpen, onClose, studentID, onTransactionCompleted }) => {
   const [transactionRef, setTransactionRef] = useState('');
   const [receiptImage, setReceiptImage] = useState(null);
   const [hoursToAdd, setHoursToAdd] = useState(1);
   const [error, setError] = useState('');
+  const { enqueueSnackbar } = useSnackbar();
 
   if (!isOpen) return null;
 
@@ -45,9 +47,9 @@ const StudentTransaction = ({ isOpen, onClose, studentID, onTransactionCompleted
       if (response.status === 201) {
         onTransactionCompleted();
         onClose();
-        alert('Transaction processed successfully!');
+        enqueueSnackbar('Transaction processed successfully!', { variant: 'success' });
       } else {
-        alert('Failed to process the transaction.');
+        enqueueSnackbar('Failed to process transaction!', { variant: 'error' });
       }
     } catch (error) {
       console.error('Error processing transaction:', error);

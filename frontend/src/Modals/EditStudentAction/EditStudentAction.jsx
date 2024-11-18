@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
 import './EditStudentAction.css';
 import axios from 'axios';
+import { useSnackbar } from 'notistack';
 
 
 export default function EditStudentModal({ isOpen, onClose, studentID, username }) {
     const [isLoading, setIsLoading] = useState(false);
     const [currentPasswordIsDefault, setCurrentPasswordIsDefault] = useState(false);
-    const [snackbarMessage, setSnackbarMessage] = useState("");
-    const [isSnackbarVisible, setIsSnackbarVisible] = useState(false); 
+    const { enqueueSnackbar } = useSnackbar();
 
 
     useEffect(() => {
@@ -19,8 +19,7 @@ export default function EditStudentModal({ isOpen, onClose, studentID, username 
                     setCurrentPasswordIsDefault(response.data.is_default);
                 } catch (error) {
                     console.error("Error fetching password status:", error.response ? error.response.data : error.message);
-                    setSnackbarMessage("Failed to fetch password status.");
-                    setIsSnackbarVisible(true);
+                    enqueueSnackbar('Failed to fetch password status', { variant: 'error' });
                 } finally {
                     setIsLoading(false);
                 }
@@ -54,8 +53,8 @@ export default function EditStudentModal({ isOpen, onClose, studentID, username 
   const handleResetPassword = async () => {
     try {
         const response = await axios.post(`http://localhost:8000/api/students/${studentID}/reset-password/`);
-        setSnackbarMessage("Password reset successful!");
-        setIsSnackbarVisible(true);
+        enqueueSnackbar('Password reset successful!', { variant: 'success' });
+        
 
         await logActivity(`Reset password for student ${studentID}`, username);
 
@@ -63,31 +62,16 @@ export default function EditStudentModal({ isOpen, onClose, studentID, username 
         onClose(); 
     } catch (error) {
         if (error.response && error.response.data.message === 'Current password is already the default.') {
-            setSnackbarMessage("The password is already set to default.");
+            enqueueSnackbar('The password is already set to default', { variant: 'success' });
+            onClose();
         } else {
-            setSnackbarMessage("Error resetting password.");
+            enqueueSnackbar('Error resetting password', { variant: 'error' });
         }
-        setIsSnackbarVisible(true);
         console.error("Error resetting password:", error.response ? error.response.data : error.message);
     }
 };
 
 
-  
-
-    const handleCloseSnackbar = () => {
-        setIsSnackbarVisible(false); 
-    };
-
-    useEffect(() => {
-        if (isSnackbarVisible) {
-            const timer = setTimeout(() => {
-                handleCloseSnackbar();
-            }, 3000); 
-
-            return () => clearTimeout(timer); 
-        }
-    }, [isSnackbarVisible]);
 
     return (
         isOpen && (
@@ -118,13 +102,6 @@ export default function EditStudentModal({ isOpen, onClose, studentID, username 
                     </div>
                 </div>
 
-                {/* Snackbar for notifications */}
-                {isSnackbarVisible && (
-                    <div className="snackbar">
-                        {snackbarMessage}
-                        <button onClick={handleCloseSnackbar} className="snackbar-close-button">✖️</button>
-                    </div>
-                )}
             </div>
         )
     );
