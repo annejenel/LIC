@@ -56,8 +56,8 @@ class StudentApp:
         self.clear_screen()
         
         self.root.deiconify()
-        # self.root.focus_force()
-        # self.root.wm_attributes("-topmost", 1)
+        self.root.focus_force()
+        self.root.wm_attributes("-topmost", 1)
 
         
         
@@ -116,6 +116,7 @@ class StudentApp:
     def create_change_password_screen(self, student_id):
         # Open a new window for changing password
         change_password_window = tk.Toplevel(self.root)
+        change_password_window.transient(self.root)
         change_password_window.grab_set()
         change_password_window.title("Change Password")
             
