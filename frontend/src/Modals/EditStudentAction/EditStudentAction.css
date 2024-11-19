@@ -72,14 +72,12 @@
 }
 
 .resetpass_cancel-button {
-    background-color: #f44336;
-    /* Red */
-    color: white;
+    border-radius: 5px;
+    color: #89343B;
 }
 
 .resetpass_confirm-button {
-    background-color: #4CAF50;
-    /* Green */
+    background-color: #89343B;
     color: white;
 }
 

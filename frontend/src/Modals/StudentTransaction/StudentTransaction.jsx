@@ -105,7 +105,7 @@ const StudentTransaction = ({ isOpen, onClose, studentID, onTransactionCompleted
             />
             {receiptImage && <img src={URL.createObjectURL(receiptImage)} alt="Receipt Preview" className="image-preview" />}
           </div>
-          <button type="submit">Submit</button>
+          <button type="submit" className='transaction-btn'>Submit</button>
         </form>
       </div>
     </div>

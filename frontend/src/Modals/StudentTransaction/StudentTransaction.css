@@ -70,8 +70,8 @@ form input {
 }
 
 /* Style submit button */
-button {
-  background-color: #007bff;
+.transaction-btn {
+  background-color: #89343b;
   color: #fff;
   border: none;
   padding: 10px 15px;

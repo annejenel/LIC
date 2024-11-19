@@ -44,8 +44,8 @@ const Confirmation = ({ isOpen, onClose, onConfirm, newStatus }) => {
           <span className="status-pill">{newStatus}</span>?
         </p>
         <div className="modal-actions">
-          <button className="btn-confirm" onClick={handleConfirm}>Confirm</button>
           <button className="btn-cancel" onClick={onClose}>Cancel</button>
+          <button className="btn-confirm" onClick={handleConfirm}>Confirm</button>
         </div>
 
         {/* Snackbar Alert */}

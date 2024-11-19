@@ -31,22 +31,22 @@
 }
 
 .btn-confirm {
-    background-color: green;
+    background-color: #89343B;
     color: white;
     border: none;
     padding: 10px 15px;
-    margin-right: 10px;
+
     cursor: pointer;
     border-radius: 5px;
 }
 
 .btn-cancel {
-    background-color: rgb(88, 71, 71);
-    color: white;
-    border: none;
+    border-radius: 5px;
+    color: #89343B;
     padding: 10px 15px;
     cursor: pointer;
-    border-radius: 5px;
+    margin-right: 10px;
+    border-color: white;
 }
 
 /* Typography */

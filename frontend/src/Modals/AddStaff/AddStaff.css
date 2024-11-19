@@ -140,7 +140,7 @@ tr:hover {
 }
 
 .add-staff-modal button[type="submit"] {
-    background-color: #28a745;
+    background-color: #89343b;
     color: white;
     padding: 12px 25px;
     border: none;
@@ -150,9 +150,7 @@ tr:hover {
     transition: background-color 0.3s;
 }
 
-.add-staff-modal button[type="submit"]:hover {
-    background-color: #218838;
-}
+
 
 .add-staff-modal-close:hover {
     color: #dc3545;

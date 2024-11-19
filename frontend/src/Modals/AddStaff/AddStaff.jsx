@@ -63,7 +63,7 @@ const AddStaffModal = ({ isOpen, onClose, onAddStaff }) => {
               required
             />
           </div>
-          <button type="submit">Add Staff</button>
+          <button type="submit" >Add Staff</button>
         </form>
       </div>
     </div>

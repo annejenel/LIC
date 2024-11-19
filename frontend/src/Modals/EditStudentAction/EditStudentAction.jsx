@@ -93,12 +93,13 @@ export default function EditStudentModal({ isOpen, onClose, studentID, username 
                         )}
                     </div>
                     <div className="resetpass_modal-footer">
+                    <button className="resetpass_cancel-button" onClick={onClose} disabled={isLoading}>
+                            Cancel
+                        </button>
                         <button className="resetpass_confirm-button" onClick={handleResetPassword} disabled={isLoading}>
-                            Yes
+                            Reset
                         </button>
-                        <button className="resetpass_cancel-button" onClick={onClose} disabled={isLoading}>
-                            No
-                        </button>
+                       
                     </div>
                 </div>
 

@@ -33,7 +33,7 @@ const StudentHistory = ({ isOpen, onClose, studentID }) => {
   return (
     <div className="session-overlay">
         <div className="session-content">
-            <button className="modal-close" onClick={onClose}>
+            <button className="session_modal-close" onClick={onClose}>
             &times;
             </button>
             <h2>Session History</h2>

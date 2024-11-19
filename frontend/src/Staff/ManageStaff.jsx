@@ -254,10 +254,10 @@ const ManageStaff = () => {
                 <Button
                   startDecorator={<AddIcon />}
                   sx={{
-                    backgroundColor: '#28a745',
+                    backgroundColor: '#89343b',
                     color: 'white',
                     fontSize: '12px',
-                    '&:hover': { backgroundColor: '#218838' },
+                    '&:hover': { backgroundColor: '#FFD404', color: '#89343b' },
                   }}
                   onClick={() => setIsModalOpen(true)}
                 >
