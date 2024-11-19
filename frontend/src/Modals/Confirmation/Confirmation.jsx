@@ -46,6 +46,7 @@ const Confirmation = ({ isOpen, onClose, onConfirm, newStatus }) => {
         <div className="modal-actions">
           <button className="btn-cancel" onClick={onClose}>Cancel</button>
           <button className="btn-confirm" onClick={handleConfirm}>Confirm</button>
+          
         </div>
 
         {/* Snackbar Alert */}
