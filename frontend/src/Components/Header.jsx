@@ -6,6 +6,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import ExitToAppOutlinedIcon from '@mui/icons-material/ExitToAppOutlined';
 import axios from 'axios';
 import { getCookie } from "../utils/utils";
+import { useSnackbar } from 'notistack';
 
 const theme = extendTheme({
   components: {
@@ -36,6 +37,7 @@ const Header = ({ username }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const [userRole, setUserRole] = useState('');
+  const { enqueueSnackbar } = useSnackbar();
 
   useEffect(() => {
     const role = localStorage.getItem('userRole');
@@ -165,7 +167,8 @@ const Header = ({ username }) => {
                       onClick={() => {
                         // Check if the page is restricted and if the user is allowed to access it
                         if (item.restricted && userRole !== 'admin') {
-                          alert("Access Denied: Admins Only");
+          
+                          enqueueSnackbar('Access Denied', { variant: 'error' });
                         } else {
                           navigate(item.path === "/dashboard" ? `/dashboard/${username}` : item.path);
                         }
