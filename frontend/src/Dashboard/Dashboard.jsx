@@ -24,6 +24,7 @@ import DriveFolderUploadIcon from "@mui/icons-material/DriveFolderUpload";
 import PersonAddAltIcon from '@mui/icons-material/PersonAddAlt';
 import Header from '../Components/Header.jsx';
 import Confirmation from '../Modals/Confirmation/Confirmation.jsx';
+import { useSnackbar } from 'notistack';
 
 import { useParams } from 'react-router-dom';
 
@@ -94,6 +95,7 @@ export default function Dashboard() {
   const [newStatus, setNewStatus] = useState('');
   const [activityLogs, setActivityLogs] = useState([]);
   const [isStudentHistory, setIsStudentHistory] = useState(false);
+  const { enqueueSnackbar } = useSnackbar();
 
 
 
@@ -222,7 +224,16 @@ export default function Dashboard() {
   const openAddStudentModal = () => setIsAddStudentModalOpen(true);
   const closeAddStudentModal = () => {setIsAddStudentModalOpen(false); console.log("Closing modal");}
 
-  const openAddNewSem = () => {setIsAddNewSemOpen(true); console.log("Opening modal");}
+  const openAddNewSem = () => {
+    const role = localStorage.getItem('userRole');
+    if (role === 'admin') {
+    setIsAddNewSemOpen(true); 
+    console.log("Opening modal");
+
+    } else {
+      enqueueSnackbar("You do not have permission to add new semester.", {variant: 'error'});
+    }
+  }
   const closeAddNewSem = () => {setIsAddNewSemOpen(false); console.log("Closing modal");}
 
   const openUpload = () => {setUpload(true); console.log("Opening modal");}
