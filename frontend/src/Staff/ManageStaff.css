@@ -42,25 +42,11 @@ body {
   /* Adjust as needed */
 }
 
-/* Logs Table Styles */
 .logs-table {
   background-color: transparent;
-  flex: 1;
-  /* Make the logs table flexible */
-  /* Optionally, add max-width to limit table size */
-  max-width: 50%;
+  width: 40%;
   margin-top: 30px;
   padding: 0 50px;
-  /* Adjust as needed */
-}
-
-/* Additional styles for better table appearance */
-table {
-  width: 100%;
-  /* Make tables take full width of their container */
-  border-collapse: collapse;
-  border-radius: 5px;
-  /* Remove space between table cells */
 }
 
 th,

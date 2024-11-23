@@ -308,58 +308,56 @@ const ManageStaff = () => {
               </table>
             </div>
             <div className="logs-table">
-    <Typography
-        component="h1"
-        sx={{
-            fontSize: '36px',
-            fontWeight: 'normal',
-            color: '#a94442',
-        }}
-    >
-        LOGS
-    </Typography>
-    <table style={{ display: 'block', maxHeight: '400px', overflowY: 'auto', width: '100%', borderRadius: '5px' }}>
-        <thead>
-            <tr>
-               <strong><td colSpan="2">{`Staff: ${selectedUsername || ""}`}</td></strong> 
-              </tr>
-            <tr>
-                <th>Action</th>
-                <th>Timestamp</th> 
-            </tr>
-        </thead>
-        <tbody>
-        {loading ? (
-          <tr>
-              <td colSpan="2">Loading...</td>
-          </tr>
-        ) : selectedUsername ? (
-          <>
-              
-              {activityLogs.length > 0 ? (
-                activityLogs.map((log, index) => (
-                    <tr key={index}>
-                      <td>{log.action}</td> 
-                      <td>{new Date(log.timestamp).toLocaleString()}</td>
+              <Typography
+                  component="h1"
+                  sx={{
+                      fontSize: '36px',
+                      fontWeight: 'normal',
+                      color: '#a94442',
+                  }}
+              >
+                  LOGS
+              </Typography>
+              <table style={{ display: 'block', maxHeight: '400px', overflowY: 'auto', width: '100%', borderRadius: '5px' }}>
+                  <thead style={{ width: '100%'}}>
+                      <tr>
+                        <strong><th colSpan="3" style={{width: '1000px', maxWidth:'100%', color: '#a94442'}}>{`Staff: ${selectedUsername || ""}`}</th></strong> 
+                        </tr>
+                      <tr>
+                          <th style={{width: '75%'}}>Action</th>
+                          <th style={{width: '25%'}}>Timestamp</th> 
+                      </tr>
+                  </thead>
+                  <tbody>
+                  {loading ? (
+                    <tr>
+                        <td colSpan="2">Loading...</td>
                     </tr>
-                ))
-              ) : (
-                <tr>
-                    <td colSpan="2">No logs found for this user.</td>
-                </tr>
-              )}
-          </>
-        ) : (
-          <tr>
-              <td colSpan="2">No logs yet...</td>
-          </tr>
-        )}
+                  ) : selectedUsername ? (
+                    <>
+                        
+                        {activityLogs.length > 0 ? (
+                          activityLogs.map((log, index) => (
+                              <tr key={index}>
+                                <td>{log.action}</td> 
+                                <td>{new Date(log.timestamp).toLocaleString()}</td>
+                              </tr>
+                          ))
+                        ) : (
+                          <tr>
+                              <td colSpan="2">No logs found for this user.</td>
+                          </tr>
+                        )}
+                    </>
+                  ) : (
+                    <tr>
+                        <td colSpan="2">No logs yet...</td>
+                    </tr>
+                  )}
 
-        </tbody>
-    </table>
-</div>
-
-
+                  </tbody>
+              </table>
+            </div>
           </div>
         </div>
       </div>
