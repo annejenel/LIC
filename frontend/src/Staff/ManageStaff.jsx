@@ -264,7 +264,7 @@ const ManageStaff = () => {
                   Add Staff
                 </Button>
               </div>
-              <table className='staff-actual-table'>
+              <table>
                 <thead>
                   <tr>
                     <th>Name</th>
@@ -318,7 +318,7 @@ const ManageStaff = () => {
     >
         LOGS
     </Typography>
-    <table style={{ display: 'block', maxHeight: '400px', overflowY: 'auto', width: '100%' }}>
+    <table style={{ display: 'block', maxHeight: '400px', overflowY: 'auto', width: '100%', borderRadius: '5px' }}>
         <thead>
             <tr>
                <strong><td colSpan="2">{`Staff: ${selectedUsername || ""}`}</td></strong> 

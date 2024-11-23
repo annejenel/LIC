@@ -10,6 +10,7 @@ body {
   justify-content: space-between;
   /* Align content to the left */
   padding: 20px 0px;
+  border-radius: 5px;
   /* Add some padding for better spacing */
 }
 
@@ -58,6 +59,7 @@ table {
   width: 100%;
   /* Make tables take full width of their container */
   border-collapse: collapse;
+  border-radius: 5px;
   /* Remove space between table cells */
 }
 
