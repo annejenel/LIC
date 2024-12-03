@@ -10,26 +10,6 @@ export default function EditStudentModal({ isOpen, onClose, studentID, username 
     const { enqueueSnackbar } = useSnackbar();
 
 
-    useEffect(() => {
-        if (isOpen && studentID) {
-            const fetchPasswordStatus = async () => {
-                try {
-                    setIsLoading(true);
-                    const response = await axios.get(`/students/${studentID}/password/`);
-                    setCurrentPasswordIsDefault(response.data.is_default);
-                } catch (error) {
-                    console.error("Error fetching password status:", error.response ? error.response.data : error.message);
-                    enqueueSnackbar('Failed to fetch password status', { variant: 'error' });
-                } finally {
-                    setIsLoading(false);
-                }
-            };
-
-            fetchPasswordStatus();
-        }
-    }, [isOpen, studentID]);
-
-
 
     const logActivity = async (action, username) => {
         const logData = {
