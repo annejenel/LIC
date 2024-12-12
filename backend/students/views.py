@@ -128,9 +128,14 @@ class TransactionCreateView(APIView):
     
 
 class TransactionListView(generics.ListAPIView):
-    
-    queryset = Transaction.objects.all()
     serializer_class = TransactionSerializer
+
+    def get_queryset(self):
+        # Retrieve the active semester (or filter based on your needs)
+        sem = Semester.objects.first()  # Or use a filter to get the active semester
+        
+        # Filter transactions by semester name and year
+        return Transaction.objects.filter(semester_name=sem.semester_name, year=sem.year)
 
 class StaffLoginView(generics.GenericAPIView):
     serializer_class = StaffLoginSerializer
@@ -264,12 +269,14 @@ class ImportStudentView(APIView):
 
 class SessionListByStudentID(generics.ListAPIView):
     serializer_class = SessionSerializer
+    
 
     def get_queryset(self):
         studentID = self.kwargs['studentID']
-        print(studentID)
+        sem = Semester.objects.first()
+        
         # Filter sessions based on the foreign key's studentID
-        return Session.objects.filter(parent_id=studentID)
+        return Session.objects.filter(parent_id=studentID, semester_name=sem.semester_name, year=sem.year)
     
 class StudentUpdateView(generics.UpdateAPIView):
     queryset = Student.objects.all()
@@ -789,28 +796,46 @@ def log_staff_activity(staff, action):
     )
 
 def export_to_excel(request):
-    records = Session.objects.all()
+    current_sem = Semester.objects.first()
+    records = Session.objects.filter(
+        semester_name=current_sem.semester_name, 
+        year=current_sem.year
+    )
+    transactions = Transaction.objects.filter(
+        semester_name=current_sem.semester_name, 
+        year=current_sem.year
+    )
+    
 
     if not records.exists():
         return HttpResponse("No data to export.", status=404)
     
+
     workbook = openpyxl.Workbook()
     sheet = workbook.active
     sheet.title = 'Sessions'
 
     # Headers
-    headers = ['Date', 'StudentID', 'Course', 'Time Consumed (minutes)', 'Semester', 'School Year']
+    headers = ['Date', 'StudentID', 'Course','Login Time', 'Logout Time', 'Time Consumed (minutes)', 'Semester', 'School Year']
     sheet.append(headers)
 
     # Add data rows
     for record in records:
-        sheet.append([record.date, record.parent_id, record.course, record.consumedTime, record.semester_name, record.year])
+        sheet.append([record.date, record.parent_id, record.course, record.loginTime, record.logoutTime, record.consumedTime, record.semester_name, record.year])
+
+    transaction_sheet = workbook.create_sheet(title='Transactions')
+    transaction_header = ['Reference Number', 'Date and Time', 'Payment(PHP)', 'Semester', 'School Year']
+    transaction_sheet.append(transaction_header)
+
+    for t in transactions:
+        transaction_sheet.append([t.reference_number, t.timestamp, t.amount, t.semester_name, t.year])
 
     # Prepare response
     response = HttpResponse(
         content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
     )
-    response['Content-Disposition'] = 'attachment; filename=sessions.xlsx'
+    filename = f"{current_sem.semester_name}_{current_sem.year}_records.xlsx"
+    response['Content-Disposition'] = f'attachment; filename="{filename}"'
 
     # Save workbook to response
     workbook.save(response)
