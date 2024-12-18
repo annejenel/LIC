@@ -301,6 +301,18 @@ export default function Dashboard() {
     logActivity(`Processed a transaction for student ${selectedStudentID}`);
   };
   
+  const handleReset = async () => {
+    try {
+      const response = await axios.post("http://localhost:8000/api/reset/", {}); // Adjust endpoint as needed
+      if (response.status === 200) {
+        enqueueSnackbar("Reset successfully!", {variant: 'success'});
+      }
+    } catch (error) {
+      console.error("Reset failed", error);
+      enqueueSnackbar("Reset Failed. Something went wrong.", {variant: 'error'});
+
+    }
+  };
 
   return (
     <CssVarsProvider theme={theme}>
@@ -460,6 +472,13 @@ export default function Dashboard() {
         >
           <ArrowForwardIos />
         </button>
+        <Button 
+        variant="contained" 
+        color="warning" 
+        onClick={handleReset}
+      >
+        Reset
+      </Button>
       </div>
 
 

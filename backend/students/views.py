@@ -27,6 +27,7 @@ from django.views.decorators.csrf import csrf_exempt
 from datetime import datetime, date, time
 import openpyxl
 from django.http import HttpResponse
+from django.db.models import F
 
 logger = logging.getLogger(__name__)
 
@@ -62,6 +63,13 @@ class ResetPasswordView(APIView):
             student.password = make_password(default_password)
             student.is_logged_in = False
             student.save()
+
+            print(student)
+            # Update all null `logoutTime` values for the current student's sessions
+            Session.objects.filter(parent_id=student, logoutTime__isnull=True).update(logoutTime=F('loginTime'))
+
+            # Update all null `consumedTime` values for the current student's sessions
+            Session.objects.filter(parent_id=student, consumedTime__isnull=True).update(consumedTime=0)
 
             # Log the password reset action
             staff_username = request.user.username  # The username of the staff performing the reset
@@ -840,3 +848,20 @@ def export_to_excel(request):
     # Save workbook to response
     workbook.save(response)
     return response
+
+@csrf_exempt
+def reset_system(request):
+    if request.method == 'POST':
+        try:
+            # Reset all students' `is_logged_in` field to 0
+            Student.objects.update(is_logged_in=0)
+            
+            # Update all null `logoutTime` values with the corresponding `loginTime`
+            Session.objects.filter(logoutTime__isnull=True).update(logoutTime=F('loginTime'))
+
+            Session.objects.filter(consumedTime__isnull=True).update(consumedTime=0)
+            
+            return JsonResponse({"message": "Reset successful!"}, status=200)
+        except Exception as e:
+            print("Error during reset:", e)
+            return JsonResponse({"error": "Reset failed!"}, status=500)
