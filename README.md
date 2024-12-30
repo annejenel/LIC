@@ -36,6 +36,6 @@ Framework: Tkinter (Python’s built-in GUI library)
 
 ## Deployment
 
-This project includes separate repositories for deployment.
+This project has been deployed previously on Heroku and Vercel for testing purposes. You can access the separate repositories for deployment.
 - [Frontend Deployment Repository](https://github.com/shadycodee/LIC-frontend)
 - [Backend Deployment Repository](https://github.com/shadycodee/LIC-backend)
