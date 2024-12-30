@@ -6,19 +6,19 @@ LIC Connect is a capstone project designed to address the challenges faced by th
 
 ## Features
 
-- Web Application (for staff and admin):
+### Web Application (for staff and admin):
 
-Manage student accounts and activity records.
+- Manage staff/students accounts and activity records.
 
-Access detailed analytics and usage history.
+- Access detailed analytics and usage history.
 
-Administrative controls, including adding new semesters and managing settings.
+- Administrative controls, including adding new semesters and managing settings.
 
-- GUI Application (for students):
+### GUI Application (for students):
 
-Simple and intuitive login process for accessing internet services.
+- Simple and intuitive login process for accessing computers in LIC.
 
-Student account validation.
+- Student account validation.
 
 ## Technology Stack
 
