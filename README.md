@@ -2,7 +2,7 @@
 
 ## Overview
 
-LIC Connect is a capstone project designed to address the challenges faced by the LIC library internet center at Cebu Institute of Technology University. This system automates student account management, login tracking, and administrative tasks. By combining a robust web application and a GUI desktop application, LIC Connect provides a seamless experience for students, staff, and administrators.
+LIC Connect is a capstone project designed to address the challenges faced by the LIC (Library Internet Center) at Cebu Institute of Technology University. This system automates student account management, login tracking, and administrative tasks. By combining a robust web application and a GUI desktop application, LIC Connect provides a seamless experience for students, staff, and administrators.
 
 ## Features
 
